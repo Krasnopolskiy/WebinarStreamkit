@@ -9,7 +9,7 @@
             <ul class="navbar-nav">
                 {% comment %} {% if not user.is_authenticated %} {% endcomment %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Log in</a>
+                    <a class="nav-link" href="{% url 'login' %}">Log in</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Sign up</a>

@@ -9,3 +9,9 @@ class IndexView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, 'pages/index.html', self.context)
+
+class LogInView(View):
+    context = {'pagename': 'Login'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'registration/login.html', self.context)
