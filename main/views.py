@@ -1,3 +1,11 @@
 from django.shortcuts import render
+from django.http import HttpRequest
+from django.http.response import HttpResponse
+from django.views import View
 
-# Create your views here.
+
+class IndexView(View):
+    context = {'pagename': 'Index'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/index.html', self.context)
