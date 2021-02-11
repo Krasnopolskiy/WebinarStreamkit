@@ -7,8 +7,9 @@
     <div class="row justify-content-center">
         <div class="col-6">
             <form action="{% url 'signup' %}" class="form-horizontal" method="POST" role="form">
-                <h2 class="h3 m-3" style="text-align: center"><a class="text-decoration-none" href="#"> Авторизация</a>
-                    / Регистрация</h2>
+                <h2 class="h3 m-3" style="text-align: center">
+                    <a class="text-decoration-none" href="#"> Авторизация</a>/ Регистрация
+                </h2>
                 {% csrf_token %}
                 {% for item in form %}
                 {{ item|as_crispy_field }}
