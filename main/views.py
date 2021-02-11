@@ -1,10 +1,9 @@
-from audioop import reverse
-
 from django.contrib.auth import get_user_model, authenticate, login
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
+from django.urls import reverse
 
 from . import forms
 
@@ -17,7 +16,7 @@ class IndexView(View):
 
 
 class LoginView(View):
-    context = {'pagename': 'signin'}
+    context = {'pagename': 'Login'}
 
     def get(self, request):
         self.context['form'] = forms.LoginView()
@@ -36,3 +35,10 @@ class LoginView(View):
                 return redirect(reverse('index'))
         return render(request, 'registration/login.html', self.context)
 
+
+class SignupView(View):
+    context = {'pagename': 'Signup'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        self.context['form'] = forms.SignupForm()
+        return render(request, 'registration/signup.html', self.context)
