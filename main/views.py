@@ -19,12 +19,12 @@ class LoginView(View):
     context = {'pagename': 'Login'}
 
     def get(self, request):
-        self.context['form'] = forms.LoginView()
+        self.context['form'] = forms.LoginForm()
         return render(request, 'registration/login.html', self.context)
 
     def post(self, request):
         get_user_model()
-        form = forms.LoginView(request.POST)
+        form = forms.LoginForm(request.POST)
         self.context['form'] = form
         if form.is_valid():
             username = form.cleaned_data.get('username')
