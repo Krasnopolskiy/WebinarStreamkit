@@ -2,18 +2,24 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="row">
-        <div class=" w-50 m-10 mx-auto" style="height: calc(100vh - 60px) ">
-            <form class="form-horizontal" role="form" action="{% url 'signup' %}" method="POST">
-                <h2 style="text-align: center" class="h3 m-3 fw-normal"><a style="text-decoration: none" href="#"> Авторизация</a> / Регистрация</h2>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form action="{% url 'signup' %}" class="form-horizontal" method="POST" role="form">
+                <h2 class="h3 m-3" style="text-align: center"><a class="text-decoration-none" href="#"> Авторизация</a>
+                    / Регистрация</h2>
                 {% csrf_token %}
                 {% for item in form %}
                 {{ item|as_crispy_field }}
                 {% endfor %}
-                <input class="w-100 btn btn-lg btn-primary" type="submit" value="Войти">
+                <div class="d-grid">
+                    <input class="btn btn-lg btn-primary" type="submit" value="Войти">
+                </div>
             </form>
         </div>
     </div>
- {% load static %}
-{% endblock %}
+</div>
 
+
+{% endblock %}
