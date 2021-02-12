@@ -1,10 +1,10 @@
+from django.contrib.auth import get_user_model, authenticate, login
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
-from django.contrib.auth import login, authenticate, get_user_model
-from . import forms
 from django.urls import reverse
+from . import forms
 
 
 class IndexView(View):

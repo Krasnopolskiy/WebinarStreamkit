@@ -8,7 +8,7 @@
         <div class="col-6">
             <form action="{% url 'signup' %}" class="form-horizontal" method="POST" role="form">
                 <h2 class="text-center m-3">
-                    <a class="text-decoration-none" href="#"> Авторизация</a>/ Регистрация
+                    <a class="text-decoration-none" href="{% url 'login' %}"> Авторизация</a>/ Регистрация
                 </h2>
                 {% csrf_token %}
                 {% for item in form %}
