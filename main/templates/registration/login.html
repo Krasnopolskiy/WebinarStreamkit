@@ -12,13 +12,22 @@
                 </h2>
                 {% csrf_token %}
                 {% for item in form %}
-                {{ item|as_crispy_field }}
+                    {{ item|as_crispy_field }}
                 {% endfor %}
                 <br>
                 <div class="d-grid">
                     <input class="btn btn-lg btn-primary" type="submit" value="Войти">
                 </div>
             </form>
+            {% if error %}
+                {% if form_error %}
+                    <pre>Произошла ошибка формы.</pre>
+                    <h4>Детали ошибки:</h4>
+                    {{ form.errors }}
+                {% else %}
+                    <p>Неправильно введён логин или пароль</p>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>

@@ -20,19 +20,25 @@ class LoginView(View):
 
     def get(self, request):
         self.context['form'] = forms.LoginForm()
+        self.context['error'] = False
+        self.context['form_error'] = False
         return render(request, 'registration/login.html', self.context)
 
     def post(self, request):
         get_user_model()
         form = forms.LoginForm(request.POST)
         self.context['form'] = form
+        self.context['error'] = True
         if form.is_valid():
+            self.context['form_error'] = False
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect(reverse('index'))
+        else:
+            self.context['form_error'] = True
         return render(request, 'registration/login.html', self.context)
 
 
