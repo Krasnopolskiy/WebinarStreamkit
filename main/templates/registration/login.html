@@ -6,21 +6,21 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6">
-            <form action="{% url 'signup' %}" class="form-horizontal" method="POST" role="form">
+            <form action="{% url 'login' %}" class="form-horizontal" method="POST" role="form">
                 <h2 class="text-center m-3">
-                    <a class="text-decoration-none" href="{% url 'login' %}">Авторизация</a> / Регистрация
+                    Авторизация / <a class="text-decoration-none" href="{% url 'signup' %}">Регистрация</a>
                 </h2>
                 {% csrf_token %}
                 {% for item in form %}
                 {{ item|as_crispy_field }}
                 {% endfor %}
+                <br>
                 <div class="d-grid">
-                    <input class="btn btn-lg btn-primary" type="submit" value="Зарегистрироваться">
+                    <input class="btn btn-lg btn-primary" type="submit" value="Войти">
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 
 {% endblock %}

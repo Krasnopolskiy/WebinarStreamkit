@@ -14,6 +14,27 @@ class IndexView(View):
         return render(request, 'pages/index.html', self.context)
 
 
+class LoginView(View):
+    context = {'pagename': 'Login'}
+
+    def get(self, request):
+        self.context['form'] = forms.LoginForm()
+        return render(request, 'registration/login.html', self.context)
+
+    def post(self, request):
+        get_user_model()
+        form = forms.LoginForm(request.POST)
+        self.context['form'] = form
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(reverse('index'))
+        return render(request, 'registration/login.html', self.context)
+
+
 class SignupView(View):
     context = {'pagename': 'Signup'}
 
