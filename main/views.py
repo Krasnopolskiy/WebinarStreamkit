@@ -42,3 +42,10 @@ class SignupView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['form'] = forms.SignupForm()
         return render(request, 'registration/signup.html', self.context)
+
+
+class ProfileView(View):
+    context = {'pagename': 'Profile'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/profile.html', self.context)
