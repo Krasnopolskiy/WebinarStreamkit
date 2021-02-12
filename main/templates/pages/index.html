@@ -4,42 +4,38 @@
 <div class="container p-3">
     <div class="row my-5">
         <div class="col">
-            <h1 class="display-1 text-center">Webinar StreamKit</h1>
+            <h1 class="display-1 text-center">Webinar Streamkit</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col px-5">
+            <h2>Совершенно новый StreamKit для платформы Webinar</h2>
+            <p class="lead">Удобный виджет для модерации чата, сохранения вебинара и его управления.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col p-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Как это работает?</h5>
+                    <p class="card-text">Подробную документацию по использованию StreamKit для платформы Webinar можно
+                        изучить здесь</p>
+                    <a href="#" class="btn btn-primary">Документация</a>
+                </div>
+            </div>
+        </div>
+        <div class="col p-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Как начать?</h5>
+                    <p class="card-text">Для начала работы необходимо зарегестрироваться или авторизоваться под Вашим
+                        аккаунтом</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
+                    <a href="{% url 'signup' %}" class="btn btn-primary ms-3">Регистрация</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="container p-2">
-  <div class="row align-items-center">
-<<h2> Совершенно новый StreamKit для платформы Webinar </h2>
-    </div>
-</div>
-<div class="container p-4">
-    <div class="row align-items-center">
-      <p class="lead">
-  Удобный виджет для модерации чата, сохранения вебинара и его управления.
-      </p>
-</div>
-</div>
-<div class="container">
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Как это работает?</h5>
-        <p class="card-text">Подробную документацию по использованию StreamKit для платформы Webinar можно изучить здесь</p>
-        <a href="#" class="btn btn-primary">Документация</a>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Как начать?</h5>
-        <p class="card-text">Для начала работы необходимо зарегестрироваться или авторизоваться под Вашим аккаунтом</p>
-        <a href="#" class="btn btn-primary">Авторизация</a> <a href="#" class="btn btn-primary">Регистрация</a>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
