@@ -4,6 +4,7 @@ from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
 from django.urls import reverse
+from django.contrib import messages
 
 from . import forms
 
@@ -36,9 +37,24 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                # messages.add_message(request, messages.SUCCESS, "Авторизация успешна")
+                messages.add_message(request,
+                                     messages.SUCCESS,
+                                     "Пользователь авторизован успешно",
+                                     extra_tags='alert alert-success alert-dismissible fade show')
                 return redirect(reverse('index'))
+            else:
+                messages.add_message(request,
+                                     messages.ERROR,
+                                     "Неправильный логин или пароль",
+                                     extra_tags='alert alert-danger alert-dismissible fade show')
         else:
             self.context['form_error'] = True
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 "Некорректные данные в форме авторизации",
+                                 extra_tags='alert alert-danger alert-dismissible fade show')
+
         return render(request, 'registration/login.html', self.context)
 
 
