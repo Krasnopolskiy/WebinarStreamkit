@@ -14,7 +14,9 @@
                 {% for item in form %}
                 {{ item|as_crispy_field }}
                 {% endfor %}
-                <input class="btn btn-primary mt-3" type="submit" value="Войти">
+                <div class="d-grid">
+                    <input class="btn btn-primary mt-3" type="submit" value="Зарегистрироваться">
+                </div>
             </form>
         </div>
     </div>

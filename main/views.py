@@ -42,3 +42,17 @@ class SignupView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['form'] = forms.SignupForm()
         return render(request, 'registration/signup.html', self.context)
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        get_user_model()
+        form = forms.SignupForm(request.POST)
+        self.context['form'] = form
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(reverse('index'))
+        return render(request, 'registration/signup.html', self.context)
