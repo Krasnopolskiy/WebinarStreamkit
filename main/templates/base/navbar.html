@@ -12,34 +12,42 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav w-100 d-flex justify-content-end">
-                {% if not user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == login_url %}active disabled{% endif %}"
-                        href="{% url 'login' %}">Войти</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == signup_url %}active disabled{% endif %}"
-                        href="{% url 'signup' %}">Зарегистрироваться</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == index_url %}active disabled{% endif %}"
-                        href="{% url 'index' %}">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == profile_url %}active disabled{% endif %}"
-                        href="{% url 'profile' %}">Профиль</a>
-                </li>
-                {% if user.is_staff %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Администрирование</a>
-                </li>
-                {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
-                </li>
-                {% endif %}
+            <ul class="navbar-nav container-fluid">
+                <div class="row w-100">
+                    <div class="col d-flex justify-content-start">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == index_url %}active disabled{% endif %}"
+                                href="{% url 'index' %}">Главная</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}">Администрирование</a>
+                        </li>
+                        {% endif %}
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        {% if not user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == login_url %}active disabled{% endif %}"
+                                href="{% url 'login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == signup_url %}active disabled{% endif %}"
+                                href="{% url 'signup' %}">Зарегистрироваться</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == profile_url %}active disabled{% endif %}"
+                                href="{% url 'profile' %}">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+                        </li>
+                        {% endif %}
+                    </div>
+                </div>
             </ul>
         </div>
     </div>
