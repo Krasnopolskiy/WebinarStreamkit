@@ -3,11 +3,12 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-10 p-5 border rounded shadow">
-            <p class="lead">
-                {% comment %} Текущий ключ: <span class="badge bg-danger">не установлен</span> {% endcomment %}
-                Текущий ключ: <span class="font-monospace">************2409</span>
-            </p>    
-            {% comment %} TODO {% url 'change_apikey' %}  {% endcomment %}
+            <label class="form-label">Ключ API</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control font-monospace" readonly value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+                <button class="btn btn-secondary input-group-text">Копировать</button>
+            </div>
+            {% comment %} TODO {% url 'change_apikey' %} {% endcomment %}
             <form action="#" class="form-horizontal d-grid gap-3 mt-5" method="POST" role="form">
                 {% csrf_token %}
                 {% for item in apikey_form %}

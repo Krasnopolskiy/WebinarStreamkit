@@ -24,5 +24,5 @@ class SignupForm(RegistrationForm):
 class ApikeyForm(forms.Form):
     apikey = forms.CharField(
         widget=forms.TextInput,
-        label='Новый API-ключ'
+        label='Установить ключ API'
     )
