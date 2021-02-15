@@ -6,33 +6,35 @@
         height: 200px;
         width: 200px;
     }
+
+    .list-group-item.active {
+        border-radius: .25rem;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="row gx-5 my-3">
+    <div class="row gx-5 my-5">
         <div class="col-4">
-            <div class="card p-2">
-                <div class="card-body d-grid gap-3">
-                    <div class="d-flex justify-content-center my-3">
-                        <div class="bg-secondary border avatar-example"></div>
-                    </div>
-                    <h5 class="card-title">Информация о пользователе</h5>
-                    <ul class="card-text">
-                        <li>Имя: John</li>
-                        <li>Фамилия: Doe</li>
-                        <li>E-mail: john.doe@mail.com</li>
-                    </ul>
-                    <div class="mb-3">
-                        <label for="formFile" class="form-label">Загрузить аватар</label>
-                        <input class="form-control" type="file" id="formFile">
-                    </div>
-                    <a href="#" class="btn btn-primary">Изменить пароль</a>
+            <div class="list-group list-group-flush" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" data-bs-toggle="list"
+                    href="#list-main">Основная информация</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
+                    href="#list-security">Безопасность</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-main">
+                    {% include 'pages/profile/main.html' %}
+                </div>
+                <div class="tab-pane fade" id="list-security">
+                    {% include 'pages/profile/security.html' with form=form %}
                 </div>
             </div>
         </div>
-        <div class="col-8 border"></div>
     </div>
 </div>
 {% endblock %}

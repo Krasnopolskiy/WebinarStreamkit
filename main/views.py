@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth import forms as auth_forms
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.http.response import HttpResponse
@@ -91,4 +92,5 @@ class ProfileView(View):
     context = {'pagename': 'Profile'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        self.context['form'] = auth_forms.PasswordChangeForm(user=request.user)
         return render(request, 'pages/profile.html', self.context)
