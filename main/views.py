@@ -38,21 +38,21 @@ class LoginView(View):
                     request,
                     messages.SUCCESS,
                     'Пользователь успешно авторизован',
-                    extra_tags='alert alert-success alert-dismissible fade show'
+                    extra_tags='alert-success'
                 )
                 return redirect(reverse('index'))
             messages.add_message(
                 request,
                 messages.ERROR,
                 'Неправильный логин или пароль',
-                extra_tags='alert alert-danger alert-dismissible fade show'
+                extra_tags='alert-danger'
             )
             return render(request, 'registration/login.html', self.context)
         messages.add_message(
             request,
             messages.ERROR,
             'Некорректные данные в форме авторизации',
-            extra_tags='alert alert-danger alert-dismissible fade show'
+            extra_tags='alert-danger'
         )
         return render(request, 'registration/login.html', self.context)
 
@@ -75,14 +75,14 @@ class SignupView(View):
                 request,
                 messages.SUCCESS,
                 'Пользователь успешно зарегистрирован',
-                extra_tags='alert alert-success alert-dismissible fade show'
+                extra_tags='alert-success'
             )
             return redirect(reverse('index'))
         messages.add_message(
             request,
             messages.ERROR,
             'Ошибка регистрации',
-            extra_tags='alert alert-danger alert-dismissible fade show'
+            extra_tags='alert-danger'
         )
         return render(request, 'registration/signup.html', self.context)
 
