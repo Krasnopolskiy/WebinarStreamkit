@@ -92,5 +92,6 @@ class ProfileView(View):
     context = {'pagename': 'Profile'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        self.context['form'] = auth_forms.PasswordChangeForm(user=request.user)
+        self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
+        self.context['apikey_form'] = forms.ApikeyForm()
         return render(request, 'pages/profile.html', self.context)

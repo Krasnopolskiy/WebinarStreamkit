@@ -19,3 +19,10 @@ class LoginForm(forms.Form):
 class SignupForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
         model = User
+
+
+class ApikeyForm(forms.Form):
+    apikey = forms.CharField(
+        widget=forms.TextInput,
+        label='Новый API-ключ'
+    )
