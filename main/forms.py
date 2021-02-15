@@ -18,8 +18,4 @@ class LoginForm(forms.Form):
 
 class SignupForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
-        username = forms.CharField(
-            widget=forms.TextInput,
-            label='Имя пользователя'
-        )
         model = User
