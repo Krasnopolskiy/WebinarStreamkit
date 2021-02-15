@@ -16,15 +16,6 @@
                 {% endfor %}
                 <input class="btn btn-primary mt-3" type="submit" value="Войти">
             </form>
-            {% if error %}
-                {% if form_error %}
-                    <pre>Произошла ошибка формы.</pre>
-                    <h4>Детали ошибки:</h4>
-                    {{ form.errors }}
-                {% else %}
-                    <p>Неправильно введён логин или пароль</p>
-                {% endif %}
-            {% endif %}
         </div>
     </div>
 </div>

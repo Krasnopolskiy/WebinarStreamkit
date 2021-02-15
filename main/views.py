@@ -21,15 +21,12 @@ class LoginView(View):
 
     def get(self, request):
         self.context['form'] = forms.LoginForm()
-        self.context['error'] = False
-        self.context['form_error'] = False
         return render(request, 'registration/login.html', self.context)
 
     def post(self, request):
         get_user_model()
         form = forms.LoginForm(request.POST)
         self.context['form'] = form
-        self.context['error'] = True
         if form.is_valid():
             self.context['form_error'] = False
             username = form.cleaned_data.get('username')
@@ -37,24 +34,26 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # messages.add_message(request, messages.SUCCESS, "Авторизация успешна")
-                messages.add_message(request,
-                                     messages.SUCCESS,
-                                     "Пользователь авторизован успешно",
-                                     extra_tags='alert alert-success alert-dismissible fade show')
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    'Пользователь успешно авторизован',
+                    extra_tags='alert alert-success alert-dismissible fade show'
+                )
                 return redirect(reverse('index'))
-            else:
-                messages.add_message(request,
-                                     messages.ERROR,
-                                     "Неправильный логин или пароль",
-                                     extra_tags='alert alert-danger alert-dismissible fade show')
-        else:
-            self.context['form_error'] = True
-            messages.add_message(request,
-                                 messages.ERROR,
-                                 "Некорректные данные в форме авторизации",
-                                 extra_tags='alert alert-danger alert-dismissible fade show')
-
+            messages.add_message(
+                request,
+                messages.ERROR,
+                'Неправильный логин или пароль',
+                extra_tags='alert alert-danger alert-dismissible fade show'
+            )
+            return render(request, 'registration/login.html', self.context)
+        messages.add_message(
+            request,
+            messages.ERROR,
+            'Некорректные данные в форме авторизации',
+            extra_tags='alert alert-danger alert-dismissible fade show'
+        )
         return render(request, 'registration/login.html', self.context)
 
 
@@ -63,6 +62,28 @@ class SignupView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['form'] = forms.SignupForm()
+        return render(request, 'registration/signup.html', self.context)
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        get_user_model()
+        form = forms.SignupForm(request.POST)
+        self.context['form'] = form
+        if form.is_valid():
+            user = form.save()
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                'Пользователь успешно зарегистрирован',
+                extra_tags='alert alert-success alert-dismissible fade show'
+            )
+            return redirect(reverse('index'))
+        messages.add_message(
+            request,
+            messages.ERROR,
+            'Ошибка регистрации',
+            extra_tags='alert alert-danger alert-dismissible fade show'
+        )
         return render(request, 'registration/signup.html', self.context)
 
 

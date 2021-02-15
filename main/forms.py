@@ -22,3 +22,4 @@ class SignupForm(RegistrationForm):
             widget=forms.TextInput,
             label='Имя пользователя'
         )
+        model = User
