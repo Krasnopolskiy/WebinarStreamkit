@@ -8,4 +8,6 @@
 - в папке `main/templates/main/_____.html` *(указать здесь имя страницы транслитом)*
 - в ветке `feature/_____/html` *(указать здесь имя страницы транслитом)*
 
-/label ~frontend ~html ~css
+/label ~frontend
+/label ~html
+/label ~css
