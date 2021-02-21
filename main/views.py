@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth import forms as auth_forms
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth.views import LoginView
 
 from . import forms
 
@@ -17,45 +19,12 @@ class IndexView(View):
         return render(request, 'pages/index.html', self.context)
 
 
-class LoginView(View):
+class CustomLoginView(SuccessMessageMixin, LoginView):
     context = {'pagename': 'Login'}
-
-    def get(self, request):
-        self.context['form'] = forms.LoginForm()
-        return render(request, 'registration/login.html', self.context)
-
-    def post(self, request):
-        get_user_model()
-        form = forms.LoginForm(request.POST)
-        self.context['form'] = form
-        if form.is_valid():
-            self.context['form_error'] = False
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    'Пользователь успешно авторизован',
-                    extra_tags='alert-success'
-                )
-                return redirect(reverse('index'))
-            messages.add_message(
-                request,
-                messages.ERROR,
-                'Неправильный логин или пароль',
-                extra_tags='alert-danger'
-            )
-            return render(request, 'registration/login.html', self.context)
-        messages.add_message(
-            request,
-            messages.ERROR,
-            'Некорректные данные в форме авторизации',
-            extra_tags='alert-danger'
-        )
-        return render(request, 'registration/login.html', self.context)
+    template_name = 'registration/login.html'
+    form_class = forms.LoginForm
+    success_url = '/profile'
+    success_message = 'Пользователь успешно авторизован'
 
 
 class SignupView(View):

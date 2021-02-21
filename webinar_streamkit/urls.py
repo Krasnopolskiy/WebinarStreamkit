@@ -6,7 +6,7 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('login/', views.LoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     path('signup/', views.SignupView.as_view(), name='signup'),
     path('change-password/', auth_views.PasswordChangeView.as_view(), name='change_password'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
