@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row my-5">
+        <div class="col">
+            <h2 class="text-center m-3">Список вебинаров</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h3 class="text-center">Занятие 1 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
+            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
+                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+            </video>
+        </div>
+        <div class="col-sm-4">
+            <h3 class="text-center">Занятие 2 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
+            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
+                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+            </video>
+        </div>
+        <div class="col-sm">
+            <h3 class="text-center">Занятие 3 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
+            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
+                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+            </video>
+        </div>
+    </div>
+</div>
+{% endblock %}
