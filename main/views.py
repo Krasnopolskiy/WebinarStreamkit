@@ -6,9 +6,9 @@ from django.http.response import HttpResponse
 from django.views import View
 from django.urls import reverse
 from django.contrib import messages
-
+from main.models import User,AdditionalUserInfo
 from . import forms
-
+from main.forms import ImageForm
 
 class IndexView(View):
     context = {'pagename': 'Index'}
@@ -90,8 +90,39 @@ class SignupView(View):
 
 class ProfileView(View):
     context = {'pagename': 'Profile'}
+    form = ImageForm()
+
+
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
+        userinfo = User.objects.get(username=request.user.username)
+        if userinfo.avatar=="":
+            self.context["hasavatar"] = False
+        else:
+            self.context["hasavatar"] = True
+
+        self.context["userinfo"] = userinfo
+        self.context["imguploadformm"] = self.form
+        return render(request, 'pages/profile.html', self.context)
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            img_obj = form.instance
+            user = User.objects.get(username=request.user.username)
+            user.avatar = img_obj.image.url
+            user.save()
+        self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
+        self.context['apikey_form'] = forms.ApikeyForm()
+        userinfo = User.objects.get(username=request.user.username)
+        if userinfo.avatar == "":
+            self.context["hasavatar"] = False
+        else:
+            self.context["hasavatar"] = True
+
+        self.context["userinfo"] = userinfo
+        self.context["imguploadformm"] = self.form
         return render(request, 'pages/profile.html', self.context)

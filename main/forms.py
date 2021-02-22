@@ -1,7 +1,7 @@
 from django_registration.forms import RegistrationForm
 from django import forms
 from django.contrib.auth import get_user_model
-
+from main.models import Image
 User = get_user_model()
 
 
@@ -26,3 +26,8 @@ class ApikeyForm(forms.Form):
         widget=forms.TextInput,
         label='Установить ключ API'
     )
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['image']
