@@ -1,16 +1,22 @@
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LoginView, PasswordChangeView, LogoutView
+from django_registration.views import RegistrationView
 from django.urls import path
 
 from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('signup/', views.SignupView.as_view(), name='signup'),
-    path('change-password/', auth_views.PasswordChangeView.as_view(), name='change_password'),
-    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+    path('login/', LoginView.as_view(
+        template_name='registration/login.html',
+        extra_context={'pagename': 'Авторизация'}
+    ), name='login'),
+    path('signup/', RegistrationView.as_view(
+        template_name='registration/signup.html',
+        extra_context={'pagename': 'Регистрация'}
+    ), name='signup'),
+    path('change-password/', PasswordChangeView.as_view(), name='change_password'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('', views.IndexView.as_view(), name='index'),
 ]
