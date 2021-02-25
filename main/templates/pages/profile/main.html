@@ -4,7 +4,7 @@
             <div class="card-body d-grid gap-3">
                 <div class="d-flex justify-content-center my-3">
                     {% if hasavatar %}
-                    <div class="bg-secondary border shadow-sm rounded" id="avatar" style="background: url({{userinfo.avatar}}) no-repeat 300px 200px; background-size:"></div>
+                    <img class="bg-secondary border shadow-sm rounded" id="avatar" src="{{userinfo.avatar}}" >
                     {% else %}
                     <div class="bg-secondary border shadow-sm rounded" id="avatar"></div>
                     {% endif %}
