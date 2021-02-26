@@ -5,7 +5,7 @@
         <div class="col-10 p-5 border rounded shadow">
             <label class="form-label">Ключ API</label>
             <div class="input-group mb-3">
-                <input type="text" class="form-control font-monospace" readonly value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+                <input type="text" class="form-control font-monospace" readonly value="{{ apikey }}">
                 <button class="btn btn-secondary input-group-text">Копировать</button>
             </div>
             {% comment %} TODO {% url 'change_apikey' %} {% endcomment %}
