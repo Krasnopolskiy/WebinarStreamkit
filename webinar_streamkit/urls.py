@@ -15,7 +15,7 @@ urlpatterns = [
     path('signup/', RegistrationView.as_view(
         template_name='registration/signup.html',
         extra_context={'pagename': 'Регистрация'},
-        success_url='/'
+        success_url='/',
     ), name='signup'),
     path('change-password/', PasswordChangeView.as_view(), name='change_password'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
