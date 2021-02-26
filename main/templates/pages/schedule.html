@@ -7,24 +7,26 @@
             <h2 class="text-center m-3">Список вебинаров</h2>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-4">
-            <h3 class="text-center">Занятие 1 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
-            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
-                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-            </video>
-        </div>
-        <div class="col-sm-4">
-            <h3 class="text-center">Занятие 2 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
-            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
-                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-            </video>
-        </div>
-        <div class="col-sm">
-            <h3 class="text-center">Занятие 3 <input class="btn btn-primary btn-sm" href="#" type="submit" value="i"></h3>
-            <video controls="controls" height="300" poster="video/duel.jpg" width="400">
-                <source src="video/duel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-            </video>
+    <div class="row justify-content-center">
+        <div class="col-sm-4 p-3">
+            <div class="card mb-3 rounded shadow">
+                <div class="card-header text-center">
+                    <h4 class="card-title">Название {{webinar.name}}</h4>
+                    <h5 class="card-text">Время начала: {{ webinar.date }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Организатор: {{ webinar.organizer }}</p>
+                    <hr>
+                    <p class="card-text">Длительность: {{ webinar.duration }}</p>
+                    <hr>
+                    <p class="card-text">Краткое описание: {{ webinar.description }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-grid">
+                        <input class="btn btn-primary mt-2" href="#" type="submit" value="Открыть">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
