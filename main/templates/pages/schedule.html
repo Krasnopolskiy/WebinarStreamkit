@@ -7,27 +7,33 @@
             <h2 class="text-center m-3">Список вебинаров</h2>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-sm-4 p-3">
-            <div class="card mb-3 rounded shadow">
-                <div class="card-header text-center">
-                    <h4 class="card-title">Название {{webinar.name}}</h4>
-                    <h5 class="card-text">Время начала: {{ webinar.date }}</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Организатор: {{ webinar.organizer }}</p>
-                    <hr>
-                    <p class="card-text">Длительность: {{ webinar.duration }}</p>
-                    <hr>
-                    <p class="card-text">Краткое описание: {{ webinar.description }}</p>
-                </div>
-                <div class="card-footer">
-                    <div class="d-grid">
-                        <input class="btn btn-primary mt-2" href="#" type="submit" value="Открыть">
+
+    {% if webinars %}
+       <p>Здесь отображается список вебинаров</p>
+    {% else %}
+        <p>Списка пока нет, вот вам пример демо-карточки</p>
+        <div class="row justify-content-center">
+            <div class="col-sm-4 p-3">
+                <div class="card mb-3 rounded shadow">
+                    <div class="card-header text-center">
+                        <h4 class="card-title">Название {{ webinar.name }}</h4>
+                        <h5 class="card-text">Время начала: {{ webinar.date }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Организатор: {{ webinar.organizer }}</p>
+                        <hr>
+                        <p class="card-text">Длительность: {{ webinar.duration }}</p>
+                        <hr>
+                        <p class="card-text">Краткое описание: {{ webinar.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid">
+                            <input class="btn btn-primary mt-2" href="#" type="submit" value="Открыть">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}
