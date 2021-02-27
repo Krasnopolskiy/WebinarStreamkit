@@ -21,3 +21,10 @@ class ProfileView(View):
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
         return render(request, 'pages/profile.html', self.context)
+
+
+class ScheduleView(View):
+    context = {'pagename': 'Schedule'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/schedule.html', self.context)
