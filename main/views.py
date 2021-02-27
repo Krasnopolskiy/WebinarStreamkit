@@ -18,20 +18,15 @@ class IndexView(View):
 class ProfileView(View):
     context = {'pagename': 'Profile'}
     form = ImageForm()
+    # context["imguploadformm"] = form
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
-        userinfo = User.objects.get(username=request.user.username)
-        if userinfo.avatar=="":
-            self.context["hasavatar"] = False
-        else:
-            self.context["hasavatar"] = True
-
-        self.context['apikey'] = userinfo.apikey
-
-        self.context["userinfo"] = userinfo
-        self.context["imguploadformm"] = self.form
+        self.context['userinfo'] = User.objects.get(username=request.user.username)
+        self.context['apikey'] = User.objects.get(username=request.user.username).apikey
+        if not self.context['apikey']:
+            self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
         return render(request, 'pages/profile.html', self.context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
@@ -44,22 +39,17 @@ class ProfileView(View):
             user.save()
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
-        userinfo = User.objects.get(username=request.user.username)
-        if userinfo.avatar == "":
-            self.context["hasavatar"] = False
-        else:
-            self.context["hasavatar"] = True
+        self.context['userinfo'] = User.objects.get(username=request.user.username)
 
         api_key_form = ApikeyForm(request.POST)
-        self.context['apikey'] = ''
-        if api_key_form.is_valid():
-            user = User.objects.get(username=request.user.username)
+        self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
+        if api_key_form.is_valid() and len(request.POST.get('apikey')) == 32:
+            user = self.context['userinfo']
             user.apikey = request.POST.get('apikey')
             user.save()
             self.context['apikey'] = user.apikey
 
-        self.context["userinfo"] = userinfo
-        self.context["imguploadformm"] = self.form
         return render(request, 'pages/profile.html', self.context)
 
 
