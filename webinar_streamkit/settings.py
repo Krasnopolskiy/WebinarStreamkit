@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_registration'
 ]
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -75,6 +74,7 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'main.User'
 WSGI_APPLICATION = 'webinar_streamkit.wsgi.application'
 
 
@@ -131,12 +131,8 @@ STATICFILES_DIRS = [
     'static'
 ]
 
-MEDIA_ROOT = BASE_DIR / 'media'
-
-AUTH_USER_MODEL = 'main.User'
-
 LOGOUT_REDIRECT_URL = '/login/'
-LOGIN_REDIRECT_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 MEDIA_URL = '/media/'
