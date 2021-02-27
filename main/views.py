@@ -91,20 +91,13 @@ class SignupView(View):
 class ProfileView(View):
     context = {'pagename': 'Profile'}
     form = ImageForm()
-
+    context["imguploadformm"] = form
 
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
-        userinfo = User.objects.get(username=request.user.username)
-        if userinfo.avatar=="":
-            self.context["hasavatar"] = False
-        else:
-            self.context["hasavatar"] = True
-
-        self.context["userinfo"] = userinfo
-        self.context["imguploadformm"] = self.form
+        self.context['userinfo'] = User.objects.get(username=request.user.username)
         return render(request, 'pages/profile.html', self.context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
@@ -117,12 +110,5 @@ class ProfileView(View):
             user.save()
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
-        userinfo = User.objects.get(username=request.user.username)
-        if userinfo.avatar == "":
-            self.context["hasavatar"] = False
-        else:
-            self.context["hasavatar"] = True
-
-        self.context["userinfo"] = userinfo
-        self.context["imguploadformm"] = self.form
+        self.context['userinfo'] = User.objects.get(username=request.user.username)
         return render(request, 'pages/profile.html', self.context)
