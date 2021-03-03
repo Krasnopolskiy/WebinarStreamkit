@@ -26,7 +26,7 @@ class EventView(View):
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        return render(request, 'main/event.html', self.context)
+        return render(request, 'pages/event.html', self.context)
 
 class ScheduleView(View):
     context = {'pagename': 'Schedule'}
