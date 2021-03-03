@@ -22,6 +22,11 @@ class ProfileView(View):
         self.context['apikey_form'] = forms.ApikeyForm()
         return render(request, 'pages/profile.html', self.context)
 
+class EventView(View):
+    context = {'pagename': 'Event'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/event.html', self.context)
 
 class ScheduleView(View):
     context = {'pagename': 'Schedule'}
