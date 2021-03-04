@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.views import LoginView, PasswordChangeView, LogoutView
 from django_registration.backends.one_step.views import RegistrationView
 from django.urls import path
-
+from django.conf import settings
+from django.conf.urls.static import static
 from main import views
 
 urlpatterns = [
@@ -24,3 +25,6 @@ urlpatterns = [
     path('event/', views.EventView.as_view(), name='event'),
     path('schedule/', views.ScheduleView.as_view(), name='schedule'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
