@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('/main'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webinar_streamkit.settings')
