@@ -6,6 +6,8 @@ from django.views import View
 from main.models import User
 from . import forms
 from main.forms import ImageForm, ApikeyForm
+import requests
+from datetime import datetime
 
 
 class IndexView(View):
@@ -57,11 +59,11 @@ class EventView(View):
     sessionid='6c4221eb82804f97a6b6e27c7a005ee5'
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        information = request.get('https://events.webinar.ru/api/eventsession/8454775').json()
+        information = requests.get('https://events.webinar.ru/api/eventsession/8454775').json()
         self.context['name'] = information['name']
-        self.context['data_webinar'] = information['startsAt']
-        self.context['webinar_host'] = information['organization']['name']
-        self.context['web_status'] = information['status']
+        self.context['startsAt'] = datetime.strptime(information['startsAt'],'%Y-%m-%dT%H:%M:%S%z')
+        self.context['org_name'] = information['organization']['name']
+        self.context['status'] = information['status']
 
         return render(request, 'pages/event.html', self.context)
 

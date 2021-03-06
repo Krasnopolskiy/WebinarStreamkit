@@ -29,10 +29,10 @@
                     Описание
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Даты проведения вебинара:</li>
-                    <li class="list-group-item">Ведущий вебинара:</li>
-                    <li class="list-group-item">Статус вебинара:</li>
-                    <li class="list-group-item">URL трансляции:</li>
+                    <li class="list-group-item">Даты проведения вебинара: {{startsAt}}</li>
+                    <li class="list-group-item">Ведущий вебинара: {{org_name}}</li>
+                    <li class="list-group-item">Статус вебинара: {{status}}</li>
+                    <li class="list-group-item">URL трансляции: </li>
                 </ul>
             </div>
             <a href="{% url 'schedule' %}" class="btn btn-primary my-3">Назад</a>
