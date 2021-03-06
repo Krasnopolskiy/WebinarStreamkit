@@ -15,4 +15,4 @@ views.py
 *********
 models.py
 *********
--AdditionalUserInfo(models.Model):Установка мкаксимального размера аватара
+-AdditionalUserInfo(models.Model):Установка максимального размера аватара
