@@ -27,9 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-WEBINAR_EMAIL = None
-WEBINAR_PASSWORD = None
-
 # Application definition
 
 INSTALLED_APPS = [

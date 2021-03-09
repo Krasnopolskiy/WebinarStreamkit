@@ -23,7 +23,7 @@ sudo apt install make
 pip install --upgrade pip
 pip install -r requirements.txt
 ./manage.py migrate
-./manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('vasya', '1@abc.net', 'promprog')"
+./manage.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('vasya', 'krimiussp@gmail.com', 'aDima1901')"
 ./manage.py runserver
 ```
 

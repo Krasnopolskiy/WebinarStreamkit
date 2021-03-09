@@ -53,18 +53,23 @@ class ProfileView(View):
 
         return render(request, 'pages/profile.html', self.context)
 
+
 class EventView(View):
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, 'pages/event.html', self.context)
 
+
 class ScheduleView(View):
     context = {'pagename': 'Schedule'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login', data={'email': 'krimiussp@gmail.com', 'password': 'aDima1901'})
-        events = session.get('https://events.webinar.ru/api/organizations/635791/eventsessions/list/planned')
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.email, 'password': request.user.password})
+        data = json.loads(session.get('https://events.webinar.ru/api/login').text)
+        organization_id = data['memberships'][0]['organization']['id']
+        url = 'https://events.webinar.ru/api/organizations/' + str(organization_id) + '/eventsessions/list/planned'
+        events = session.get(url)
         self.context['events'] = json.loads(events.text)
         return render(request, 'pages/schedule.html', self.context)
