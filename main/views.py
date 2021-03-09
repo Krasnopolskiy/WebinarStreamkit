@@ -28,7 +28,7 @@ class ProfileView(View):
         self.context['apikey'] = User.objects.get(username=request.user.username).apikey
         if not self.context['apikey']:
             self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        return render(request, 'pages/profile.html', self.context)
+        return render(request, 'pages/profile.html', self.conaWtext)
 
     def post(self, request: HttpRequest) -> HttpResponse:
         form = ImageForm(request.POST, request.FILES)
@@ -66,7 +66,7 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login', data={'email': request.user.email, 'password': request.user.password})
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.service_email, 'password': request.user.service_password})
         data = json.loads(session.get('https://events.webinar.ru/api/login').text)
         organization_id = data['memberships'][0]['organization']['id']
         url = 'https://events.webinar.ru/api/organizations/' + str(organization_id) + '/eventsessions/list/planned'
