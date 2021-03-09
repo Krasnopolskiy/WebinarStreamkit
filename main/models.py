@@ -9,3 +9,11 @@ class User(AbstractUser):
 
 class Image(models.Model):
     image = models.ImageField(upload_to='images')
+
+
+class DBModel:
+    def __init__(self):
+        pass
+
+    def get_user(self, login):
+        return User.objects.get(username=login)
