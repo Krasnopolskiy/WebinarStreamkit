@@ -24,7 +24,7 @@ class ProfileView(View):
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
         self.context['userinfo'] = self.model.get_user(request.user.username)
-        self.context['apikey'] = self.context['userinfo'].apikey
+        self.context['apikey'] = self.model.get_apikey(request.user.username)
         if not self.context['apikey']:
             self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
         return render(request, 'pages/profile.html', self.context)
@@ -34,9 +34,7 @@ class ProfileView(View):
         if form.is_valid():
             form.save()
             img_obj = form.instance
-            user = self.model.get_user(request.user.username)
-            user.avatar = img_obj.image.url
-            user.save()
+            self.model.set_avatar(img_obj, request.user.username)
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
         self.context['userinfo'] = self.model.get_user(request.user.username)
@@ -45,10 +43,8 @@ class ProfileView(View):
         self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
         if api_key_form.is_valid() and len(request.POST.get('apikey')) == 32:
-            user = self.context['userinfo']
-            user.apikey = request.POST.get('apikey')
-            user.save()
-            self.context['apikey'] = user.apikey
+            self.model.set_apikey(request.POST.get('apikey'), request.user.username)
+            self.context['apikey'] = request.POST.get('apikey')
 
         return render(request, 'pages/profile.html', self.context)
 
