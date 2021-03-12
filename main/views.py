@@ -5,9 +5,7 @@ from django.http.response import HttpResponse
 from django.views import View
 from PIL import Image
 import os
-from pathlib import Path
 from main.models import User
-from webinar_streamkit.settings import BASE_DIR
 from . import forms
 from main.forms import ImageForm, ApikeyForm
 
@@ -72,3 +70,10 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, 'pages/schedule.html', self.context)
+
+
+class WidgetView(View):
+    context = {'pagename': 'Widget'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/chat_widget.html', self.context)
