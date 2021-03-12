@@ -22,7 +22,6 @@ class IndexView(View):
 class ProfileView(View):
     context = {'pagename': 'Profile'}
     form = ImageForm()
-    # context["imguploadformm"] = form
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
