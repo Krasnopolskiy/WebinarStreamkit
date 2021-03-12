@@ -39,12 +39,11 @@ class ProfileView(View):
             form.save()
             img_obj = form.instance
             user = User.objects.get(username=request.user.username)
-            user.avatar = img_obj.image.url
             original_image = Image.open(os.getcwd()+img_obj.image.url)
-            print(os.getcwd()+img_obj.image.url)
             size = (200, 200)
             resized_image = original_image.resize(size)
             resized_image.save(os.getcwd()+img_obj.image.url)
+            user.avatar = img_obj.image.url
             user.save()
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
