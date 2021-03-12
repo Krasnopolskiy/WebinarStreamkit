@@ -28,7 +28,7 @@ class ProfileView(View):
         self.context['apikey'] = User.objects.get(username=request.user.username).apikey
         if not self.context['apikey']:
             self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        return render(request, 'pages/profile.html', self.conaWtext)
+        return render(request, 'pages/profile.html', self.context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
         form = ImageForm(request.POST, request.FILES)
