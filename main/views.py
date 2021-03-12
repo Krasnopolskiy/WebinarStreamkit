@@ -6,8 +6,8 @@ from django.views import View
 from main.models import User
 from . import forms
 from main.forms import ImageForm, ApikeyForm
-import requests
 from datetime import datetime
+import requests, json
 
 
 class IndexView(View):
@@ -54,6 +54,7 @@ class ProfileView(View):
 
         return render(request, 'pages/profile.html', self.context)
 
+
 class EventView(View):
     context = {'pagename': 'Event'}
     sessionid='6c4221eb82804f97a6b6e27c7a005ee5'
@@ -71,4 +72,11 @@ class ScheduleView(View):
     context = {'pagename': 'Schedule'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        session = requests.Session()
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.service_email, 'password': request.user.service_password})
+        data = json.loads(session.get('https://events.webinar.ru/api/login').text)
+        organization_id = data['memberships'][0]['organization']['id']
+        url = 'https://events.webinar.ru/api/organizations/' + str(organization_id) + '/eventsessions/list/planned'
+        events = session.get(url)
+        self.context['events'] = json.loads(events.text)
         return render(request, 'pages/schedule.html', self.context)
