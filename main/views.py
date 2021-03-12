@@ -57,7 +57,6 @@ class ProfileView(View):
 
 class EventView(View):
     context = {'pagename': 'Event'}
-    sessionid='6c4221eb82804f97a6b6e27c7a005ee5'
 
     def get(self, request: HttpRequest) -> HttpResponse:
         information = requests.get('https://events.webinar.ru/api/eventsession/8454775').json()
@@ -67,6 +66,7 @@ class EventView(View):
         self.context['status'] = information['status']
 
         return render(request, 'pages/event.html', self.context)
+
 
 class ScheduleView(View):
     context = {'pagename': 'Schedule'}
