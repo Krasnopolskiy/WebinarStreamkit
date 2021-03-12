@@ -9,16 +9,17 @@
     </div>
 </div>
 
-<div class="card" style="width: 22rem;" >
-    <div class="card-header text-center">
-        <div class="card-body">
-            <h5 class="card-title">Чат</h5>
-            <p class="card-text">*сообщения*</p>
+<div class="widget flex-column d-flex justify-content-center align-items-center">
+    <div class="card" style="padding-right:0; width: 50%;">
+        <div class="card-header text-center">
+            <div class="card-body" >
+                <h5 class="card-title">Чат</h5>
+                <p class="card-text">*сообщения*</p>
+            </div>
         </div>
     </div>
-</div>
-    <div class="card" style="width: 22rem;">
-        <div class="row justify-content-center">
+    <div class="card" style="padding-right:0; width: 50%;">
+        <div class="row justify-content-center" style="margin:0;">
             <div class="card-header text-center">
                 <div class="card-body">
                     <h5 class="card-title">Ожидают модерации</h5>
@@ -29,8 +30,11 @@
             </div>
         </div>
     </div>
+    <div class="row flex-row justify-content-center align-items-center" style="width: 50%;">
+        <button type="button" class="btn btn-primary btn-sm" style="width: 30%; margin: 10px;">Приостановить вебинар</button>
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 30%; margin: 10px;">Завершить вебинар</button>
+    </div>
+
 </div>
-<button type="button" class="btn btn-primary btn-sm">Приостановить вебинар</button>
-<button type="button" class="btn btn-secondary btn-sm">Завершить вебинар</button>
 
 {% endblock %}
