@@ -8,22 +8,29 @@
         </div>
     </div>
 </div>
-<div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-        Чат
-    </a>
-    <a href="#" class="list-group-item list-group-item-action">*сообщение*</a>
-</div>
-    <div class="card" style="width: 18rem;">
+
+<div class="card" style="width: 22rem;" >
+    <div class="card-header text-center">
         <div class="card-body">
-            <h5 class="card-title">Ожидание модерации</h5>
-            <p class="card-text">*сообщение*</p>
-            <a href="#" class="card-link">Одобрить</a>
-            <a href="#" class="card-link">Удалить</a>
+            <h5 class="card-title">Чат</h5>
+            <p class="card-text">*сообщения*</p>
         </div>
     </div>
 </div>
-<button type="button" class="btn btn-primary btn-lg">Приостановить вебинар</button>
-<button type="button" class="btn btn-secondary btn-lg">Завершить вебинар</button>
+    <div class="card" style="width: 22rem;">
+        <div class="row justify-content-center">
+            <div class="card-header text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Ожидают модерации</h5>
+                    <p class="card-text">*сообщения*</p>
+                    <button type="button" class="btn btn-primary btn-sm">Одобрить</button>
+                    <button type="button" class="btn btn-danger btn-sm">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" class="btn btn-primary btn-sm">Приостановить вебинар</button>
+<button type="button" class="btn btn-secondary btn-sm">Завершить вебинар</button>
 
 {% endblock %}
