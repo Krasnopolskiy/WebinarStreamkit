@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base/base.html' %}
 
-</body>
-</html>
+{% block extra_css %}
+<style>
+    #avatar {
+        height: 200px;
+        width: 200px;
+    }
+
+    .list-group-item.active {
+        border-radius: .25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row gx-5 my-5">
+        <div class="col-4">
+            <div class="list-group list-group-flush" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" data-bs-toggle="list"
+                    href="#list-main">Основная информация</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
+                    href="#list-password">Изменить пароль</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
+                    href="#list-apikey">Ключ API</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-main">
+                    {% include 'pages/profile/main.html' %}
+                </div>
+                <div class="tab-pane fade" id="list-password">
+                    {% include 'pages/profile/password.html' with form=form %}
+                </div>
+                <div class="tab-pane fade" id="list-apikey">
+                    {% include 'pages/profile/apikey.html' with form=form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

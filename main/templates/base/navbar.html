@@ -1,35 +1,57 @@
 {% url 'signup' as signup_url %}
+{% url 'login' as login_url %}
+{% url 'index' as index_url %}
+{% url 'profile' as profile_url %}
+
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Webinar Streamkit</a>
+        <a class="navbar-brand" href="{% url 'index' %}">Webinar Streamkit</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
             aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbar">
-            <ul class="navbar-nav">
-                {% comment %} {% if not user.is_authenticated %} {% endcomment %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log in</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  {% if request.path == signup_url %}active disabled{% endif %}"
-                        href="{% url 'signup' %}">Sign up</a>
-                </li>
-                {% comment %} {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                {% if user.is_staff %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Administration</a>
-                </li>
-                {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Log out</a>
-                </li>
-                {% endif %} {% endcomment %}
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav container-fluid">
+                <div class="row w-100">
+                    <div class="col d-flex justify-content-start">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == index_url %}active disabled{% endif %}"
+                                href="{% url 'index' %}">Главная</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == schedule_url %}active disabled{% endif %}"
+                                href="{% url 'schedule' %}">Список вебинаров</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}">Администрирование</a>
+                        </li>
+                        {% endif %}
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        {% if not user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == login_url %}active disabled{% endif %}"
+                                href="{% url 'login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == signup_url %}active disabled{% endif %}"
+                                href="{% url 'signup' %}">Зарегистрироваться</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == profile_url %}active disabled{% endif %}"
+                                href="{% url 'profile' %}">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+                        </li>
+                        {% endif %}
+                    </div>
+                </div>
             </ul>
         </div>
     </div>
