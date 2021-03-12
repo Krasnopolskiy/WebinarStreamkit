@@ -21,8 +21,18 @@ class LoginForm(AuthenticationForm):
 
 
 class SignupForm(RegistrationForm):
+    webinar_email = forms.CharField(
+        widget=forms.TextInput,
+        label='Email от аккаунта webinar'
+    )
+    webinar_password = forms.CharField(
+        widget=forms.TextInput,
+        label='Пароль от аккаунта webinar'
+    )
+
     class Meta(RegistrationForm.Meta):
         model = User
+        fields = {'username', 'email', 'webinar_email', 'webinar_password'}
 
 
 class ApikeyForm(forms.Form):

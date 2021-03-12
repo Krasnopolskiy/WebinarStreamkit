@@ -1,11 +1,16 @@
 from django.contrib.auth import forms as auth_forms
+from django_registration.backends.one_step.views import RegistrationView
 from django.shortcuts import render
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
 from main.models import User
+from main.forms import SignupForm
 from . import forms
 from main.forms import ImageForm, ApikeyForm
+from django.contrib.auth import authenticate, login
+from django_registration import signals
+from django_registration.views import RegistrationView as BaseRegistrationView
 import requests, json
 
 
@@ -14,6 +19,33 @@ class IndexView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, 'pages/index.html', self.context)
+
+
+class AdvRegistrationView(BaseRegistrationView):
+    template_name = 'registration/signup.html'
+    extra_context = {'pagename': 'Регистрация'}
+    success_url = '/'
+    form_class = SignupForm
+
+    def register(self, form):
+        new_user = form.save()
+        new_user = authenticate(
+            **{
+                User.USERNAME_FIELD: new_user.get_username(),
+                "password": form.cleaned_data["password1"],
+            }
+        )
+        login(self.request, new_user)
+        session = requests.Session()
+        session.post('https://events.webinar.ru/api/login',
+                     data={'email': new_user.webinar_email, 'password': new_user.webinar_password})
+        data = json.loads(session.get('https://events.webinar.ru/api/login').text)
+        new_user.organizationId = data['memberships'][0]['organization']['id']
+        new_user.save()
+        signals.user_registered.send(
+            sender=self.__class__, user=new_user, request=self.request
+        )
+        return new_user
 
 
 class ProfileView(View):
@@ -66,10 +98,9 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login', data={'email': request.user.service_email, 'password': request.user.service_password})
-        data = json.loads(session.get('https://events.webinar.ru/api/login').text)
-        organization_id = data['memberships'][0]['organization']['id']
-        url = 'https://events.webinar.ru/api/organizations/' + str(organization_id) + '/eventsessions/list/planned'
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + '/eventsessions/list/planned'
         events = session.get(url)
+        print(events)
         self.context['events'] = json.loads(events.text)
         return render(request, 'pages/schedule.html', self.context)
