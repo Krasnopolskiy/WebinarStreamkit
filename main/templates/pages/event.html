@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col">
+            <h2 class="display-4 text-center">Название вебинара</h2>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6">
+            <div class="card shadow rounded m-3 p-2">
+                <div class="p-1">
+                    <video class="w-100 rounded" controls="controls"></video>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col d-grid px-3">
+                        <button class="btn btn-primary">Запустить/Остановить</button>
+                    </div>
+                    <div class="col d-grid px-3">
+                        <button class="btn btn-primary">Открыть виджет вебинара</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card rounded shadow">
+                <div class="card-header h4">
+                    Описание
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Даты проведения вебинара:</li>
+                    <li class="list-group-item">Ведущий вебинара:</li>
+                    <li class="list-group-item">Статус вебинара:</li>
+                    <li class="list-group-item">URL трансляции:</li>
+                </ul>
+            </div>
+            <a href="{% url 'schedule' %}" class="btn btn-primary my-3">Назад</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

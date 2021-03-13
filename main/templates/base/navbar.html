@@ -20,6 +20,10 @@
                             <a class="nav-link {% if request.path == index_url %}active disabled{% endif %}"
                                 href="{% url 'index' %}">Главная</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == schedule_url %}active disabled{% endif %}"
+                                href="{% url 'schedule' %}">Список вебинаров</a>
+                        </li>
                         {% endif %}
                         {% if user.is_staff %}
                         <li class="nav-item">
@@ -41,10 +45,6 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.path == profile_url %}active disabled{% endif %}"
                                 href="{% url 'profile' %}">Профиль</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == schedule_url %}active disabled{% endif %}"
-                                href="{% url 'schedule' %}">Список вебинаров</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
