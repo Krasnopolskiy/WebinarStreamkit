@@ -5,21 +5,33 @@ from django.http.response import HttpResponse
 from django.views import View
 from PIL import Image
 import os
-from pathlib import Path
 from main.models import User
-from webinar_streamkit.settings import BASE_DIR
 from . import forms
 from main.forms import ImageForm, ApikeyForm
 
 
 class IndexView(View):
+    """
+    View-класс главной страницы
+    """
     context = {'pagename': 'Index'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        View-функция главной страницы (GET)
+
+        :param request: Детали запроса
+        :type request: :class: `django.http.HttpRequest`
+        :return: Объект ответа сервера
+        :rtype: :class: `django.http.HttpResponse`
+        """
         return render(request, 'pages/index.html', self.context)
 
 
 class ProfileView(View):
+    """
+    View-класс профиля
+    """
     context = {'pagename': 'Profile'}
     form = ImageForm()
 
@@ -61,6 +73,9 @@ class ProfileView(View):
 
 
 class EventView(View):
+    """
+    View-класс вебинара
+    """
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -68,6 +83,9 @@ class EventView(View):
 
 
 class ScheduleView(View):
+    """
+    View-класс списка вебинаров
+    """
     context = {'pagename': 'Schedule'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
