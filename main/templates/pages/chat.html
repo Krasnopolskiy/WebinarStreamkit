@@ -10,7 +10,10 @@
     </div>
     <div class="row align-items-center">
         <div class="col-6" id="chat">
-
+            {% for msg in answer %}
+                {{ msg.text }}
+            <br>
+            {% endfor %}
         </div>
     </div>
 </div>

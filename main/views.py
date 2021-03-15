@@ -1,3 +1,4 @@
+import requests
 from django.contrib.auth import forms as auth_forms
 from django.shortcuts import render
 from django.http import HttpRequest
@@ -5,9 +6,8 @@ from django.http.response import HttpResponse
 from django.views import View
 from PIL import Image
 import os
-from pathlib import Path
+import json
 from main.models import User
-from webinar_streamkit.settings import BASE_DIR
 from . import forms
 from main.forms import ImageForm, ApikeyForm
 
@@ -78,4 +78,9 @@ class ChatView(View):
     context = {'pagename': 'Chat'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        session = requests.Session()
+        session.post('https://events.webinar.ru/api/login',
+                     data={'email': 'artemglazyrin@mail.ru', 'password': 'qwerty12345'})
+
+        self.context['answer'] = json.loads(session.get('https://events.webinar.ru/api/eventsessions/8454277/chat').text)
         return render(request, 'pages/chat.html', self.context)
