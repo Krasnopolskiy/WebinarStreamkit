@@ -44,7 +44,9 @@ class AdvRegistrationView(BaseRegistrationView):
         session.post('https://events.webinar.ru/api/login',
                      data={'email': new_user.webinar_email, 'password': new_user.webinar_password})
         data = json.loads(session.get('https://events.webinar.ru/api/login').text)
+        new_user.id = data['id']
         new_user.organizationId = data['memberships'][0]['organization']['id']
+        new_user.sessionId = data['sessionId']
         new_user.save()
         signals.user_registered.send(
             sender=self.__class__, user=new_user, request=self.request

@@ -8,6 +8,8 @@ class User(AbstractUser):
     webinar_email = models.CharField(max_length=255, default='')
     webinar_password = models.CharField(max_length=255, default='')
     organizationId = models.IntegerField(default=0)
+    id = models.IntegerField(default=0)
+    sessionId = models.IntegerField(default=0)
 
 
 class Image(models.Model):
