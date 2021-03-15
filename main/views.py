@@ -72,3 +72,10 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, 'pages/schedule.html', self.context)
+
+
+class ChatView(View):
+    context = {'pagename': 'Chat'}
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, 'pages/chat.html', self.context)
