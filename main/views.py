@@ -4,8 +4,12 @@ from django.shortcuts import render
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
+from PIL import Image
+import os
+from pathlib import Path
 from main.models import User
 from main.forms import SignupForm
+from webinar_streamkit.settings import BASE_DIR
 from . import forms
 from main.forms import ImageForm, ApikeyForm
 from django.contrib.auth import authenticate, login
@@ -51,7 +55,6 @@ class AdvRegistrationView(BaseRegistrationView):
 class ProfileView(View):
     context = {'pagename': 'Profile'}
     form = ImageForm()
-    # context["imguploadformm"] = form
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
@@ -68,6 +71,10 @@ class ProfileView(View):
             form.save()
             img_obj = form.instance
             user = User.objects.get(username=request.user.username)
+            original_image = Image.open(os.getcwd()+img_obj.image.url)
+            size = (200, 200)
+            resized_image = original_image.resize(size)
+            resized_image.save(os.getcwd()+img_obj.image.url)
             user.avatar = img_obj.image.url
             user.save()
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
