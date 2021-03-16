@@ -61,6 +61,7 @@ class ProfileView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
+        self.context['webinar_form'] = forms.WebinarForm()
         self.context['userinfo'] = User.objects.get(username=request.user.username)
         self.context['apikey'] = User.objects.get(username=request.user.username).apikey
         if not self.context['apikey']:
