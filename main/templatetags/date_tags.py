@@ -1,7 +1,6 @@
-import datetime
-
 from django.template import Library
 from django.template.defaultfilters import stringfilter
+from datetime import datetime
 
 register = Library()
 
@@ -9,7 +8,7 @@ register = Library()
 def parse_date(date_string):
     try:
         print(date_string)
-        return datetime.datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
+        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         print("ValueError")
         return None
