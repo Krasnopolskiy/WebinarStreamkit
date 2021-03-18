@@ -1,15 +1,13 @@
 from django.contrib.auth import forms as auth_forms
-from django_registration.backends.one_step.views import RegistrationView
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.views import View
 from PIL import Image
 import os
-from pathlib import Path
 from main.models import User
-from main.forms import SignupForm
-from webinar_streamkit.settings import BASE_DIR
+from main.forms import SignupForm, WebinarForm
 from . import forms
 from main.forms import ImageForm, ApikeyForm
 from django.contrib.auth import authenticate, login
@@ -82,16 +80,29 @@ class ProfileView(View):
             user.save()
         self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
         self.context['apikey_form'] = forms.ApikeyForm()
+        self.context['webinar_form'] = forms.WebinarForm()
         self.context['userinfo'] = User.objects.get(username=request.user.username)
 
         api_key_form = ApikeyForm(request.POST)
+        webinar_form = WebinarForm(request.POST)
         self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-
+        user = self.context['userinfo']
         if api_key_form.is_valid() and len(request.POST.get('apikey')) == 32:
-            user = self.context['userinfo']
             user.apikey = request.POST.get('apikey')
             user.save()
             self.context['apikey'] = user.apikey
+
+        if webinar_form.is_valid():
+            user.webinar_email = request.POST.get('webinar_email')
+            user.webinar_password = request.POST.get('webinar_password')
+
+            session = requests.Session()
+            session.post('https://events.webinar.ru/api/login', data={'email': user.webinar_email, 'password': user.webinar_password})
+            json_resp = json.loads(session.get('https://events.webinar.ru/api/login').text)
+            print(json_resp)
+            user.organizationId = json_resp['memberships'][0]['organization']['id']
+
+            user.save()
 
         return render(request, 'pages/profile.html', self.context)
 
@@ -111,6 +122,6 @@ class ScheduleView(View):
         session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
         url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + '/eventsessions/list/planned'
         events = session.get(url)
-        print(events)
+        print(events.text)
         self.context['events'] = json.loads(events.text)
         return render(request, 'pages/schedule.html', self.context)

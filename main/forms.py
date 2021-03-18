@@ -59,4 +59,3 @@ class WebinarForm(forms.Form):
         widget=forms.TextInput,
         label='Пароль от аккаунта webinar'
     )
-
