@@ -120,7 +120,8 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email,
+                                                                  'password': request.user.webinar_password})
         url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + '/eventsessions/list/planned'
         events = session.get(url)
         self.context['events'] = json.loads(events.text)
@@ -134,6 +135,8 @@ class ChatView(View):
         session = requests.Session()
         session.post('https://events.webinar.ru/api/login',
                      data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        sessionId = json.loads(session.get('https://events.webinar.ru/api/login').text)['sessionId']
 
         self.context['answer'] = json.loads(session.get('https://events.webinar.ru/api/eventsessions/8454277/chat').text)
+        print(sessionId)
         return render(request, 'pages/chat.html', self.context)
