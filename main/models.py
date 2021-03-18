@@ -5,8 +5,11 @@ from django.db import models
 class User(AbstractUser):
     avatar = models.CharField(max_length=255, default='')
     apikey = models.CharField(max_length=32, default='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-    service_email = models.CharField(max_length=255, default='krimiussp@gmail.com')
-    service_password = models.CharField(max_length=255, default='promprog')
+    webinar_email = models.CharField(max_length=255, default='')
+    webinar_password = models.CharField(max_length=255, default='')
+    organizationId = models.IntegerField(default=0)
+    id = models.IntegerField(default=0, primary_key=True)
+    sessionId = models.IntegerField(default=0)
 
 
 class Image(models.Model):

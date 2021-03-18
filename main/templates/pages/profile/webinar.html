@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-10 p-5 border rounded shadow">
+            <form action="#" class="form-horizontal d-grid gap-3" method="POST" role="form">
+                <h2 class="text-center m-3">
+                    Авторизация на Webinar
+                </h2>
+                {% csrf_token %}
+                {% for item in webinar_form %}
+                    {{ item|as_crispy_field }}
+                {% endfor %}
+                <div class="d-grid">
+                    <input class="btn btn-primary mt-3" type="submit" value="Сохранить">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
