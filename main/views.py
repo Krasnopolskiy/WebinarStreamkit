@@ -131,16 +131,19 @@ class ScheduleView(View):
 class WidgetView(View):
     context = {'pagename': 'Widget'}
 
-    def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest, id: int) -> HttpResponse:
         session = requests.Session()
         session.post('https://events.webinar.ru/api/login',
                      data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
-        self.context['answer'] = json.loads(session.get('https://events.webinar.ru/api/eventsessions/8454277/chat').text)
+        self.context['answer'] = json.loads(session.get(f'https://events.webinar.ru/api/eventsessions/{id}/chat').text)
+
         self.context['chat'] = []
         self.context['awaiting_msgs'] = []
+
         for item in self.context['answer']:
             if not item['isModerated']:
                 self.context['awaiting_msgs'].append(item)
             elif not item['isDeleted']:
                 self.context['chat'].append(item)
+
         return render(request, 'pages/chat_widget.html', self.context)
