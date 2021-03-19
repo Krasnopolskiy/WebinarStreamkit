@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView, PasswordChangeView, LogoutView
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from main import views
+from main import views, consumers
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -19,8 +19,13 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('event/', views.EventView.as_view(), name='event'),
     path('schedule/', views.ScheduleView.as_view(), name='schedule'),
-    path('event/<int:id>/widget/', views.WidgetView.as_view(), name='widget'),
+    path('chat/<int:id>/', views.WidgetView.as_view(), name='chat'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+
+
+websocket_urlpatterns = [
+    path('chat/<int:id>/', consumers.ChatConsumer.as_asgi())
+]
