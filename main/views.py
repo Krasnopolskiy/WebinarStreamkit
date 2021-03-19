@@ -119,6 +119,7 @@ class EventView(View):
         self.context['startsAt'] = datetime.strptime(information['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
         self.context['org_name'] = information['organization']['name']
         self.context['status'] = information['status']
+        self.context['id'] = id
 
         return render(request, 'pages/event.html', self.context)
 
