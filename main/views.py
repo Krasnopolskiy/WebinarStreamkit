@@ -11,6 +11,7 @@ from main.models import User
 from main.forms import SignupForm, WebinarForm
 from . import forms
 from main.forms import ImageForm, ApikeyForm
+from datetime import datetime
 from django.contrib.auth import authenticate, login
 from django_registration import signals
 from django_registration.views import RegistrationView as BaseRegistrationView
@@ -43,14 +44,15 @@ class AdvRegistrationView(BaseRegistrationView):
         session.post('https://events.webinar.ru/api/login',
                      data={'email': new_user.webinar_email, 'password': new_user.webinar_password})
         data = json.loads(session.get('https://events.webinar.ru/api/login').text)
-        new_user.id = data['id']
-        new_user.organizationId = data['memberships'][0]['organization']['id']
-        new_user.sessionId = data['sessionId']
-        new_user.save()
-        signals.user_registered.send(
-            sender=self.__class__, user=new_user, request=self.request
-        )
-        return new_user
+        if 'error' not in data.keys():
+            new_user.id = data['id']
+            new_user.organizationId = data['memberships'][0]['organization']['id']
+            new_user.sessionId = data['sessionId']
+            new_user.save()
+            signals.user_registered.send(
+                sender=self.__class__, user=new_user, request=self.request
+            )
+            return new_user
 
 
 class ProfileView(View):
@@ -111,7 +113,14 @@ class ProfileView(View):
 class EventView(View):
     context = {'pagename': 'Event'}
 
-    def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest, id: int) -> HttpResponse:
+        information = requests.get(f'https://events.webinar.ru/api/eventsession/{id}').json()
+        self.context['name'] = information['name']
+        self.context['startsAt'] = datetime.strptime(information['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
+        self.context['org_name'] = information['organization']['name']
+        self.context['status'] = information['status']
+        self.context['id'] = id
+
         return render(request, 'pages/event.html', self.context)
 
 
