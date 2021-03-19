@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="row my-5">
+        <div class="col">
+            <h2 class="text-center m-3">Виджет модерации чата</h2>
+        </div>
+    </div>
+</div>
+
+<div class="widget flex-column d-flex justify-content-center align-items-center">
+    <div class="card" style="padding-right:0; width: 50%;">
+        <div class="card-header text-center">
+            <div class="card-body" >
+                <h5 class="card-title">Чат</h5>
+                    {% if chat %}
+                        {% for msg in chat %}
+                            <p class="card-text">{{ msg.authorName }}: {{ msg.text }}</p>
+                        <br>
+                        {% endfor %}
+                    {% else %}
+                        <p class="card-text">Пока ничего нет</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card" style="padding-right:0; width: 50%;">
+        <div class="row justify-content-center" style="margin:0;">
+            <div class="card-header text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Ожидают модерации</h5>
+
+                    {% if awaiting_msgs %}
+                        {% for msg in awaiting_msgs %}
+                            <p class="card-text">{{ msg.authorName }}: {{ msg.text }}</p>
+                        <br>
+                        {% endfor %}
+                    {% else %}
+                        <p class="card-text">Пока ничего нет</p>
+                    {% endif %}
+
+                    <button type="button" class="btn btn-primary btn-sm">Одобрить</button>
+                    <button type="button" class="btn btn-danger btn-sm">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row flex-row justify-content-center align-items-center" style="width: 50%;">
+        <button type="button" class="btn btn-primary btn-sm" style="width: 30%; margin: 10px;">Приостановить вебинар</button>
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 30%; margin: 10px;">Завершить вебинар</button>
+    </div>
+
+</div>
+
+<script src="{% static 'js/get_chat.js' %}"></script>
+{% endblock %}

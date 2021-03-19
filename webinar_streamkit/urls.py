@@ -19,7 +19,7 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('event/', views.EventView.as_view(), name='event'),
     path('schedule/', views.ScheduleView.as_view(), name='schedule'),
-    path('chat/', views.ChatView.as_view(), name='chat'),
+    path('widget/', views.WidgetView.as_view(), name='widget'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
