@@ -24,12 +24,12 @@ class SignupForm(RegistrationForm):
 
     webinar_email = forms.CharField(
         widget=forms.TextInput,
-        label='Email от аккаунта webinar',
+        label='Email от аккаунта Webinar',
         required=False
     )
     webinar_password = forms.CharField(
         widget=forms.TextInput,
-        label='Пароль от аккаунта webinar',
+        label='Пароль от аккаунта Webinar',
         required=False
     )
 
@@ -53,9 +53,9 @@ class ImageForm(forms.ModelForm):
 class WebinarForm(forms.Form):
     webinar_email = forms.CharField(
         widget=forms.TextInput,
-        label='Email от аккаунта webinar'
+        label='Email от аккаунта Webinar'
     )
     webinar_password = forms.CharField(
-        widget=forms.TextInput,
-        label='Пароль от аккаунта webinar'
+        widget=forms.PasswordInput,
+        label='Пароль от аккаунта Webinar'
     )

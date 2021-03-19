@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row my-3">
         <div class="col">
-            <h2 class="display-4 text-center">Название вебинара</h2>
+            <h2 class="display-4 text-center">{{name}}</h2>
         </div>
     </div>
     <div class="row align-items-center">
@@ -29,10 +29,10 @@
                     Описание
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Даты проведения вебинара:</li>
-                    <li class="list-group-item">Ведущий вебинара:</li>
-                    <li class="list-group-item">Статус вебинара:</li>
-                    <li class="list-group-item">URL трансляции:</li>
+                    <li class="list-group-item">Даты проведения вебинара: {{startsAt}}</li>
+                    <li class="list-group-item">Ведущий вебинара: {{org_name}}</li>
+                    <li class="list-group-item">Статус вебинара: {{status}}</li>
+                    <li class="list-group-item">URL трансляции: https://events.webinar.ru/38904989/8289659/stream-new/ {{event.id}} </li>
                 </ul>
             </div>
             <a href="{% url 'schedule' %}" class="btn btn-primary my-3">Назад</a>
