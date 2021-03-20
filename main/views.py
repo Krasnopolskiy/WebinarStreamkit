@@ -137,6 +137,7 @@ class ScheduleView(View):
               '/eventsessions/list/planned'
         events = json.loads(session.get(url).text)
         print(events)
-        print(session.get('https://events.webinar.ru//api/event/session/8455019/participations').text)
-        self.context['events'] = events
+        if 'error' not in events:
+            print(session.get('https://events.webinar.ru//api/event/session/8455019/participations').text)
+            self.context['events'] = events
         return render(request, 'pages/schedule.html', self.context)
