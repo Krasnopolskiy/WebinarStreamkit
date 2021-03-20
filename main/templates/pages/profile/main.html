@@ -3,10 +3,12 @@
         <div class="col-10 p-5 border rounded shadow">
             <div class="card-body d-grid gap-3">
                 <div class="d-flex justify-content-center my-3">
-                    {% if userinfo.avatar is not None %}
-                    <img class="bg-secondary border shadow-sm rounded" id="avatar" src="{{userinfo.avatar}}" >
+                    {% if userinfo.avatar %}
+                        <img class="bg-secondary border shadow-sm rounded" id="avatar" src="{{userinfo.avatar}}" >
                     {% else %}
-                    <div class="bg-secondary border shadow-sm rounded" id="avatar"></div>
+                        {% load static %}
+                        <img class="bg-secondary border shadow-sm rounded" id="avatar" src="{% static 'default_avatar.svg' %}" >
+                        <!--<div class="bg-secondary border shadow-sm rounded" id="avatar" src=""></div>-->
                     {% endif %}
                 </div>
                 <h5 class="card-title">Информация о пользователе</h5>
