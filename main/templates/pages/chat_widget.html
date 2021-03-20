@@ -10,7 +10,14 @@
     </div>
     <div class="row py-3">
         <div class="col">
-            <div class="border shadow p-3 rounded overflow-scroll" id="chat" style="max-height: 70vh"></div>
+            <div class="border shadow p-3 rounded overflow-scroll" id="chat" style="max-height: 70vh">
+                {% if chat %}
+                    {% for msg in chat %}
+                        {{ msg.authorName }} : {{ msg.text }}
+                        <br>
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

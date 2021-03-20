@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView, LogoutView
 from django.urls import path
 from django.conf import settings
@@ -17,9 +18,10 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('', views.IndexView.as_view(), name='index'),
-    path('event/', views.EventView.as_view(), name='event'),
     path('schedule/', views.ScheduleView.as_view(), name='schedule'),
-    path('chat/<int:id>/', views.WidgetView.as_view(), name='chat'),
+    path('chat/<int:input_id>/', views.WidgetView.as_view(), name='chat'),
+    path('event/<int:event_id>/', login_required(views.EventView.as_view()), name='event'),
+    path('schedule/', login_required(views.ScheduleView.as_view()), name='schedule'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

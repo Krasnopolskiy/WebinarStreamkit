@@ -100,7 +100,8 @@ class ProfileView(View):
             user.webinar_password = request.POST.get('webinar_password')
 
             session = requests.Session()
-            session.post('https://events.webinar.ru/api/login', data={'email': user.webinar_email, 'password': user.webinar_password})
+            session.post('https://events.webinar.ru/api/login',
+                         data={'email': user.webinar_email, 'password': user.webinar_password})
             json_resp = json.loads(session.get('https://events.webinar.ru/api/login').text)
             print(json_resp)
             user.organizationId = json_resp['memberships'][0]['organization']['id']
@@ -113,13 +114,19 @@ class ProfileView(View):
 class EventView(View):
     context = {'pagename': 'Event'}
 
-    def get(self, request: HttpRequest, id: int) -> HttpResponse:
-        information = requests.get(f'https://events.webinar.ru/api/eventsession/{id}').json()
-        self.context['name'] = information['name']
-        self.context['startsAt'] = datetime.strptime(information['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
-        self.context['org_name'] = information['organization']['name']
-        self.context['status'] = information['status']
-        self.context['id'] = id
+    def get(self, request: HttpRequest, event_id) -> HttpResponse:
+        session = requests.Session()
+        session.post('https://events.webinar.ru/api/login',
+                     data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        data = session.get(f'https://events.webinar.ru/api/event/{event_id}').json()
+        print(data['eventSessions'])
+        self.context['name'] = data['name']
+        self.context['startsAt'] = datetime.strptime(data['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
+        self.context['org_name'] = data['organization']['name']
+        self.context['status'] = data['status']
+        self.context['sessionId'] = event_id
+        self.context['userId'] = data['createUser']['id']
+        self.context['webinarId'] = data['eventSessions'][0]['id']
 
         return render(request, 'pages/event.html', self.context)
 
@@ -131,20 +138,32 @@ class ScheduleView(View):
         session = requests.Session()
         session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email,
                                                                   'password': request.user.webinar_password})
-        url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + '/eventsessions/list/planned'
+        url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + \
+              '/eventsessions/list/planned'
         events = session.get(url)
-        self.context['events'] = json.loads(events.text)
+        events = json.loads(events.text)
+        print(events)
+        if 'error' not in events:
+            print(session.get('https://events.webinar.ru//api/event/session/8455019/participations').text)
+            self.context['events'] = events
         return render(request, 'pages/schedule.html', self.context)
 
 
 class WidgetView(View):
     context = {'pagename': 'Widget'}
 
-    def get(self, request: HttpRequest, id: int) -> HttpResponse:
+    def get(self, request: HttpRequest, input_id: int) -> HttpResponse:
         session = requests.Session()
+
         session.post('https://events.webinar.ru/api/login',
                      data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
-        self.context['answer'] = json.loads(session.get(f'https://events.webinar.ru/api/eventsessions/{id}/chat').text)
+
+        data = session.get(f'https://events.webinar.ru/api/event/{input_id}').json()
+        print(data)
+        sessionId = data['eventSessions'][0]['id']
+        print(sessionId)
+
+        self.context['answer'] = json.loads(session.get(f'https://events.webinar.ru/api/eventsessions/{sessionId}/chat').text)
 
         self.context['chat'] = []
         self.context['awaiting_msgs'] = []
