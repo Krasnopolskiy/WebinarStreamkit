@@ -99,7 +99,8 @@ class ProfileView(View):
             user.webinar_password = request.POST.get('webinar_password')
 
             session = requests.Session()
-            session.post('https://events.webinar.ru/api/login', data={'email': user.webinar_email, 'password': user.webinar_password})
+            session.post('https://events.webinar.ru/api/login',
+                         data={'email': user.webinar_email, 'password': user.webinar_password})
             json_resp = json.loads(session.get('https://events.webinar.ru/api/login').text)
             print(json_resp)
             user.organizationId = json_resp['memberships'][0]['organization']['id']
@@ -127,9 +128,10 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
-        url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + '/eventsessions/list/planned'
-        events = session.get(url)
-        print(events.text)
-        self.context['events'] = json.loads(events.text)
+        session.post('https://events.webinar.ru/api/login',
+                     data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + \
+              '/eventsessions/list/planned'
+        events = json.loads(session.get(url).text)
+        self.context['events'] = events
         return render(request, 'pages/schedule.html', self.context)

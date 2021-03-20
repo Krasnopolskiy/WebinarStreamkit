@@ -18,7 +18,7 @@ urlpatterns = [
     path('profile/', login_required(views.ProfileView.as_view()), name='profile'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('', views.IndexView.as_view(), name='index'),
-    path('event/8454775/', login_required(views.EventView.as_view()), name='event'),
+    path('event/<int:event_id>/', login_required(views.EventView.as_view()), name='event'),
     path('schedule/', login_required(views.ScheduleView.as_view()), name='schedule'),
 ]
 if settings.DEBUG:
