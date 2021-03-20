@@ -17,8 +17,9 @@ ws.onmessage = event => {
 }
 
 ws.onopen = () => {
+    alert("Соединение установлено.");
 	ws.send('get_chat')
-	setTimeout(() => {
+	setInterval(() => {
 		ws.send('get_chat')
 	}, 5000)
 }
