@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load date_tags %}
 
 {% block content %}
 <div class="container">
@@ -9,30 +10,31 @@
     </div>
 
     {% if webinars %}
-       <p>Здесь отображается список вебинаров</p>
+       <p>{{events}}</p>
     {% else %}
-        <p>Списка пока нет, вот вам пример демо-карточки</p>
-        <div class="row justify-content-center">
-            <div class="col-sm-4 p-3">
-                <div class="card mb-3 rounded shadow">
-                    <div class="card-header text-center">
-                        <h4 class="card-title">Название {{ webinar.name }}</h4>
-                        <h5 class="card-text">Время начала: {{ webinar.date }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Организатор: {{ webinar.organizer }}</p>
-                        <hr>
-                        <p class="card-text">Длительность: {{ webinar.duration }}</p>
-                        <hr>
-                        <p class="card-text">Краткое описание: {{ webinar.description }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-grid">
-                            <input class="btn btn-primary mt-2" href="#" type="submit" value="Открыть">
+         <div class="row justify-content-center">
+            {% for event in events %}
+                <div class="col-sm-4 p-3">
+                    <div class="card mb-3 h-100 rounded shadow">
+                        <div class="card-header text-center">
+                            <h4 class="card-title">Название: {{ event.name }}</h4>
+                            <h5 class="card-text">Время начала: {{ event.startsAt|parse_date }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Организатор: {{ event.lector }}</p>
+                            <hr>
+                            <p class="card-text">Длительность: {{ event.startsAt }}</p>
+                            <hr>
+                            <p class="card-text">Краткое описание: {{ event.name }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid">
+                                <a class="btn btn-primary mt-2" href="{% url 'event' event_id=event.id %}" role="button">Открыть</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
     {% endif %}
 </div>

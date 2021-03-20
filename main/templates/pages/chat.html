@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col">
+            <h2 class="display-4 text-center">Чатик</h2>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6" id="chat">
+            {% for msg in answer %}
+                {{ msg.text }}
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/get_chat.js' %}"></script>
+{% endblock %}
