@@ -113,12 +113,16 @@ class ProfileView(View):
 class EventView(View):
     context = {'pagename': 'Event'}
 
-    def get(self, request: HttpRequest) -> HttpResponse:
-        information = requests.get('https://events.webinar.ru/api/eventsession/8454775').json()
-        self.context['name'] = information['name']
-        self.context['startsAt'] = datetime.strptime(information['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
-        self.context['org_name'] = information['organization']['name']
-        self.context['status'] = information['status']
+    def get(self, request: HttpRequest, event_id) -> HttpResponse:
+        session = requests.Session()
+        session.post('https://events.webinar.ru/api/login',
+                     data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        url = 'https://events.webinar.ru/api/event/' + str(event_id)
+        data = session.get(url).json()
+        self.context['name'] = data['name']
+        self.context['startsAt'] = datetime.strptime(data['startsAt'], '%Y-%m-%dT%H:%M:%S%z')
+        self.context['org_name'] = data['organization']['name']
+        self.context['status'] = data['status']
 
         return render(request, 'pages/event.html', self.context)
 
@@ -128,10 +132,11 @@ class ScheduleView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         session = requests.Session()
-        session.post('https://events.webinar.ru/api/login',
-                     data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
+        session.post('https://events.webinar.ru/api/login', data={'email': request.user.webinar_email, 'password': request.user.webinar_password})
         url = 'https://events.webinar.ru/api/organizations/' + str(request.user.organizationId) + \
               '/eventsessions/list/planned'
         events = json.loads(session.get(url).text)
+        print(events)
+        print(session.get('https://events.webinar.ru//api/event/session/8455019/participations').text)
         self.context['events'] = events
         return render(request, 'pages/schedule.html', self.context)
