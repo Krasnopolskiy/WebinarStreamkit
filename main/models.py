@@ -2,15 +2,16 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+class WebinarSession(models.Model):
+    email = models.CharField(max_length=255, default='')
+    password = models.CharField(max_length=255, default='')
+
+
 class User(AbstractUser):
-    avatar = models.CharField(max_length=255, default='')
-    apikey = models.CharField(max_length=32, default='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-    webinar_email = models.CharField(max_length=255, default='')
-    webinar_password = models.CharField(max_length=255, default='')
-    organizationId = models.IntegerField(default=0)
-    id = models.IntegerField(default=0, primary_key=True)
-    sessionId = models.IntegerField(default=0)
+    avatar = models.ImageField(upload_to='avatars', default='avatars/default.svg')
+    webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
 
-
-class Image(models.Model):
-    image = models.ImageField(upload_to='images')
+    def save(self, *args, **kwargs) -> None:
+        if self.id is None:
+            self.webinar_session = WebinarSession.objects.create()
+        super(User, self).save(*args, **kwargs)

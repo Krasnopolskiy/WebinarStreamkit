@@ -10,6 +10,7 @@
     .list-group-item.active {
         border-radius: .25rem;
     }
+
 </style>
 {% endblock %}
 
@@ -19,31 +20,27 @@
         <div class="col-4">
             <div class="list-group list-group-flush" id="list-tab" role="tablist">
                 <a class="list-group-item list-group-item-action active" data-bs-toggle="list"
-                    href="#list-main">Основная информация</a>
-                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
-                    href="#list-password">Изменить пароль</a>
-                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
-                    href="#list-apikey">Ключ API</a>
-                <a class="list-group-item list-group-item-action" data-bs-toggle="list"
-                    href="#list-webinar">Webinar авторизация</a>
+                    href="#list-information">Основная информация</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#list-password">Изменить
+                    пароль</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#list-webinar">Данные
+                    Webinar</a>
             </div>
         </div>
         <div class="col-8">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="list-main">
-                    {% include 'pages/profile/main.html' %}
+                <div class="tab-pane fade show active" id="list-information">
+                    {% include 'pages/profile/information.html' with form=forms|get_item:'information'  %}
                 </div>
                 <div class="tab-pane fade" id="list-password">
-                    {% include 'pages/profile/password.html' with form=form %}
-                </div>
-                <div class="tab-pane fade" id="list-apikey">
-                    {% include 'pages/profile/apikey.html' with form=form %}
+                    {% include 'pages/profile/password.html' with form=forms|get_item:'password' %}
                 </div>
                 <div class="tab-pane fade" id="list-webinar">
-                    {% include 'pages/profile/webinar.html' with form=form %}
+                    {% include 'pages/profile/webinar.html' with form=forms|get_item:'webinar' %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -1,0 +1,30 @@
+{% load crispy_forms_tags %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-10 p-5 border rounded shadow">
+            <div class="card-body d-grid gap-3">
+                <div class="d-flex justify-content-center my-3">
+                    <img class="border shadow-sm rounded p-3" id="avatar" src="{{ request.user.avatar.url }}">
+                </div>
+                <h5 class="card-title">Информация о пользователе</h5>
+                <ul class="card-text">
+                    <li>Имя: {{ request.user.first_name }}</li>
+                    <li>Фамилия: {{ request.user.last_name }}</li>
+                    <li>E-mail: {{ request.user.email }}</li>
+                </ul>
+                <div class="mb-3">
+                    <form method="POST" action="{% url 'update_user_information' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for item in form %}
+                        {{ item|as_crispy_field }}
+                        {% endfor %}
+                        <div class="d-grid">
+                            <input class="btn btn-primary mt-3" type="submit" value="Сохранить">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

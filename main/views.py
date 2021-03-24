@@ -1,21 +1,12 @@
-import requests
-from django.contrib.auth import forms as auth_forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest
 from django.http.response import HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
-from PIL import Image
-import os
-from main.models import User
-from main.forms import SignupForm, WebinarForm
-from . import forms
-from main.forms import ImageForm, ApikeyForm
-from datetime import datetime
-from django.contrib.auth import authenticate, login
-from django_registration import signals
-from django_registration.views import RegistrationView as BaseRegistrationView
-import requests, json
+
+from main.forms import UserInformationForm, WebinarCredentialsForm
 
 
 class IndexView(View):
@@ -25,50 +16,35 @@ class IndexView(View):
         return render(request, 'pages/index.html', self.context)
 
 
-class AdvRegistrationView(BaseRegistrationView):
-    template_name = 'registration/signup.html'
-    extra_context = {'pagename': 'Регистрация'}
-    success_url = '/'
-    form_class = SignupForm
-
-    def register(self, form):
-        new_user = form.save()
-        new_user = authenticate(
-            **{
-                User.USERNAME_FIELD: new_user.get_username(),
-                "password": form.cleaned_data["password1"],
-            }
-        )
-        login(self.request, new_user)
-        session = requests.Session()
-        session.post('https://events.webinar.ru/api/login',
-                     data={'email': new_user.webinar_email, 'password': new_user.webinar_password})
-        data = json.loads(session.get('https://events.webinar.ru/api/login').text)
-        if 'error' not in data.keys():
-            new_user.id = data['id']
-            new_user.organizationId = data['memberships'][0]['organization']['id']
-            new_user.sessionId = data['sessionId']
-            new_user.save()
-            signals.user_registered.send(
-                sender=self.__class__, user=new_user, request=self.request
-            )
-            return new_user
-
-
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     context = {'pagename': 'Profile'}
-    form = ImageForm()
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
-        self.context['apikey_form'] = forms.ApikeyForm()
-        self.context['webinar_form'] = forms.WebinarForm()
-        self.context['userinfo'] = User.objects.get(username=request.user.username)
-        self.context['apikey'] = User.objects.get(username=request.user.username).apikey
-        if not self.context['apikey']:
-            self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        self.context['forms'] = {
+            'information': UserInformationForm(),
+            'password': PasswordChangeForm(user=request.user),
+            'webinar': WebinarCredentialsForm()
+        }
         return render(request, 'pages/profile.html', self.context)
 
+
+class WebinarCredentialsView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = WebinarCredentialsForm(request.POST, instance=request.user.webinar_session)
+        if form.is_valid():
+            form.save()
+        return redirect(reverse('profile'))
+
+
+class UserInformationView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = UserInformationForm(request.POST, request.FILES, instance=request.user.avatar)
+        if form.is_valid():
+            form.save()
+        return redirect(reverse('profile'))
+
+
+'''
     def post(self, request: HttpRequest) -> HttpResponse:
         form = ImageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -108,8 +84,7 @@ class ProfileView(View):
             user.save()
 
         return render(request, 'pages/profile.html', self.context)
-
-
+        
 class EventView(View):
     context = {'pagename': 'Event'}
 
@@ -156,3 +131,4 @@ class WidgetView(View):
                 self.context['chat'].append(item)
 
         return render(request, 'pages/chat_widget.html', self.context)
+'''
