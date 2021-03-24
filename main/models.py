@@ -8,7 +8,7 @@ class WebinarSession(models.Model):
 
 
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to='avatars', default='avatars/default.svg')
+    avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs) -> None:

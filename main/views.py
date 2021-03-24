@@ -38,7 +38,7 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
 
 class UserInformationView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponse:
-        form = UserInformationForm(request.POST, request.FILES, instance=request.user.avatar)
+        form = UserInformationForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
         return redirect(reverse('profile'))
