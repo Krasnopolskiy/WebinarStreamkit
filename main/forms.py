@@ -12,7 +12,7 @@ class ExtendedSignupForm(RegistrationForm):
 class UserInformationForm(forms.ModelForm):
     avatar = forms.ImageField(
         widget=forms.FileInput(attrs={'class': 'form-control'}),
-        label='Загрузить аватар'
+        label=''
     )
 
     class Meta:
