@@ -40,7 +40,7 @@ class WebinarSession(models.Model):
         route = Webinar.Routes.EVENT.format(event_id=event_id)
         data = loads(self.session.get(route).text)
         if 'error' not in data:
-            return Webinar.Event(**data)
+            return Webinar.Event(self.webinar_user, **data)
 
     def get_schedule(self) -> List[Webinar.Event]:
         schedule = list()

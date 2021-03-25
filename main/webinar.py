@@ -17,6 +17,7 @@ class Converter:
 
 class Webinar:
     class Routes:
+        STREAM = 'https://events.webinar.ru/{user_id}/{event_id}/stream-new/{session_id}'
         API = 'https://events.webinar.ru/api/{route}'
         LOGIN = API.format(route='/login')
         USER = API.format(route='/user/{user_id}')
@@ -38,7 +39,7 @@ class Webinar:
 
     class Message:
         def __init__(self, **data: Any) -> None:
-            attrs = ['id', 'authorName', 'text', 'isModerated']
+            attrs = ['id', 'authorName', 'text', 'isModerated', 'createAt']
             self = Converter(self, attrs, **data).convert()
 
     class Chat:
@@ -52,7 +53,13 @@ class Webinar:
             return [message for message in self.messages if not message.isModerated]
 
     class Event:
-        def __init__(self, **data: Any) -> None:
+        def __init__(self, user: Webinar.User, **data: Any) -> None:
             attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
             self = Converter(self, attrs, **data).convert()
             self.session_id = data['eventSessions'][0]['id']
+            self.image = data['image']['url']
+            self.url = Webinar.Routes.STREAM.format(
+                user_id=user.id,
+                event_id=self.id,
+                session_id=self.session_id
+            )

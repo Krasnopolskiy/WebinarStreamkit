@@ -7,7 +7,7 @@ from django_registration.backends.one_step.views import RegistrationView
 
 from main.consumers import ChatConsumer
 from main.forms import ExtendedSignupForm
-from main.views import (IndexView, ProfileView, ScheduleView, UserInformationView,
+from main.views import (EventView, IndexView, ProfileView, ScheduleView, UserInformationView,
                         WebinarCredentialsView)
 
 urlpatterns = [
@@ -30,7 +30,8 @@ urlpatterns = [
     ), name='change_password'),
     path('profile/webinar/credentials', WebinarCredentialsView.as_view(), name='update_webinar_credentials'),
     path('profile/user/information', UserInformationView.as_view(), name='update_user_information'),
-    path('schedule/', ScheduleView.as_view(), name='schedule')
+    path('schedule/', ScheduleView.as_view(), name='schedule'),
+    path('event/<int:event_id>', EventView.as_view(), name='event')
 ]
 
 

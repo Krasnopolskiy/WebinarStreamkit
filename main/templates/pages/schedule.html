@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row m-3 mt-5">
-        <h6 class="display-6">Расписание вебинаров</h6>
+<div class="container">
+    <div class="row m-3 mt-3">
+        <h2 class="display-6">Расписание вебинаров</h2>
     </div>
     <div class="row my-3">
         <div class="col">
@@ -32,7 +32,10 @@
                             <td class="p-3 text-truncate">{{ event.description }}</td>
                             <td class="p-3">{{ event.startsAt|parse_date }}</td>
                             <td class="p-3">{{ event.endsAt|parse_date }}</td>
-                            <td class="p-3"><button class="btn btn-outline-primary">Перейти</button></td>
+                            <td class="p-3">
+                                <a href="{% url 'event' event_id=event.id %}"
+                                    class="btn btn-outline-primary">Перейти</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

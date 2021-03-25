@@ -51,3 +51,14 @@ class ScheduleView(LoginRequiredMixin, View):
         request.user.webinar_session.login()
         self.context['events'] = request.user.webinar_session.get_schedule()
         return render(request, 'pages/schedule.html', self.context)
+
+
+class EventView(LoginRequiredMixin, View):
+    context = {'pagename': 'Event'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        request.user.webinar_session.login()
+        event = request.user.webinar_session.get_event({'id': event_id})
+        self.context['event'] = event
+        self.context['chat'] = request.user.webinar_session.get_chat(event)
+        return render(request, 'pages/event.html', self.context)
