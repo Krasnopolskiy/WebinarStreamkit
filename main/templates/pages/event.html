@@ -3,7 +3,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/event.css' %}">
-<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -30,8 +29,10 @@
                     <h6>{{event.startsAt|parse_date}} &#8212; {{event.endsAt|parse_date}}</h6>
                 </div>
                 <div class="px-3">
-                    <button class="btn btn-primary me-3">Виджет модерации чата</button>
-                    <a href="{{ event.url }}" class="btn btn-primary">Перейти к вебинару</a>
+                    <a href={% url 'chat' event_id=event.id %} class="btn btn-primary me-2 mt-2">
+                        Виджет модерации чата
+                    </a>
+                    <a href="{{ event.url }}" class="btn btn-primary mt-2">Перейти к вебинару</a>
                 </div>
             </div>
         </div>

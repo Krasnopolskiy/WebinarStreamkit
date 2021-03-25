@@ -1,62 +1,84 @@
-import json
-from typing import Dict
-from requests import Session
+from __future__ import annotations
+
+import asyncio
+from json import dumps, loads
+from typing import Any, Callable, Dict
+from uuid import uuid4
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-import requests
+
+from main.models import WebinarSession
+from main.webinar import Webinar
 
 
-class WebinarApi:
-    URL = 'https://events.webinar.ru/api'
+class Timer:
+    def __init__(self, timeout: float, callback: Callable, *args: Any, **kwargs: Dict[str, Any]) -> None:
+        self.timeout = timeout
+        self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
+        self.task = asyncio.Future
 
-    def __init__(self, user) -> None:
-        self.session = Session()
-        self.login(user.webinar_email, user.webinar_password)
+    def enable(self) -> None:
+        self.enabled = True
+        self.task = asyncio.ensure_future(self.job())
 
-    def login(self, email, password) -> None:
-        self.session.post(WebinarApi.URL + '/login', data={'email': email, 'password': password})
+    async def job(self) -> None:
+        while self.enabled:
+            await self.callback(*self.args, **self.kwargs)
+            await asyncio.sleep(self.timeout)
 
-    def get_chat(self, chat_id) -> Dict:
-        data = self.session.get(WebinarApi.URL + f'/eventsessions/{chat_id}/chat').text
-        return json.loads(data)
+    def cancel(self):
+        self.enabled = False
+        self.task.cancel()
+
+
+def get_chat(webinar_session: WebinarSession, event_id: str) -> Webinar.Chat:
+    webinar_session.login()
+    event = webinar_session.get_event({'id': event_id})
+    return webinar_session.get_chat(event)
+
+
+async def send_chat(consumer: ChatConsumer) -> None:
+    chat = await sync_to_async(get_chat)(consumer.webinar_session, consumer.event_id)
+    await consumer.channel_layer.group_send(
+        consumer.room,
+        {
+            'type': 'server_message',
+            'message': {
+                'event': 'update_chat',
+                'chat': await sync_to_async(chat.serialize)()
+            }
+        }
+    )
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self) -> None:
-        self.chat_id = self.scope['url_route']['kwargs']['id']
-        self.chat = str(self.chat_id)
-        self.api = await sync_to_async(WebinarApi)(self.scope['user'])
+        self.event_id = self.scope['url_route']['kwargs']['event_id']
+        self.room = f'client_{self.event_id}_{uuid4()}'
+
+        user_id = self.scope['user'].id
+        self.webinar_session = await sync_to_async(WebinarSession.objects.get)(user=user_id)
+        self.timer = Timer(1, send_chat, self)
+        self.timer.enable()
 
         await self.channel_layer.group_add(
-            self.chat,
+            self.room,
             self.channel_name
         )
 
         await self.accept()
 
-    async def disconnect(self, close_code) -> None:
+    async def disconnect(self, close_code: int) -> None:
         await self.channel_layer.group_discard(
-            self.chat,
+            self.room,
             self.channel_name
         )
 
     async def receive(self, text_data: str) -> None:
-        commands = {
-            'get_chat': {
-                'function': self.api.get_chat,
-                'params': self.chat
-            }
-        }
-        command = text_data
-        message = await sync_to_async(commands[command]['function'])(commands[command]['params'])
-        await self.channel_layer.group_send(
-            self.chat,
-            {
-                'type': 'server_message',
-                'message': message
-            }
-        )
+        message = loads(text_data)
 
     async def server_message(self, event: dict) -> None:
-        await self.send(text_data=json.dumps(event['message']))
+        await self.send(text_data=dumps(event['message']))

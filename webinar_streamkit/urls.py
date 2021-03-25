@@ -7,8 +7,7 @@ from django_registration.backends.one_step.views import RegistrationView
 
 from main.consumers import ChatConsumer
 from main.forms import ExtendedSignupForm
-from main.views import (EventView, IndexView, ProfileView, ScheduleView, UserInformationView,
-                        WebinarCredentialsView)
+from main.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -31,7 +30,8 @@ urlpatterns = [
     path('profile/webinar/credentials', WebinarCredentialsView.as_view(), name='update_webinar_credentials'),
     path('profile/user/information', UserInformationView.as_view(), name='update_user_information'),
     path('schedule/', ScheduleView.as_view(), name='schedule'),
-    path('event/<int:event_id>', EventView.as_view(), name='event')
+    path('event/<int:event_id>', EventView.as_view(), name='event'),
+    path('event/<int:event_id>/chat', ChatView.as_view(), name='chat')
 ]
 
 
@@ -43,5 +43,5 @@ if settings.DEBUG:
 
 
 websocket_urlpatterns = [
-    path('chat/<int:id>/', ChatConsumer.as_asgi())
+    path('event/<int:event_id>/chat', ChatConsumer.as_asgi())
 ]

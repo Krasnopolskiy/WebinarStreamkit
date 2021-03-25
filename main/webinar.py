@@ -26,36 +26,43 @@ class Webinar:
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
 
     class User:
+        attrs = ['id', 'name', 'secondName']
+
         def __init__(self, **data: Any) -> None:
-            attrs = ['id', 'name', 'secondName']
-            self = Converter(self, attrs, **data).convert()
+            self = Converter(self, self.attrs, **data).convert()
             self.memberships = [Webinar.Organization(**membership['organization'])
                                 for membership in data.get('memberships', [])]
 
     class Organization:
+        attrs = ['id', 'name']
+
         def __init__(self, **data: Any) -> None:
-            attrs = ['id', 'name']
-            self = Converter(self, attrs, **data).convert()
+            self = Converter(self, self.attrs, **data).convert()
 
     class Message:
+        attrs = ['id', 'authorName', 'text', 'isModerated', 'createAt']
+
         def __init__(self, **data: Any) -> None:
-            attrs = ['id', 'authorName', 'text', 'isModerated', 'createAt']
-            self = Converter(self, attrs, **data).convert()
+            self = Converter(self, self.attrs, **data).convert()
+
+        def serialize(self) -> Dict[str, Any]:
+            return {attr: getattr(self, attr) for attr in self.attrs}
 
     class Chat:
         def __init__(self, messages: List[Dict]) -> None:
             self.messages = [Webinar.Message(**message) for message in messages]
 
-        def get_moderated(self) -> List[Webinar.Message]:
-            return [message for message in self.messages if message.isModerated]
-
-        def get_awaiting(self) -> List[Webinar.Message]:
-            return [message for message in self.messages if not message.isModerated]
+        def serialize(self) -> List[Webinar.Message]:
+            return {
+                'moderated': [message.serialize() for message in self.messages if message.isModerated],
+                'awaiting': [message.serialize() for message in self.messages if not message.isModerated]
+            }
 
     class Event:
+        attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
+
         def __init__(self, user: Webinar.User, **data: Any) -> None:
-            attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
-            self = Converter(self, attrs, **data).convert()
+            self = Converter(self, self.attrs, **data).convert()
             self.session_id = data['eventSessions'][0]['id']
             self.image = data['image']['url']
             self.url = Webinar.Routes.STREAM.format(
