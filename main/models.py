@@ -34,15 +34,20 @@ class WebinarSession(models.Model):
         data = loads(self.session.get(route).text)
         return WebinarChat(data)
 
-    def get_event(self, event_id: int) -> WebinarEvent:
+    def get_event(self, event: Dict) -> WebinarEvent:
+        event_id = event.get('eventId', event['id'])
         route = WebinarRoutes.EVENT.format(event_id=event_id)
         data = loads(self.session.get(route).text)
-        return WebinarEvent(**data)
+        if 'error' not in data:
+            return WebinarEvent(**data)
 
-    def get_schedule(self) -> List[Dict]:
+    def get_schedule(self) -> List[WebinarEvent]:
         route = WebinarRoutes.PLANNED.format(organization_id=self.organization_id)
-        return loads(self.session.get(route).text)
-
+        events = loads(self.session.get(route).text)
+        return list(filter(
+            lambda event: event is not None,
+            [self.get_event(event) for event in events]
+        ))
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')

@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+{% load filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row m-3 mt-5">
+        <h6 class="display-6">Расписание вебинаров</h6>
+    </div>
+    <div class="row my-3">
+        <div class="col">
+            <div class="shadow-sm p-3 border rounded">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="p-3" scope="col">#</th>
+                            <th class="p-3" scope="col">Название</th>
+                            <th class="p-3" scope="col">Описание</th>
+                            <th class="p-3" scope="col">Начало</th>
+                            <th class="p-3" scope="col">Конец</th>
+                            <th class="p-3" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <th class="p-3" scope="row">{{ forloop.counter }}</th>
+                            <td class="p-3 text-truncate">{{ event.name }}</td>
+                            <td class="p-3 text-truncate">{{ event.description }}</td>
+                            <td class="p-3">{{ event.startsAt|parse_date }}</td>
+                            <td class="p-3">{{ event.endsAt|parse_date }}</td>
+                            <td class="p-3"><button class="btn btn-outline-primary">Перейти</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
