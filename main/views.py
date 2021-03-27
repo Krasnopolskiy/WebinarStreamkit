@@ -62,8 +62,8 @@ class EventView(LoginRequiredMixin, View):
         return render(request, 'pages/event.html', self.context)
 
 
-class ChatView(LoginRequiredMixin, View):
-    context = {'pagename': 'Chat'}
+class WidgetView(LoginRequiredMixin, View):
+    context = {'pagename': 'Widget'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        return render(request, 'pages/chat.html', self.context)
+        return render(request, 'pages/widget.html', self.context)

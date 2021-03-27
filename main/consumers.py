@@ -7,9 +7,9 @@ from uuid import uuid4
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.template.loader import render_to_string
 
 from main.models import WebinarSession
-from main.webinar import Webinar
 
 
 class Timer:
@@ -34,21 +34,22 @@ class Timer:
         self.task.cancel()
 
 
-def get_chat(webinar_session: WebinarSession, event_id: str) -> Webinar.Chat:
+def get_chat_template(webinar_session: WebinarSession, event_id: str) -> str:
     webinar_session.login()
     event = webinar_session.get_event({'id': event_id})
-    return webinar_session.get_chat(event)
+    chat = webinar_session.get_chat(event)
+    return render_to_string('components/widget/chat.html', {'chat': chat})
 
 
 async def send_chat(consumer: ChatConsumer) -> None:
-    chat = await sync_to_async(get_chat)(consumer.webinar_session, consumer.event_id)
+    template = await sync_to_async(get_chat_template)(consumer.webinar_session, consumer.event_id)
     await consumer.channel_layer.group_send(
         consumer.room,
         {
             'type': 'server_message',
             'message': {
-                'event': 'update_chat',
-                'chat': await sync_to_async(chat.serialize)()
+                'event': 'update chat',
+                'template': template
             }
         }
     )
