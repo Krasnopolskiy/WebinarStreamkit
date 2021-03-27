@@ -1,0 +1,5 @@
+{% load filters %}
+
+<p class="text-muted">{{message.authorName}}, {{message.createAt|parse_date}}</p>
+<p>{{message.text}}</p>
+<input type="hidden" value="{{message.id}}" name="message-id">

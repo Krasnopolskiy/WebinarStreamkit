@@ -50,12 +50,13 @@ class Webinar:
 
     class Chat:
         def __init__(self, messages: List[Dict]) -> None:
-            self.messages = [Webinar.Message(**message) for message in messages]
+            self.moderated = [Webinar.Message(**message) for message in messages if message['isModerated']]
+            self.awaiting = [Webinar.Message(**message) for message in messages if not message['isModerated']]
 
         def serialize(self) -> List[Webinar.Message]:
             return {
-                'moderated': [message.serialize() for message in self.messages if message.isModerated],
-                'awaiting': [message.serialize() for message in self.messages if not message.isModerated]
+                'moderated': [message.serialize() for message in self.moderated],
+                'awaiting': [message.serialize() for message in self.awaiting]
             }
 
     class Event:
