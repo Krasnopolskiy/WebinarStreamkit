@@ -1,61 +1,35 @@
-from django.contrib.auth.forms import AuthenticationForm
-from django_registration.forms import RegistrationForm
 from django import forms
-from django.contrib.auth import get_user_model
-from main.models import Image
-User = get_user_model()
+from django_registration.forms import RegistrationForm
+
+from main.models import User, WebinarSession
 
 
-class LoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
-
-    username = forms.CharField(
-        widget=forms.TextInput,
-        label='Имя пользователя'
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput,
-        label='Пароль'
-    )
-
-
-class SignupForm(RegistrationForm):
-
-    webinar_email = forms.CharField(
-        widget=forms.TextInput,
-        label='Email от аккаунта Webinar',
-        required=False
-    )
-    webinar_password = forms.CharField(
-        widget=forms.TextInput,
-        label='Пароль от аккаунта Webinar',
-        required=False
-    )
-
+class ExtendedSignupForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
         model = User
 
 
-class ApikeyForm(forms.Form):
-    apikey = forms.CharField(
-        widget=forms.TextInput,
-        label='Установить ключ API'
+class UserInformationForm(forms.ModelForm):
+    avatar = forms.ImageField(
+        widget=forms.FileInput(attrs={'class': 'form-control'}),
+        label=''
     )
 
-
-class ImageForm(forms.ModelForm):
     class Meta:
-        model = Image
-        fields = ['image']
+        model = User
+        fields = ['avatar']
 
 
-class WebinarForm(forms.Form):
-    webinar_email = forms.CharField(
-        widget=forms.TextInput,
-        label='Email от аккаунта Webinar'
+class WebinarCredentialsForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput,
+        label='Адрес электронной почты Webinar'
     )
-    webinar_password = forms.CharField(
+    password = forms.CharField(
         widget=forms.PasswordInput,
-        label='Пароль от аккаунта Webinar'
+        label='Пароль Webinar'
     )
+
+    class Meta:
+        model = WebinarSession
+        fields = ['email', 'password']

@@ -1,41 +1,47 @@
 {% extends 'base/base.html' %}
-{% load date_tags %}
+{% load filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="row my-5">
+    <div class="row m-3 mt-3">
+        <h2 class="display-6">Расписание вебинаров</h2>
+    </div>
+    <div class="row my-3">
         <div class="col">
-            <h2 class="text-center m-3">Список вебинаров</h2>
+            <div class="shadow-sm p-3 border rounded">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="p-3" scope="col">#</th>
+                            <th class="p-3" scope="col">Название</th>
+                            <th class="p-3" scope="col">Описание</th>
+                            <th class="p-3" scope="col">Начало</th>
+                            <th class="p-3" scope="col">Конец</th>
+                            <th class="p-3" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <th class="p-3" scope="row">{{ forloop.counter }}</th>
+                            <td class="p-3 text-truncate">{{ event.name }}</td>
+                            <td class="p-3 text-truncate">{{ event.description }}</td>
+                            <td class="p-3">{{ event.startsAt|parse_date }}</td>
+                            <td class="p-3">{{ event.endsAt|parse_date }}</td>
+                            <td class="p-3">
+                                <a href="{% url 'event' event_id=event.id %}"
+                                    class="btn btn-outline-primary">Перейти</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
-    {% if webinars %}
-       <p>{{events}}</p>
-    {% else %}
-         <div class="row justify-content-center">
-            {% for event in events %}
-                <div class="col-sm-4 p-3">
-                    <div class="card mb-3 h-100 rounded shadow">
-                        <div class="card-header text-center">
-                            <h4 class="card-title">Название: {{ event.name }}</h4>
-                            <h5 class="card-text">Время начала: {{ event.startsAt|parse_date }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Организатор: {{ event.lector }}</p>
-                            <hr>
-                            <p class="card-text">Длительность: {{ event.startsAt }}</p>
-                            <hr>
-                            <p class="card-text">Краткое описание: {{ event.name }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-grid">
-                                <a class="btn btn-primary mt-2" href="{% url 'event' event_id=event.id %}" role="button">Открыть</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 </div>
 {% endblock %}
