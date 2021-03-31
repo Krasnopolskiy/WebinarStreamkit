@@ -26,10 +26,15 @@ let update_event_handlers = () => {
         console.log(`Declining <Message ${message_id}> ...`)
     })
 }
-
+let last_scroll_pos = 0;
 ws.onmessage = event => {
     let data = JSON.parse(event['data'])
     if (data['event'] == 'update chat') {
-        update_chat(data['template'])
+        update_chat(data['template']);
+        document.querySelector('#moderated').scrollTop = last_scroll_pos;
     }
+    $('#moderated').on("scroll", function(event) {
+        last_scroll_pos = $('#moderated').scrollTop();
+    });
 }
+

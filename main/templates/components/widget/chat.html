@@ -3,7 +3,7 @@
         <div class="col-6">
             <div class="border shadow rounded p-3">
                 <h4 class="mx-3">Сообщения:</h4>
-                <div class="message-box p-3">
+                <div class="message-box p-3" id="moderated">
                     {% for message in chat.moderated %}
                     {% include 'components/widget/messages/moderated.html' with message=message %}
                     {% endfor %}
@@ -13,7 +13,7 @@
         <div class="col-6">
             <div class="border shadow rounded p-3">
                 <h4 class="mx-3">Ожидают модерацию:</h4>
-                <div class="message-box p-3">
+                <div class="message-box p-3" id="awaiting">
                     {% for message in chat.awaiting %}
                     {% include 'components/widget/messages/awaiting.html' with message=message %}
                     {% endfor %}
