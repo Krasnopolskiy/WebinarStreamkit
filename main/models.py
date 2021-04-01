@@ -53,6 +53,12 @@ class WebinarSession(models.Model):
             ))
         return schedule
 
+    def accept_message(self, message_id: int, event: Webinar.Event) -> None:
+        request_body = {'isModerated': 'true', 'messageIds[0]': message_id}
+        route = Webinar.Routes.ACCEPT_MESSAGE.format(session_id=event.session_id)
+        response = loads(self.session.put(route, data=request_body).text)
+        print(response)
+
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
