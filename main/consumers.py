@@ -80,6 +80,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data: str) -> None:
         message = loads(text_data)
+        data_event = {'id': self.event_id}
+        event = self.webinar_session.get_event(data_event)
+        if message['command'] == 'accept message':
+            self.webinar_session.accept_message(message['message_id'], event)
 
     async def server_message(self, event: dict) -> None:
         await self.send(text_data=dumps(event['message']))

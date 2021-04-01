@@ -18,7 +18,7 @@ let update_event_handlers = () => {
 
     $('.accept-message-btn').click(event => {
         let message_id = $(event.target).siblings('input[name="message-id"]').val()
-        console.log(`Accepting <Message ${message_id}> ...`)
+        ws.send(`{"command": "accept message", "message_id": ${message_id}}`)
     })
 
     $('.decline-message-btn').click(event => {
