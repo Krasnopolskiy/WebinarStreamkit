@@ -25,6 +25,10 @@ class ProfileView(LoginRequiredMixin, View):
             'password': PasswordChangeForm(user=request.user),
             'webinar': WebinarCredentialsForm()
         }
+        request.user.webinar_session.login()
+        self.context['name'] = request.user.webinar_session.webinar_user.name
+        self.context['secondName'] = request.user.webinar_session.webinar_user.secondName
+        self.context['email'] = request.user.webinar_session.email
         return render(request, 'pages/profile.html', self.context)
 
 
