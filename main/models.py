@@ -1,6 +1,5 @@
 from json import loads
 from typing import Any, Dict, List
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from requests import Session
@@ -52,6 +51,12 @@ class WebinarSession(models.Model):
                 [self.get_event(event) for event in events]
             ))
         return schedule
+
+    def accept_message(self, message_id: int, event: Webinar.Event) -> None:
+        request_body = {'isModerated': 'true', 'messageIds[0]': message_id}
+        route = Webinar.Routes.ACCEPT_MESSAGE.format(session_id=event.session_id)
+        response = loads(self.session.put(route, data=request_body).text)
+        print(response)
 
 
 class User(AbstractUser):

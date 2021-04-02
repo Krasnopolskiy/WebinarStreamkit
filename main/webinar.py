@@ -24,6 +24,7 @@ class Webinar:
         PLANNED = API.format(route='/organizations/{organization_id}/eventsessions/list/planned')
         EVENT = API.format(route='/event/{event_id}')
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
+        ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
 
     class User:
         attrs = ['id', 'name', 'secondName']
