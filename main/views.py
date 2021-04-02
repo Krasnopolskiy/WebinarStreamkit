@@ -5,6 +5,11 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from datetime import datetime
+from django.contrib.auth import authenticate, login
+from django_registration import signals
+from django_registration.views import RegistrationView as BaseRegistrationView
+import requests, json
 
 from main.forms import UserInformationForm, WebinarCredentialsForm
 

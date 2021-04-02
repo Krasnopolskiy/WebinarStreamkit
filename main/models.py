@@ -1,6 +1,5 @@
 from json import loads
 from typing import Any, Dict, List
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from requests import Session
