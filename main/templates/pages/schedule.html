@@ -29,7 +29,11 @@
                         <tr>
                             <th class="p-3" scope="row">{{ forloop.counter }}</th>
                             <td class="p-3 text-truncate">{{ event.name }}</td>
+                            {% if not event.description %}
+                            <td class="p-3 text-truncate"> - </td>
+                            {% else %}
                             <td class="p-3 text-truncate">{{ event.description }}</td>
+                            {% endif %}
                             <td class="p-3">{{ event.startsAt|parse_date }}</td>
                             <td class="p-3">{{ event.endsAt|parse_date }}</td>
                             <td class="p-3">
