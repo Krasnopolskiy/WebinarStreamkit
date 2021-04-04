@@ -84,6 +84,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         event = self.webinar_session.get_event(data_event)
         if message['command'] == 'accept message':
             self.webinar_session.accept_message(message['message_id'], event)
+        elif message['command'] == 'decline message':
+            self.webinar_session.decline_message(message['message_id'], event)
 
     async def server_message(self, event: dict) -> None:
         await self.send(text_data=dumps(event['message']))

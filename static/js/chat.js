@@ -23,7 +23,7 @@ let update_event_handlers = () => {
 
     $('.decline-message-btn').click(event => {
         let message_id = $(event.target).siblings('input[name="message-id"]').val()
-        console.log(`Declining <Message ${message_id}> ...`)
+        ws.send(`{"command": "decline message", "message_id": ${message_id}}`)
     })
 }
 let last_scroll_pos_moder = 0;

@@ -25,6 +25,7 @@ class Webinar:
         EVENT = API.format(route='/event/{event_id}')
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
         ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
+        DECLINE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
 
     class User:
         attrs = ['id', 'name', 'secondName']
