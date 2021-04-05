@@ -58,6 +58,11 @@ class WebinarSession(models.Model):
         response = loads(self.session.put(route, data=payload).text)
         print(response)
 
+    def decline_message(self, message_id: int, event: Webinar.Event) -> None:
+        payload = {'messageIds[0]': message_id}
+        route = Webinar.Routes.DECLINE_MESSAGE.format(session_id=event.session_id)
+        self.session.put(route, data=payload)
+
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
