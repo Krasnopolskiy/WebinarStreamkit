@@ -29,9 +29,9 @@
                     <h6>{{event.startsAt|parse_date}} &#8212; {{event.endsAt|parse_date}}</h6>
                 </div>
                 <div class="px-3">
-                    <a href={% url 'chat' event_id=event.id %} class="btn btn-primary me-2 mt-2">
+                    <button class="btn btn-primary me-2 mt-2" id="widget">
                         Виджет модерации чата
-                    </a>
+                    </button>
                     <a href="{{ event.url }}" class="btn btn-primary mt-2">Перейти к вебинару</a>
                 </div>
             </div>
