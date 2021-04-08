@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block content %}
+{% include 'components/base/navbar.html' %}
+
 <div class="container">
     <div class="row m-3 mt-3">
         <h2 class="display-6">Информация о вебинаре</h2>
@@ -44,4 +46,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/event.js' %}"></script>
 {% endblock %}

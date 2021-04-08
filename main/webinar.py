@@ -25,10 +25,7 @@ class Webinar:
         EVENT = API.format(route='/event/{event_id}')
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
         ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
-        DECLINE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
-
-    class Strings:
-        SESSION = 'sessionId'
+        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
 
     class User:
         attrs = ['id', 'name', 'secondName', 'email']
@@ -60,7 +57,7 @@ class Webinar:
             self.moderated = []
             for message in messages:
                 message = Webinar.Message(message)
-                [self.awaiting, self.moderated][message['isModerated']].append(message)
+                [self.awaiting, self.moderated][message.isModerated].append(message)
 
     class Event:
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
