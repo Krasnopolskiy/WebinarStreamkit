@@ -1,0 +1,3 @@
+{% for message in chat.awaiting %}
+{% include 'components/widget/messages/awaiting.html' with message=message %}
+{% endfor %}

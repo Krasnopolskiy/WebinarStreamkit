@@ -31,7 +31,8 @@ urlpatterns = [
     path('profile/user/information', UserInformationView.as_view(), name='update_user_information'),
     path('schedule/', ScheduleView.as_view(), name='schedule'),
     path('event/<int:event_id>', EventView.as_view(), name='event'),
-    path('event/<int:event_id>/chat', WidgetView.as_view(), name='chat')
+    path('event/<int:event_id>/moderated', ModeratedMessagesView.as_view(), name='moderated_messages'),
+    path('event/<int:event_id>/awaiting', AwaitingMessagesView.as_view(), name='awaiting_messages')
 ]
 
 
@@ -43,5 +44,6 @@ if settings.DEBUG:
 
 
 websocket_urlpatterns = [
-    path('event/<int:event_id>/chat', ChatConsumer.as_asgi())
+    path('event/<int:event_id>/moderated', ChatConsumer.as_asgi()),
+    path('event/<int:event_id>/awaiting', ChatConsumer.as_asgi()),
 ]

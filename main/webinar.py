@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 
 class Converter:
-    def __init__(self, object: Any, attrs: List[str], **data) -> None:
+    def __init__(self, object: Any, attrs: List[str], data: Dict[str, Any]) -> None:
         self.object = object
         self.data = data
         self.attrs = attrs
@@ -25,47 +25,45 @@ class Webinar:
         EVENT = API.format(route='/event/{event_id}')
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
         ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
-        DECLINE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
+        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
 
     class User:
-        attrs = ['id', 'name', 'secondName']
+        attrs = ['id', 'name', 'secondName', 'email']
 
-        def __init__(self, **data: Any) -> None:
-            self = Converter(self, self.attrs, **data).convert()
-            self.memberships = [Webinar.Organization(**membership['organization'])
+        def __init__(self, data: Dict[str, Any] = {}, is_authenticated: bool = False) -> None:
+            self = Converter(self, self.attrs, data).convert()
+            self.is_authenticated = is_authenticated
+            self.memberships = [Webinar.Organization(membership['organization'])
                                 for membership in data.get('memberships', [])]
 
     class Organization:
         attrs = ['id', 'name']
 
-        def __init__(self, **data: Any) -> None:
-            self = Converter(self, self.attrs, **data).convert()
+        def __init__(self, data: Dict[str, Any]) -> None:
+            self = Converter(self, self.attrs, data).convert()
 
     class Message:
         attrs = ['id', 'authorName', 'text', 'isModerated', 'createAt']
 
-        def __init__(self, **data: Any) -> None:
-            self = Converter(self, self.attrs, **data).convert()
+        def __init__(self, data: Dict[str, Any]) -> None:
+            self = Converter(self, self.attrs, data).convert()
 
         def serialize(self) -> Dict[str, Any]:
             return {attr: getattr(self, attr) for attr in self.attrs}
 
     class Chat:
         def __init__(self, messages: List[Dict]) -> None:
-            self.moderated = [Webinar.Message(**message) for message in messages if message['isModerated']]
-            self.awaiting = [Webinar.Message(**message) for message in messages if not message['isModerated']]
-
-        def serialize(self) -> List[Webinar.Message]:
-            return {
-                'moderated': [message.serialize() for message in self.moderated],
-                'awaiting': [message.serialize() for message in self.awaiting]
-            }
+            self.awaiting = []
+            self.moderated = []
+            for message in messages:
+                message = Webinar.Message(message)
+                [self.awaiting, self.moderated][message.isModerated].append(message)
 
     class Event:
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
 
-        def __init__(self, user: Webinar.User, **data: Any) -> None:
-            self = Converter(self, self.attrs, **data).convert()
+        def __init__(self, user: Webinar.User, data: Dict[str, Any]) -> None:
+            self = Converter(self, self.attrs, data).convert()
             self.session_id = data['eventSessions'][0]['id']
             self.image = data['image']['url']
             self.url = Webinar.Routes.STREAM.format(
