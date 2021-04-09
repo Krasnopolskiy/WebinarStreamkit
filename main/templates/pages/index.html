@@ -12,7 +12,8 @@
     <div class="row">
         <div class="col px-5">
             <h2>Совершенно новый StreamKit для платформы Webinar</h2>
-            <p class="lead">Удобный виджет для администраторов вебинара. С помощью него Вы можете модерировать чат, создавать и управлять вебинарами</p>
+            <p class="lead">Удобный виджет для администраторов вебинара. С помощью него Вы можете модерировать чат,
+                создавать и управлять вебинарами</p>
         </div>
     </div>
     <div class="row">
@@ -30,10 +31,16 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Как начать?</h5>
+                    {% if user.is_authenticated %}
+                    <p class="card-text">Для получения информации о запланированных Вами мероприятиях, пожалуйста,
+                        авторизуйтесь в аккаунте Webinar на нашем сайте.</p>
+                    <a class="btn btn-primary me-3">Авторизация Webinar</a>
+                    {% else %}
                     <p class="card-text">Для начала работы необходимо зарегистрироваться или авторизоваться под Вашим
                         аккаунтом</p>
                     <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
                     <a href="{% url 'signup' %}" class="btn btn-primary ms-3">Регистрация</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
