@@ -65,6 +65,7 @@ class ModeratedMessagesView(LoginRequiredMixin, View):
     context = {'pagename': 'Moderated'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        self.context['title'] = 'Сообщения'
         return render(request, 'pages/widget.html', self.context)
 
 
@@ -72,4 +73,5 @@ class AwaitingMessagesView(LoginRequiredMixin, View):
     context = {'pagename': 'Awaiting'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        self.context['title'] = 'Ожидают модерацию'
         return render(request, 'pages/widget.html', self.context)
