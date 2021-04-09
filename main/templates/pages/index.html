@@ -13,7 +13,7 @@
         <div class="col px-5">
             <h2>Совершенно новый StreamKit для платформы Webinar</h2>
             <p class="lead">Удобный виджет для администраторов вебинара. С помощью него Вы можете модерировать чат,
-                создавать и управлять вебинарами</p>
+                создавать вебинары и управлять ими</p>
         </div>
     </div>
     <div class="row">
@@ -34,7 +34,7 @@
                     {% if user.is_authenticated %}
                     <p class="card-text">Для получения информации о запланированных Вами мероприятиях, пожалуйста,
                         авторизуйтесь в аккаунте Webinar на нашем сайте.</p>
-                    <a class="btn btn-primary me-3">Авторизация Webinar</a>
+                    <a href="{% url 'profile' %}" class="btn btn-primary me-3">Авторизация Webinar</a>
                     {% else %}
                     <p class="card-text">Для начала работы необходимо зарегистрироваться или авторизоваться под Вашим
                         аккаунтом</p>
@@ -47,4 +47,8 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/script.js' %}"></script>
 {% endblock %}
