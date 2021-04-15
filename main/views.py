@@ -61,17 +61,23 @@ class EventView(LoginRequiredMixin, View):
         return render(request, 'pages/event.html', self.context)
 
 
-class ModeratedMessagesView(LoginRequiredMixin, View):
-    context = {'pagename': 'Moderated'}
+class ChatView(LoginRequiredMixin, View):
+    context = {'pagename': 'Chat'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['title'] = 'Сообщения'
-        return render(request, 'pages/widget.html', self.context)
+        return render(request, 'pages/chat.html', self.context)
 
 
 class AwaitingMessagesView(LoginRequiredMixin, View):
     context = {'pagename': 'Awaiting'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['title'] = 'Ожидают модерацию'
-        return render(request, 'pages/widget.html', self.context)
+        return render(request, 'pages/awaiting.html', self.context)
+
+
+class ControlView(LoginRequiredMixin, View):
+    context = {'pagename': 'Control'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        self.context['event'] = request.user.webinar_session.get_event({'id': event_id})
+        return render(request, 'pages/control.html', self.context)

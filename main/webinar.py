@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+from django.db import router
+
 
 class Converter:
     def __init__(self, object: Any, attrs: List[str], data: Dict[str, Any]) -> None:
@@ -25,7 +27,10 @@ class Webinar:
         EVENT = API.format(route='/event/{event_id}')
         CHAT = API.format(route='/eventsessions/{session_id}/chat')
         ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
-        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
+        DELETE_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/delete')
+        SETTINGS = API.format(route='/eventsessions/{session_id}/chat/settings')
+        START = API.format(route='/eventsession/{session_id}/start')
+        STOP = API.format(route='/eventsession/{session_id}/stop')
 
     class User:
         attrs = ['id', 'name', 'secondName', 'email']
@@ -58,6 +63,8 @@ class Webinar:
             for message in messages:
                 message = Webinar.Message(message)
                 [self.awaiting, self.moderated][message.isModerated].append(message)
+            self.awaiting.reverse()
+            self.moderated.reverse()
 
     class Event:
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
@@ -65,6 +72,7 @@ class Webinar:
         def __init__(self, user: Webinar.User, data: Dict[str, Any]) -> None:
             self = Converter(self, self.attrs, data).convert()
             self.session_id = data['eventSessions'][0]['id']
+            self.status = data['eventSessions'][0]['status']
             self.image = data['image']['url']
             self.url = Webinar.Routes.STREAM.format(
                 user_id=user.id,

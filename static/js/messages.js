@@ -12,12 +12,24 @@ let update_messages = template => {
 let update_event_handlers = () => {
     $('.accept-message-btn').click(event => {
         let message_id = $(event.target).siblings('input[name="message-id"]').val()
-        ws.send(`{"command": "accept message", "message_id": ${message_id}}`)
+        let payload = {
+            command: 'accept message',
+            params: {
+                'message_id': message_id
+            }
+        }
+        ws.send(JSON.stringify(payload))
     })
 
     $('.delete-message-btn').click(event => {
         let message_id = $(event.target).siblings('input[name="message-id"]').val()
-        ws.send(`{"command": "delete message", "message_id": ${message_id}}`)
+        let payload = {
+            command: 'delete message',
+            params: {
+                'message_id': message_id
+            }
+        }
+        ws.send(JSON.stringify(payload))
     })
 }
 

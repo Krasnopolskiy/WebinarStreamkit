@@ -38,13 +38,13 @@ class WebinarSession(models.Model):
         data = loads(self.session.get(route).text)
         self.webinar_user = Webinar.User(data, True)
         self.save()
-    
+
     def ensure_session(self) -> None:
         if not self.validate_session():
             err = self.login_user()
             if err is not None:
                 raise Exception
-    
+
     def get_user(self) -> Webinar.User:
         self.ensure_session()
         return self.webinar_user
@@ -75,17 +75,32 @@ class WebinarSession(models.Model):
         data = loads(self.session.get(route).text)
         return Webinar.Chat(data)
 
-    def accept_message(self, message_id: int, event: Webinar.Event) -> None:
+    def accept_message(self, event: Webinar.Event, *args, **kwargs) -> None:
         self.ensure_session()
-        payload = {'isModerated': 'true', 'messageIds[0]': message_id}
+        payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = Webinar.Routes.ACCEPT_MESSAGE.format(session_id=event.session_id)
         self.session.put(route, data=payload)
 
-    def delete_message(self, message_id: int, event: Webinar.Event) -> None:
+    def delete_message(self, event: Webinar.Event, *args, **kwargs) -> None:
         self.ensure_session()
-        payload = {'messageIds[0]': message_id}
+        payload = {'messageIds[0]': kwargs.get('message_id')}
         route = Webinar.Routes.DELETE_MESSAGE.format(session_id=event.session_id)
         self.session.put(route, data=payload)
+
+    def update_settings(self, event: Webinar.Event, *args, **kwargs) -> None:
+        self.ensure_session()
+        route = Webinar.Routes.SETTINGS.format(session_id=event.session_id)
+        self.session.put(route, data=kwargs).text
+
+    def start(self, event: Webinar.Event) -> None:
+        self.ensure_session()
+        route = Webinar.Routes.START.format(session_id=event.session_id)
+        self.session.put(route)
+
+    def stop(self, event: Webinar.Event) -> None:
+        self.ensure_session()
+        route = Webinar.Routes.STOP.format(session_id=event.session_id)
+        self.session.put(route)
 
 
 class User(AbstractUser):

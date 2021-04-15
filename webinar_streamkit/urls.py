@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import path, reverse_lazy
 from django_registration.backends.one_step.views import RegistrationView
 
-from main.consumers import ChatConsumer
+from main.consumers import AwaitingMessagesConsumer, ChatConsumer, ControlConsumer
 from main.forms import ExtendedSignupForm
 from main.views import *
 
@@ -31,8 +31,9 @@ urlpatterns = [
     path('profile/user/information', UserInformationView.as_view(), name='update_user_information'),
     path('schedule/', ScheduleView.as_view(), name='schedule'),
     path('event/<int:event_id>', EventView.as_view(), name='event'),
-    path('event/<int:event_id>/moderated', ModeratedMessagesView.as_view(), name='moderated_messages'),
-    path('event/<int:event_id>/awaiting', AwaitingMessagesView.as_view(), name='awaiting_messages')
+    path('event/<int:event_id>/chat', ChatView.as_view(), name='chat'),
+    path('event/<int:event_id>/awaiting', AwaitingMessagesView.as_view(), name='awaiting'),
+    path('event/<int:event_id>/control', ControlView.as_view(), name='control')
 ]
 
 
@@ -44,6 +45,7 @@ if settings.DEBUG:
 
 
 websocket_urlpatterns = [
-    path('event/<int:event_id>/moderated', ChatConsumer.as_asgi()),
-    path('event/<int:event_id>/awaiting', ChatConsumer.as_asgi()),
+    path('event/<int:event_id>/chat', ChatConsumer.as_asgi()),
+    path('event/<int:event_id>/awaiting', AwaitingMessagesConsumer.as_asgi()),
+    path('event/<int:event_id>/control', ControlConsumer.as_asgi()),
 ]
