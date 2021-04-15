@@ -1,3 +1,7 @@
+{% if chat.awaiting|length > 0 %}
 {% for message in chat.awaiting %}
 {% include 'components/widget/messages/awaiting.html' with message=message %}
 {% endfor %}
+{% else %}
+<h4 class="lead fs-4">Нет сообщений</h4>
+{% endif %}
