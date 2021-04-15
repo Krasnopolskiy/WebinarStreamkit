@@ -2,15 +2,15 @@ let url = new URL(window.location.href)
 
 $('#widget').click(event => {
     let height = 600, width = 400
-    w1 = window.open(`${url.href}/moderated`, 'Moderated chat', `height=${height}, width=${width}, top=0, left=0`)
-    w2 = window.open(`${url.href}/awaiting`, 'Awaiting chat', `height=${height}, width=${width}, top=0, left=${width + 20}`)
-    if (!w1 || !w2)
+    let params = 'height=600, width=400, top=0, left=0'
+    w1 = window.open(`${url.href}/moderated`, 'Moderated chat', params)
+    w2 = window.open(`${url.href}/awaiting`, 'Awaiting chat', params)
+    if (w1 === null || w2 === null)
     {
-        if (!w1 && w2)
+        if (w2 !== null)
             w2.close()
-        else if (!w2 && w1)
+        if (w1 !== null)
             w1.close()
-        alert('Внимание! У вас отключены всплывающие окна. \nЧтобы продолжить работу включите их')
+        iziToast.error({ message: 'Чтобы продолжить работу, включите всплывающие окна.' })
     }
-
 })
