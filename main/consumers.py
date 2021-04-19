@@ -41,7 +41,7 @@ class Timer:
 
 
 def get_chat_template(webinar_session: WebinarSession, event_id: str, mode: ChatMode) -> str:
-    event = webinar_session.get_event({'id': event_id})
+    event = webinar_session.get_event(event_id)
     chat = webinar_session.get_chat(event)
     return render_to_string(f'components/widget/{mode.value}.html', {'chat': chat})
 
@@ -88,7 +88,7 @@ class BaseConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data: str) -> None:
         message = loads(text_data)
-        event = await sync_to_async(self.webinar_session.get_event)({'id': self.event_id})
+        event = await sync_to_async(self.webinar_session.get_event)(self.event_id)
         if message['command'] in self.commands:
             await self.commands[message['command']](event, **message['params'])
 

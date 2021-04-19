@@ -19,18 +19,19 @@ class Converter:
 
 class Webinar:
     class Routes:
-        STREAM = 'https://events.webinar.ru/{user_id}/{event_id}/stream-new/{session_id}'
-        API = 'https://events.webinar.ru/api/{route}'
-        LOGIN = API.format(route='/login')
-        USER = API.format(route='/user/{user_id}')
-        PLANNED = API.format(route='/organizations/{organization_id}/eventsessions/list/planned')
-        EVENT = API.format(route='/event/{event_id}')
-        CHAT = API.format(route='/eventsessions/{session_id}/chat')
-        ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
-        DELETE_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/delete')
-        SETTINGS = API.format(route='/eventsessions/{session_id}/chat/settings')
-        START = API.format(route='/eventsession/{session_id}/start')
-        STOP = API.format(route='/eventsession/{session_id}/stop')
+        DOMAIN = 'https://events.webinar.ru/{url}'
+        STREAM = DOMAIN.format(url='{user_id}/{event_id}/stream-new/{session_id}')
+        API = DOMAIN.format(url='api/{route}')
+        LOGIN = API.format(route='login')
+        USER = API.format(route='user/{user_id}')
+        PLANNED = API.format(route='organizations/{organization_id}/eventsessions/list/planned')
+        EVENT = API.format(route='event/{event_id}')
+        CHAT = API.format(route='eventsessions/{session_id}/chat')
+        ACCEPT_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/moderate')
+        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
+        SETTINGS = API.format(route='eventsessions/{session_id}/chat/settings')
+        START = API.format(route='eventsession/{session_id}/start')
+        STOP = API.format(route='eventsession/{session_id}/stop')
 
     class User:
         attrs = ['id', 'name', 'secondName', 'email']
@@ -69,13 +70,13 @@ class Webinar:
     class Event:
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
 
-        def __init__(self, user: Webinar.User, data: Dict[str, Any]) -> None:
+        def __init__(self, user_id: int, data: Dict[str, Any]) -> None:
             self = Converter(self, self.attrs, data).convert()
             self.session_id = data['eventSessions'][0]['id']
             self.status = data['eventSessions'][0]['status']
             self.image = data['image']['url']
             self.url = Webinar.Routes.STREAM.format(
-                user_id=user.id,
+                user_id=user_id,
                 event_id=self.id,
                 session_id=self.session_id
             )
