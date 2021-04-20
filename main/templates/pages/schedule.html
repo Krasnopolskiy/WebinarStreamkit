@@ -48,7 +48,10 @@
                     </tbody>
                 </table>
                 {% else %}
-                <h4 class="lead fs-4 text-center">Нет ни одного запланированного вебинара</h4>
+                <div class="position-relative">
+                    <h4 class="lead fs-4 text-center">Нет ни одного запланированного вебинара</h4>
+                    <a href="{{ webinar_url }}" target="_blank" class="btn btn-primary position-absolute top-50 end-0 translate-middle-y">Запланировать</a>
+                </div>
                 {% endif %}
             </div>
         </div>

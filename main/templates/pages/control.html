@@ -6,10 +6,10 @@
     <hr>
     <div class="row my-3">
         <div class="col d-grid">
-            <button class="btn btn-secondary" id="chat-btn">Сообщения</button>
+            <button class="btn btn-primary" id="chat-btn">Сообщения</button>
         </div>
         <div class="col d-grid">
-            <button class="btn btn-secondary" id="awaiting-btn">Модерация</button>
+            <button class="btn btn-primary" id="awaiting-btn">Модерация</button>
         </div>
     </div>
     <div class="row">
@@ -17,7 +17,7 @@
             {% if event.status == 'START' %}
             <button class="btn btn-danger" id="stop-btn">Завершить</button>
             {% else %}
-            <button class="btn btn-primary" id="start-btn">Запустить</button>
+            <button class="btn btn-success" id="start-btn">Запустить</button>
             {% endif %}
         </div>
         <div class="col py-2">

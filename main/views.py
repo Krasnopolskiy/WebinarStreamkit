@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views import View
 
 from main.forms import UserInformationForm, WebinarCredentialsForm
+from main.webinar import BaseRouter
 
 
 class IndexView(View):
@@ -52,6 +53,7 @@ class ScheduleView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         self.context['events'] = request.user.webinar_session.get_schedule()
+        self.context['webinar_url'] = BaseRouter.EVENTS.value.format(route='')
         return render(request, 'pages/schedule.html', self.context)
 
 
