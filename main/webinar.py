@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Any, Dict, List
-
-from django.db import router
 
 
 class Converter:
@@ -17,22 +16,32 @@ class Converter:
         return self.object
 
 
-class Webinar:
-    class Routes:
-        DOMAIN = 'https://events.webinar.ru/{url}'
-        STREAM = DOMAIN.format(url='{user_id}/{event_id}/stream-new/{session_id}')
-        API = DOMAIN.format(url='api/{route}')
-        LOGIN = API.format(route='login')
-        USER = API.format(route='user/{user_id}')
-        PLANNED = API.format(route='organizations/{organization_id}/eventsessions/list/planned')
-        EVENT = API.format(route='event/{event_id}')
-        CHAT = API.format(route='eventsessions/{session_id}/chat')
-        ACCEPT_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/moderate')
-        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
-        SETTINGS = API.format(route='eventsessions/{session_id}/chat/settings')
-        START = API.format(route='eventsession/{session_id}/start')
-        STOP = API.format(route='eventsession/{session_id}/stop')
+class BaseRouter(Enum):
+    EVENTS = 'https://events.webinar.ru/{route}'
+    STREAM = EVENTS.format(route='{user_id}/{event_id}/stream-new/{session_id}')
+    API = EVENTS.format(route='api/{route}')
 
+
+class UserRouter(Enum):
+    LOGIN = BaseRouter.API.value.format(route='login')
+    INFO = BaseRouter.API.value.format(route='user/{user_id}')
+
+
+class EventRouter(Enum):
+    PLANNED = BaseRouter.API.value.format(route='organizations/{organization_id}/eventsessions/list/planned')
+    INFO = BaseRouter.API.value.format(route='event/{event_id}')
+    START = BaseRouter.API.value.format(route='eventsession/{session_id}/start')
+    STOP = BaseRouter.API.value.format(route='eventsession/{session_id}/stop')
+
+
+class MessageRouter(Enum):
+    CHAT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat')
+    ACCEPT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/moderate')
+    DELETE = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/delete')
+    SETTINGS = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/settings')
+
+
+class Webinar:
     class User:
         attrs = ['id', 'name', 'secondName', 'email']
 
@@ -75,7 +84,7 @@ class Webinar:
             self.session_id = data['eventSessions'][0]['id']
             self.status = data['eventSessions'][0]['status']
             self.image = data['image']['url']
-            self.url = Webinar.Routes.STREAM.format(
+            self.url = BaseRouter.STREAM.value.format(
                 user_id=user_id,
                 event_id=self.id,
                 session_id=self.session_id
