@@ -7,8 +7,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from requests import Session
 
-from main.webinar import (BaseRouter, EventRouter, MessageRouter, UserRouter,
-                          Webinar)
+from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
 
 class WebinarSession(models.Model):
@@ -26,6 +25,15 @@ class WebinarSession(models.Model):
             if cookie.name == cookie_name:
                 return cookie
 
+    def is_login_required(self) -> bool:
+        return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
+
+    def ensure_session(self) -> Optional[Dict]:
+        if self.is_login_required():
+            errors = self.login()
+            return errors if errors else None
+        self.session.cookies.set('sessionId', self.cookie)
+
     def login(self) -> Optional[Dict]:
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password}
@@ -37,15 +45,6 @@ class WebinarSession(models.Model):
         self.last_login = date.today()
         self.cookie = self.get_cookie('sessionId').value
         self.save()
-
-    def is_login_required(self) -> bool:
-        return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
-
-    def ensure_session(self) -> Optional[Dict]:
-        if self.is_login_required():
-            errors = self.login()
-            return errors if errors else None
-        self.session.cookies.set('sessionId', self.cookie)
 
     def get_user(self) -> Webinar.User:
         errors = self.ensure_session()
