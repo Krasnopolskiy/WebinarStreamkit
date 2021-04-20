@@ -23,7 +23,9 @@ class ProfileView(LoginRequiredMixin, View):
         self.context['forms'] = {
             'information': UserInformationForm(),
             'password': PasswordChangeForm(user=request.user),
-            'webinar': WebinarCredentialsForm()
+            'webinar': WebinarCredentialsForm(initial={
+                'email': request.user.webinar_session.email
+            })
         }
         self.context['webinar_user'] = request.user.webinar_session.get_user()
         return render(request, 'pages/profile.html', self.context)
@@ -57,7 +59,7 @@ class EventView(LoginRequiredMixin, View):
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['event'] = request.user.webinar_session.get_event({'id': event_id})
+        self.context['event'] = request.user.webinar_session.get_event(event_id)
         return render(request, 'pages/event.html', self.context)
 
 
@@ -79,5 +81,5 @@ class ControlView(LoginRequiredMixin, View):
     context = {'pagename': 'Control'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['event'] = request.user.webinar_session.get_event({'id': event_id})
+        self.context['event'] = request.user.webinar_session.get_event(event_id)
         return render(request, 'pages/control.html', self.context)
