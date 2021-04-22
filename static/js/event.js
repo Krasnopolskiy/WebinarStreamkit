@@ -3,5 +3,5 @@ let widget
 
 $('#widget').click(() => {
     if (widget === undefined || widget.closed)
-        widget = window.open(`${url.href}/control`, 'Control', `height=${35*vh}, width=${30*vw}, top=5, left=0`)
+        widget = window.open(`${url.href}/control`, 'Control', `height=${280}, width=${420}, top=5, left=0`)
 })

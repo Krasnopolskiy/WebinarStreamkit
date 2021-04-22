@@ -11,7 +11,7 @@ let update_messages = template => {
 
 let update_event_handlers = () => {
     $('.accept-message-btn').click(event => {
-        let message_id = $(event.target).siblings('input[name="message-id"]').val()
+        let message_id = $(event.target).parent().siblings('input[name="message-id"]').val()
         let payload = {
             command: 'accept message',
             params: {
@@ -22,7 +22,7 @@ let update_event_handlers = () => {
     })
 
     $('.delete-message-btn').click(event => {
-        let message_id = $(event.target).siblings('input[name="message-id"]').val()
+        let message_id = $(event.target).parent().siblings('input[name="message-id"]').val()
         let payload = {
             command: 'delete message',
             params: {

@@ -82,7 +82,7 @@ class WebinarSession(models.Model):
         errors = self.ensure_session()
         payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.ACCEPT.value.format(session_id=session_id)
-        self.session.put(route, data=payload)
+        self.session.put(route, data=payload).text
 
     def delete_message(self, session_id: int, **kwargs) -> None:
         errors = self.ensure_session()

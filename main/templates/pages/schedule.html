@@ -33,7 +33,7 @@
                             <th class="p-3" scope="row">{{ forloop.counter }}</th>
                             <td class="p-3 text-truncate">{{ event.name }}</td>
                             {% if not event.description %}
-                            <td class="p-3 text-truncate"> - </td>
+                            <td class="p-3 text-truncate"> &#8212; </td>
                             {% else %}
                             <td class="p-3 text-truncate">{{ event.description }}</td>
                             {% endif %}

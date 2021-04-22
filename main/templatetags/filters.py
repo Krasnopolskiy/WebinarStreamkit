@@ -15,3 +15,11 @@ def parse_date(date_string: str) -> Optional[datetime]:
         return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         return None
+
+
+@register.filter
+def parse_time(date_string: str) -> Optional[datetime]:
+    try:
+        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z").time()
+    except ValueError:
+        return None
