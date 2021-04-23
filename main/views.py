@@ -96,7 +96,21 @@ class ExtendedLoginView(LoginView):
         response = super(LoginView, self).post(request, *args, **kwargs)
         if request.user.is_autenticated:
             request.session['user'] = request.user.auth.uid
-            messages.add_message(request, messages.SUCCESS, 'Logged in')
+            messages.add_message(request, messages.SUCCESS, 'Авторизация прошла успешно')
         else:
-            messages.add_message(request, messages.ERROR, 'Invalid username or password')
+            messages.add_message(request, messages.ERROR, 'Неправильное имя пользователя или пароль. Повторите попытку')
+        return response
+
+
+class ExtendedRegistrationView(RegistrationView):
+    def post(self, request: HttpRequest, forms=None, *args, **kwargs):
+        response = super(RegistrationView, self).post(request, *args, **kwargs)
+        form = forms.SignupForm(request.POST)
+        if request.user.is_autenticated:
+            request.session['user'] = request.user.author.uid
+            messages.add_message(request, messages.SUCCESS, 'Регистрация прошла успешно')
+        else:
+            for scope in form.errors.values():
+                for error in list(scope):
+                    messages.add_message(request, messages.ERROR, error)
         return response
