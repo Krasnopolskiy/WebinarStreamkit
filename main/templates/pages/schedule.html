@@ -1,39 +1,60 @@
 {% extends 'base/base.html' %}
+{% load filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row my-5">
-        <div class="col">
-            <h2 class="text-center m-3">Список вебинаров</h2>
-        </div>
-    </div>
+{% include 'components/base/navbar.html' %}
 
-    {% if webinars %}
-       <p>Здесь отображается список вебинаров</p>
-    {% else %}
-        <p>Списка пока нет, вот вам пример демо-карточки</p>
-        <div class="row justify-content-center">
-            <div class="col-sm-4 p-3">
-                <div class="card mb-3 rounded shadow">
-                    <div class="card-header text-center">
-                        <h4 class="card-title">Название {{ webinar.name }}</h4>
-                        <h5 class="card-text">Время начала: {{ webinar.date }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Организатор: {{ webinar.organizer }}</p>
-                        <hr>
-                        <p class="card-text">Длительность: {{ webinar.duration }}</p>
-                        <hr>
-                        <p class="card-text">Краткое описание: {{ webinar.description }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-grid">
-                            <input class="btn btn-primary mt-2" href="#" type="submit" value="Открыть">
-                        </div>
-                    </div>
+<div class="container">
+    <div class="row m-3 mt-3">
+        <h2 class="display-6">Расписание вебинаров</h2>
+    </div>
+    <div class="row my-3">
+        <div class="col">
+            <div class="shadow-sm p-3 border rounded">
+                {% if events|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="p-3" scope="col">#</th>
+                            <th class="p-3" scope="col">Название</th>
+                            <th class="p-3" scope="col">Описание</th>
+                            <th class="p-3" scope="col">Начало</th>
+                            <th class="p-3" scope="col">Конец</th>
+                            <th class="p-3" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <th class="p-3" scope="row">{{ forloop.counter }}</th>
+                            <td class="p-3 text-truncate">{{ event.name }}</td>
+                            {% if not event.description %}
+                            <td class="p-3 text-truncate"> &#8212; </td>
+                            {% else %}
+                            <td class="p-3 text-truncate">{{ event.description }}</td>
+                            {% endif %}
+                            <td class="p-3">{{ event.startsAt|parse_date }}</td>
+                            <td class="p-3">{{ event.endsAt|parse_date }}</td>
+                            <td class="p-3">
+                                <a href="{% url 'event' event_id=event.id %}"
+                                    class="btn btn-outline-primary">Перейти</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="position-relative">
+                    <h4 class="lead fs-4 text-center">Нет ни одного запланированного вебинара</h4>
+                    <a href="{{ webinar_url }}" target="_blank" class="btn btn-primary position-absolute top-50 end-0 translate-middle-y">Запланировать</a>
                 </div>
+                {% endif %}
             </div>
         </div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

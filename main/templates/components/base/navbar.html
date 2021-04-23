@@ -2,6 +2,7 @@
 {% url 'login' as login_url %}
 {% url 'index' as index_url %}
 {% url 'profile' as profile_url %}
+{% url 'schedule' as schedule_url %}
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -19,6 +20,10 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.path == index_url %}active disabled{% endif %}"
                                 href="{% url 'index' %}">Главная</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == schedule_url %}active disabled{% endif %}"
+                                href="{% url 'schedule' %}">Расписание вебинаров</a>
                         </li>
                         {% endif %}
                         {% if user.is_staff %}
@@ -41,10 +46,6 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.path == profile_url %}active disabled{% endif %}"
                                 href="{% url 'profile' %}">Профиль</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == schedule_url %}active disabled{% endif %}"
-                                href="{% url 'schedule' %}">Список вебинаров</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
