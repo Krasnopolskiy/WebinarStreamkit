@@ -309,42 +309,48 @@
 },
 {
     "model": "sessions.session",
-    "pk": "iaemfrfvvcw8241m6ejgxh93ef1tjbs5",
+    "pk": "uc2vmj89nw7zqe3ckrcshl20130aovn4",
     "fields": {
-        "session_data": ".eJxVjDkOwjAUBe_iGlnYeAslPWeIvv-CA8iW4qRC3B0ipYD2zcx7qRHWpYxr53mcSJ2VVYffLQM-uG6A7lBvTWOryzxlvSl6p11fG_Hzsrt_BwV6-dYhOUAxmYm9HSgdBQcfYvYnFy0ETCIoycTIHIUcsvWWQsomMlh0oN4fA6k43A:1lZanP:Ncxa9fhhXTLbShhbXxOPopeqcBY93E14mbRBipscdoY",
-        "expire_date": "2021-05-06T14:59:11.957Z"
+        "session_data": ".eJxVjEEOwiAQRe_C2hAohSku3XsGMgyDVA0kpV0Z765NutDtf-_9lwi4rSVsnZcwJ3EWWpx-t4j04LqDdMd6a5JaXZc5yl2RB-3y2hI_L4f7d1Cwl2-t2EdNVnmdJiDwZCCTHcCzSjQiqJwjsnNKO-t8GjI7JIN6YiAzWhTvD-opODo:1la1Zo:q6aAe_31eshOyQWm9FzwfEl9cjWOP14htbKnL94kLTw",
+        "expire_date": "2021-05-07T19:34:56.773Z"
     }
 },
 {
     "model": "main.webinarsession",
     "pk": 1,
     "fields": {
-        "email": "",
-        "password": ""
+        "user_id": null,
+        "email": null,
+        "password": null,
+        "cookie": null,
+        "last_login": null
     }
 },
 {
     "model": "main.webinarsession",
     "pk": 2,
     "fields": {
-        "email": "",
-        "password": ""
+        "user_id": null,
+        "email": null,
+        "password": null,
+        "cookie": null,
+        "last_login": null
     }
 },
 {
     "model": "main.user",
     "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$216000$ubPUryiC7Ra4$XfhISOl40qadZ70TeHs/YOFKMf/Is21eL3Bkahfu8RQ=",
-        "last_login": "2021-04-15T18:20:55.193Z",
-        "is_superuser": false,
-        "username": "vasya26",
+        "password": "pbkdf2_sha256$216000$9k5lpH4J54CV$SJ5fWexX1rIvHtiVjILD5mUhjKs7L2XNcR34a/pzR9Q=",
+        "last_login": "2021-04-23T19:34:56.665Z",
+        "is_superuser": true,
+        "username": "vasya",
         "first_name": "",
         "last_name": "",
-        "email": "123@gmail.com",
-        "is_staff": false,
+        "email": "1@abc.net",
+        "is_staff": true,
         "is_active": true,
-        "date_joined": "2021-04-15T17:56:46.773Z",
+        "date_joined": "2021-04-23T19:33:57.364Z",
         "avatar": "avatar.svg",
         "webinar_session": 1,
         "groups": [],
@@ -355,16 +361,16 @@
     "model": "main.user",
     "pk": 2,
     "fields": {
-        "password": "pbkdf2_sha256$216000$mb4p4KwAdLTE$5YCYoPS7F6L4b3ZA6dUUlwHOSvfxARE0et4IZ69U6kc=",
-        "last_login": "2021-04-22T14:59:11.851Z",
+        "password": "pbkdf2_sha256$216000$k9MfFxpKBeR6$5JbMj5nIEhjr8tK7ShZ6TichFiop14SfzilpAy3qx7k=",
+        "last_login": "2021-04-23T19:34:45.716Z",
         "is_superuser": false,
-        "username": "vasya",
+        "username": "petya",
         "first_name": "",
         "last_name": "",
-        "email": "123@gmail.com",
+        "email": "abacaba@mail.ru",
         "is_staff": false,
         "is_active": true,
-        "date_joined": "2021-04-22T14:57:55.219Z",
+        "date_joined": "2021-04-23T19:34:44.947Z",
         "avatar": "avatar.svg",
         "webinar_session": 2,
         "groups": [],
