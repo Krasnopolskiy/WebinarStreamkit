@@ -1,10 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.http import HttpRequest
 from django.http.response import HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from django.contrib import messages
+from django_registration.views import RegistrationView
 
 from main.forms import UserInformationForm, WebinarCredentialsForm
 from main.webinar import BaseRouter
@@ -85,3 +89,14 @@ class ControlView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
         self.context['event'] = request.user.webinar_session.get_event(event_id)
         return render(request, 'pages/control.html', self.context)
+
+
+class ExtendedLoginView(LoginView):
+    def post(self, request: HttpRequest, *args, **kwargs):
+        response = super(LoginView, self).post(request, *args, **kwargs)
+        if request.user.is_autenticated:
+            request.session['user'] = request.user.auth.uid
+            messages.add_message(request, messages.SUCCESS, 'Logged in')
+        else:
+            messages.add_message(request, messages.ERROR, 'Invalid username or password')
+        return response
