@@ -13,6 +13,11 @@ from django.template.loader import render_to_string
 from main.models import WebinarSession
 
 
+class ChatMode(Enum):
+    MODERATED = 'moderated'
+    AWAITING = 'awaiting'
+
+
 class Timer:
     def __init__(self, timeout: float, callback: Callable, *args: Any, **kwargs: Dict) -> None:
         self.timeout = timeout
@@ -35,14 +40,19 @@ class Timer:
         self.task.cancel()
 
 
-def get_chat_template(mode: str, webinar_session: WebinarSession, event_id: str) -> str:
-    event = webinar_session.get_event({'id': event_id})
-    chat = webinar_session.get_chat(event)
-    return render_to_string(f'components/widget/{mode}.html', {'chat': chat})
+def get_chat_template(webinar_session: WebinarSession, event_id: str, mode: ChatMode) -> str:
+    event = webinar_session.get_event(event_id)
+    chat = webinar_session.get_chat(event.session_id)
+    return render_to_string(f'components/widget/{mode.value}.html', {'chat': chat})
 
 
 async def send_chat(consumer: ChatConsumer) -> None:
-    template = await sync_to_async(get_chat_template)(consumer.mode, consumer.webinar_session, consumer.event_id)
+    template = await sync_to_async(get_chat_template)(
+        consumer.webinar_session,
+        consumer.event_id,
+        consumer.mode
+    )
+
     await consumer.channel_layer.group_send(
         consumer.room,
         {
@@ -55,20 +65,13 @@ async def send_chat(consumer: ChatConsumer) -> None:
     )
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
-    MODES = ['moderated', 'awaiting']
-
+class BaseConsumer(AsyncWebsocketConsumer):
     async def connect(self) -> None:
         self.event_id = self.scope['url_route']['kwargs']['event_id']
-        self.mode = self.scope['path'].split('/')[-1]
-        if self.mode not in ChatConsumer.MODES:
-            self.mode = ChatConsumer.MODES[0]
         self.room = f'client_{self.event_id}_{uuid4()}'
 
         user_id = self.scope['user'].id
         self.webinar_session = await sync_to_async(WebinarSession.objects.get)(user=user_id)
-        self.timer = Timer(1, send_chat, self)
-        self.timer.enable()
 
         await self.channel_layer.group_add(
             self.room,
@@ -85,11 +88,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data: str) -> None:
         message = loads(text_data)
-        event = await sync_to_async(self.webinar_session.get_event)({'id': self.event_id})
-        if message['command'] == 'accept message':
-            await sync_to_async(self.webinar_session.accept_message)(message['message_id'], event)
-        elif message['command'] == 'delete message':
-            await sync_to_async(self.webinar_session.delete_message)(message['message_id'], event)
+        event = await sync_to_async(self.webinar_session.get_event)(self.event_id)
+        if message['command'] in self.commands:
+            await self.commands[message['command']](event.session_id, **message['params'])
 
     async def server_message(self, event: dict) -> None:
         await self.send(text_data=dumps(event['message']))
+
+
+class ChatConsumer(BaseConsumer):
+    async def connect(self) -> None:
+        await super().connect()
+        self.mode = ChatMode.MODERATED
+        self.timer = Timer(1, send_chat, self)
+        self.timer.enable()
+        self.commands = {
+            'delete message': sync_to_async(self.webinar_session.delete_message)
+        }
+
+
+class AwaitingMessagesConsumer(BaseConsumer):
+    async def connect(self) -> None:
+        await super().connect()
+        self.mode = ChatMode.AWAITING
+        self.timer = Timer(1, send_chat, self)
+        self.timer.enable()
+        self.commands = {
+            'accept message': sync_to_async(self.webinar_session.accept_message),
+            'delete message': sync_to_async(self.webinar_session.delete_message)
+        }
+
+
+class ControlConsumer(BaseConsumer):
+    async def connect(self) -> None:
+        await super().connect()
+        self.commands = {
+            'update settings': sync_to_async(self.webinar_session.update_settings),
+            'start': sync_to_async(self.webinar_session.start),
+            'stop': sync_to_async(self.webinar_session.stop)
+        }

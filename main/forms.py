@@ -22,11 +22,11 @@ class UserInformationForm(forms.ModelForm):
 
 class WebinarCredentialsForm(forms.ModelForm):
     email = forms.EmailField(
-        widget=forms.EmailInput,
+        widget=forms.EmailInput(attrs={'placeholder': 'john.doe@mail.com'}),
         label='Адрес электронной почты Webinar'
     )
     password = forms.CharField(
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(attrs={'placeholder': '********'}),
         label='Пароль Webinar'
     )
 
