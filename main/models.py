@@ -107,6 +107,12 @@ class WebinarSession(models.Model):
 
 
 class User(AbstractUser):
+    """
+    Модель пользователя с аватаром и ключом API
+
+    :param avatar: ссылка на изображение
+    :param webinar_session: ForeignKey на модель сессии
+    """
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
 
