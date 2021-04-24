@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'crispy_forms',
-    'django_registration'
+    'django_registration',
+    'channels'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -70,13 +70,25 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'builtins': [
+                'django.templatetags.static',
+                'main.templatetags.filters'
+            ]
         },
     },
 ]
 
 AUTH_USER_MODEL = 'main.User'
 WSGI_APPLICATION = 'webinar_streamkit.wsgi.application'
-
+ASGI_APPLICATION = 'webinar_streamkit.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -88,7 +100,9 @@ DATABASES = {
     }
 }
 
-
+FIXTURE_DIRS = [
+    'first/fixtures',
+]
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

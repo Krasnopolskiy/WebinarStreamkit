@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Any, Dict, List
 
 
@@ -7,6 +8,7 @@ class Converter:
     """
     класс-конвертер
     """
+
     def __init__(self, object: Any, attrs: List[str], data: Dict[str, Any]) -> None:
         """
         конструктор класса
@@ -19,6 +21,7 @@ class Converter:
         self.data = data
         self.attrs = attrs
 
+
     def convert(self) -> Any:
         """
         сама функция конвертирования
@@ -28,33 +31,60 @@ class Converter:
         return self.object
 
 
+class BaseRouter(Enum):
+    EVENTS = 'https://events.webinar.ru/{route}'
+    STREAM = EVENTS.format(route='{user_id}/{event_id}/stream-new/{session_id}')
+    API = EVENTS.format(route='api/{route}')
+
+
+class UserRouter(Enum):
+    LOGIN = BaseRouter.API.value.format(route='login')
+    INFO = BaseRouter.API.value.format(route='user/{user_id}')
+
+
+class EventRouter(Enum):
+    PLANNED = BaseRouter.API.value.format(route='organizations/{organization_id}/eventsessions/list/planned')
+    INFO = BaseRouter.API.value.format(route='event/{event_id}')
+    START = BaseRouter.API.value.format(route='eventsession/{session_id}/start')
+    STOP = BaseRouter.API.value.format(route='eventsession/{session_id}/stop')
+
+
+class MessageRouter(Enum):
+    CHAT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat')
+    ACCEPT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/moderate')
+    DELETE = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/delete')
+    SETTINGS = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/settings')
+
+
+class BaseRouter(Enum):
+    EVENTS = 'https://events.webinar.ru/{route}'
+    STREAM = EVENTS.format(route='{user_id}/{event_id}/stream-new/{session_id}')
+    API = EVENTS.format(route='api/{route}')
+
+
+class UserRouter(Enum):
+    LOGIN = BaseRouter.API.value.format(route='login')
+    INFO = BaseRouter.API.value.format(route='user/{user_id}')
+
+
+class EventRouter(Enum):
+    PLANNED = BaseRouter.API.value.format(route='organizations/{organization_id}/eventsessions/list/planned')
+    INFO = BaseRouter.API.value.format(route='event/{event_id}')
+    START = BaseRouter.API.value.format(route='eventsession/{session_id}/start')
+    STOP = BaseRouter.API.value.format(route='eventsession/{session_id}/stop')
+
+
+class MessageRouter(Enum):
+    CHAT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat')
+    ACCEPT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/moderate')
+    DELETE = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/delete')
+    SETTINGS = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/settings')
+
+
 class Webinar:
     """
     класс вебинара
     """
-    class Routes:
-        """
-        так называемые маршруты (ссылки)
-
-        :param STREAM: ссылка на сессию трансляции
-        :param API: ссылка на API
-        :param LOGIN: ссылка на страницу входа
-        :param USER: ссылка на страницу пользователя
-        :param PLANNED: ссылка на страницу запланированных событий вебинаров
-        :param EVENT: ссылка на страницу события
-        :param CHAT: ссылка на страницу чата
-        :param ACCEPT_MESSAGE: ссылка на подтверждение сообщения
-        :param ACCEPT_MESSAGE: ссылка на удаления сообщения
-        """
-        STREAM = 'https://events.webinar.ru/{user_id}/{event_id}/stream-new/{session_id}'
-        API = 'https://events.webinar.ru/api/{route}'
-        LOGIN = API.format(route='/login')
-        USER = API.format(route='/user/{user_id}')
-        PLANNED = API.format(route='/organizations/{organization_id}/eventsessions/list/planned')
-        EVENT = API.format(route='/event/{event_id}')
-        CHAT = API.format(route='/eventsessions/{session_id}/chat')
-        ACCEPT_MESSAGE = API.format(route='/eventsessions/{session_id}/chat/messages/moderate')
-        DELETE_MESSAGE = API.format(route='eventsessions/{session_id}/chat/messages/delete')
 
     class User:
         """
@@ -123,6 +153,8 @@ class Webinar:
             for message in messages:
                 message = Webinar.Message(message)
                 [self.awaiting, self.moderated][message.isModerated].append(message)
+            self.awaiting.reverse()
+            self.moderated.reverse()
 
     class Event:
         """
@@ -133,15 +165,16 @@ class Webinar:
         """
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
 
-        def __init__(self, user: Webinar.User, data: Dict[str, Any]) -> None:
+        def __init__(self, user_id: int, data: Dict[str, Any]) -> None:
             """
             Конструктор класса события вединара
             """
             self = Converter(self, self.attrs, data).convert()
             self.session_id = data['eventSessions'][0]['id']
+            self.status = data['eventSessions'][0]['status']
             self.image = data['image']['url']
-            self.url = Webinar.Routes.STREAM.format(
-                user_id=user.id,
+            self.url = BaseRouter.STREAM.value.format(
+                user_id=user_id,
                 event_id=self.id,
                 session_id=self.session_id
             )

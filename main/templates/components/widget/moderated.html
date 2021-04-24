@@ -1,0 +1,7 @@
+{% if chat.moderated|length > 0 %}
+{% for message in chat.moderated %}
+{% include 'components/widget/messages/moderated.html' with message=message %}
+{% endfor %}
+{% else %}
+<h4 class="lead fs-4">Нет сообщений</h4>
+{% endif %}

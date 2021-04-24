@@ -1,13 +1,13 @@
-from django.contrib.auth import forms as auth_forms
-from django.shortcuts import render
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponsePermanentRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
-from PIL import Image
-import os
-from main.models import User
-from . import forms
-from main.forms import ImageForm, ApikeyForm
+
+from main.forms import UserInformationForm, WebinarCredentialsForm
+from main.webinar import BaseRouter
 
 
 class IndexView(View):
@@ -28,65 +28,80 @@ class IndexView(View):
         return render(request, 'pages/index.html', self.context)
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     """
     View-класс профиля
     """
     context = {'pagename': 'Profile'}
-    form = ImageForm()
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
-        self.context['apikey_form'] = forms.ApikeyForm()
-        self.context['userinfo'] = User.objects.get(username=request.user.username)
-        self.context['apikey'] = User.objects.get(username=request.user.username).apikey
-        if not self.context['apikey']:
-            self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        self.context['forms'] = {
+            'information': UserInformationForm(),
+            'password': PasswordChangeForm(user=request.user),
+            'webinar': WebinarCredentialsForm(initial={
+                'email': request.user.webinar_session.email
+            })
+        }
+        self.context['webinar_user'] = request.user.webinar_session.get_user()
         return render(request, 'pages/profile.html', self.context)
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        form = ImageForm(request.POST, request.FILES)
+
+class WebinarCredentialsView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
+        form = WebinarCredentialsForm(request.POST, instance=request.user.webinar_session)
         if form.is_valid():
             form.save()
-            img_obj = form.instance
-            user = User.objects.get(username=request.user.username)
-            original_image = Image.open(os.getcwd()+img_obj.image.url)
-            size = (200, 200)
-            resized_image = original_image.resize(size)
-            resized_image.save(os.getcwd()+img_obj.image.url)
-            user.avatar = img_obj.image.url
-            user.save()
-        self.context['password_form'] = auth_forms.PasswordChangeForm(user=request.user)
-        self.context['apikey_form'] = forms.ApikeyForm()
-        self.context['userinfo'] = User.objects.get(username=request.user.username)
-
-        api_key_form = ApikeyForm(request.POST)
-        self.context['apikey'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-
-        if api_key_form.is_valid() and len(request.POST.get('apikey')) == 32:
-            user = self.context['userinfo']
-            user.apikey = request.POST.get('apikey')
-            user.save()
-            self.context['apikey'] = user.apikey
-
-        return render(request, 'pages/profile.html', self.context)
+        return redirect(reverse('profile'))
 
 
-class EventView(View):
-    """
-    View-класс вебинара
-    """
-    context = {'pagename': 'Event'}
-
-    def get(self, request: HttpRequest) -> HttpResponse:
-        return render(request, 'pages/event.html', self.context)
+class UserInformationView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
+        form = UserInformationForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+        return redirect(reverse('profile'))
 
 
-class ScheduleView(View):
+class ScheduleView(LoginRequiredMixin, View):
     """
     View-класс списка вебинаров
     """
     context = {'pagename': 'Schedule'}
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        self.context['events'] = request.user.webinar_session.get_schedule()
+        self.context['webinar_url'] = BaseRouter.EVENTS.value.format(route='')
         return render(request, 'pages/schedule.html', self.context)
+
+
+class EventView(LoginRequiredMixin, View):
+    """
+    View-класс вебинара
+    """
+    context = {'pagename': 'Event'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        self.context['event'] = request.user.webinar_session.get_event(event_id)
+        return render(request, 'pages/event.html', self.context)
+
+
+class ChatView(LoginRequiredMixin, View):
+    context = {'pagename': 'Chat'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        return render(request, 'pages/chat.html', self.context)
+
+
+class AwaitingMessagesView(LoginRequiredMixin, View):
+    context = {'pagename': 'Awaiting'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        return render(request, 'pages/awaiting.html', self.context)
+
+
+class ControlView(LoginRequiredMixin, View):
+    context = {'pagename': 'Control'}
+
+    def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        self.context['event'] = request.user.webinar_session.get_event(event_id)
+        return render(request, 'pages/control.html', self.context)

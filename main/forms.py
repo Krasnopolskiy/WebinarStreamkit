@@ -1,38 +1,35 @@
-from django.contrib.auth.forms import AuthenticationForm
-from django_registration.forms import RegistrationForm
 from django import forms
-from django.contrib.auth import get_user_model
-from main.models import Image
-User = get_user_model()
+from django_registration.forms import RegistrationForm
+
+from main.models import User, WebinarSession
 
 
-class LoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
-
-    username = forms.CharField(
-        widget=forms.TextInput,
-        label='Имя пользователя'
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput,
-        label='Пароль'
-    )
-
-
-class SignupForm(RegistrationForm):
+class ExtendedSignupForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
         model = User
 
 
-class ApikeyForm(forms.Form):
-    apikey = forms.CharField(
-        widget=forms.TextInput,
-        label='Установить ключ API'
+class UserInformationForm(forms.ModelForm):
+    avatar = forms.ImageField(
+        widget=forms.FileInput(attrs={'class': 'form-control'}),
+        label=''
     )
 
-
-class ImageForm(forms.ModelForm):
     class Meta:
-        model = Image
-        fields = ['image']
+        model = User
+        fields = ['avatar']
+
+
+class WebinarCredentialsForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'placeholder': 'john.doe@mail.com'}),
+        label='Адрес электронной почты Webinar'
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': '********'}),
+        label='Пароль Webinar'
+    )
+
+    class Meta:
+        model = WebinarSession
+        fields = ['email', 'password']
