@@ -26,16 +26,16 @@
     <script src="{% static 'js/script.js' %}"></script>
 
     {% if messages %}
-    <script>
-        let messages = []
-        {% for message in messages %}
-            messages.push({
-                'message': '{{ message }}',
-                'tags': '{{ message.tags }}'
-            })
-        {% endfor %}
-    </script>
-    <script src="{% static 'js/messages.js' %}"></script>
+        <script>
+            let messages = []
+            {% for message in messages %}
+                messages.push({
+                    'message': '{{ message }}',
+                    'tags': '{{ message.tags }}'
+                })
+            {% endfor %}
+        </script>
+        <script src="{% static 'js/toasts.js' %}"></script>
     {% endif %}
 
     {% block extra_js %}{% endblock extra_js %}

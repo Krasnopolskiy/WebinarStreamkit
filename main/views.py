@@ -94,8 +94,8 @@ class ControlView(LoginRequiredMixin, View):
 class ExtendedLoginView(LoginView):
     def post(self, request: HttpRequest, *args, **kwargs):
         response = super(LoginView, self).post(request, *args, **kwargs)
-        if request.user.is_autenticated:
-            request.session['user'] = request.user.auth.uid
+        if request.user.is_authenticated:
+            # request.session['user'] = request.user.auth.uid
             messages.add_message(request, messages.SUCCESS, 'Авторизация прошла успешно')
         else:
             messages.add_message(request, messages.ERROR, 'Неправильное имя пользователя или пароль. Повторите попытку')

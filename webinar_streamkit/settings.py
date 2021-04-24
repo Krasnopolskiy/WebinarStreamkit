@@ -92,8 +92,10 @@ CHANNEL_LAYERS = {
     },
 }
 MESSAGE_TAGS = {
-    messages.SUCCESS: 'Logged in',
-    messages.ERROR: 'Invalid username or password',
+    messages.SUCCESS: 'green',
+    messages.INFO: 'blue',
+    messages.WARNING: 'yellow',
+    messages.ERROR: 'red',
 }
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
