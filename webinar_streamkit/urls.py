@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.urls import path, reverse_lazy
 from django_registration.backends.one_step.views import RegistrationView
 
@@ -11,7 +11,7 @@ from main.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('login/', LoginView.as_view(
+    path('login/', ExtendedLoginView.as_view(
         template_name='registration/login.html',
         extra_context={'pagename': 'Авторизация'},
     ), name='login'),
