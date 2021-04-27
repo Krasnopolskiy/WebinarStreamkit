@@ -12,11 +12,15 @@
                     </div>
                     <div class="col">
                         <p class="lead">Аккаунт Webinar</p>
-                        <p class="px-3">
-                            {{ webinar_user.name }} {{ webinar_user.secondName }}
-                            <br>
-                            {{ webinar_user.email }}
-                        </p>
+                        {% if error is None %}
+                        <div class="alert alert-success font-monospace">
+                            Аккаут авторизован
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger font-monospace">
+                            {{ error }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row mt-3">

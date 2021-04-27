@@ -21,7 +21,6 @@ class Converter:
         self.data = data
         self.attrs = attrs
 
-
     def convert(self) -> Any:
         """
         сама функция конвертирования
@@ -94,7 +93,7 @@ class Webinar:
         """
         attrs = ['id', 'name', 'secondName', 'email']
 
-        def __init__(self, data: Dict[str, Any] = {}, is_authenticated: bool = False) -> None:
+        def __init__(self, data: Dict = {}, is_authenticated: bool = False) -> None:
             """
             конструктор класса
 
@@ -114,7 +113,7 @@ class Webinar:
         """
         attrs = ['id', 'name']
 
-        def __init__(self, data: Dict[str, Any]) -> None:
+        def __init__(self, data: Dict) -> None:
             """
             Конструктор класса организации
             """
@@ -128,13 +127,13 @@ class Webinar:
         """
         attrs = ['id', 'authorName', 'text', 'isModerated', 'createAt']
 
-        def __init__(self, data: Dict[str, Any]) -> None:
+        def __init__(self, data: Dict) -> None:
             """
             Конструктор класса сообщения
             """
             self = Converter(self, self.attrs, data).convert()
 
-        def serialize(self) -> Dict[str, Any]:
+        def serialize(self) -> Dict:
             """
             сериализация сообщения
             """
@@ -144,6 +143,7 @@ class Webinar:
         """
         класс чата
         """
+
         def __init__(self, messages: List[Dict]) -> None:
             """
             Конструктор класса чата
@@ -165,7 +165,7 @@ class Webinar:
         """
         attrs = ['id', 'name', 'description', 'startsAt', 'endsAt']
 
-        def __init__(self, user_id: int, data: Dict[str, Any]) -> None:
+        def __init__(self, user_id: int, data: Dict) -> None:
             """
             Конструктор класса события вединара
             """
@@ -178,3 +178,10 @@ class Webinar:
                 event_id=self.id,
                 session_id=self.session_id
             )
+
+    class Error:
+        attrs = ['code', 'message']
+
+        def __init__(self, data: Dict) -> None:
+            self = Converter(self, self.attrs, data).convert()
+            self.message = f'Webinar: {self.message}'

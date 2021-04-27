@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from functools import wraps
 from http.cookiejar import Cookie
 from json import loads
 from typing import Dict, List, Optional, Union
@@ -25,37 +26,47 @@ class WebinarSession(models.Model):
             if cookie.name == cookie_name:
                 return cookie
 
-    def is_login_required(self) -> bool:
-        return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
-
-    def ensure_session(self) -> Optional[Dict]:
-        if self.is_login_required():
-            errors = self.login()
-            return errors if errors else None
-        self.session.cookies.set('sessionId', self.cookie)
-
-    def login(self) -> Optional[Dict]:
+    def login(self) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password}
         response = loads(self.session.post(route, data=payload).text)
         if 'error' in response:
-            return response
-        data = loads(self.session.get(route, data=payload).text)
+            self.last_login = None
+            self.save()
+            return Webinar.Error(response.get('error'))
+        data = loads(self.session.get(route).text)
         self.user_id = data.get('id')
         self.last_login = date.today()
         self.cookie = self.get_cookie('sessionId').value
         self.save()
 
+    def is_login_required(self) -> bool:
+        return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
+
+    def ensure_session(self) -> Optional[Webinar.Error]:
+        if self.is_login_required():
+            error = self.login()
+            if error is not None:
+                return error
+        self.session.cookies.set('sessionId', self.cookie)
+
+    def webinar_required(function):
+        @wraps(function)
+        def wrap(self, *args, **kwargs):
+            response = self.ensure_session()
+            if isinstance(response, Webinar.Error):
+                return response
+            return function(self, *args, **kwargs)
+        return wrap
+
+    @webinar_required
     def get_user(self) -> Webinar.User:
-        errors = self.ensure_session()
         route = UserRouter.INFO.value.format(user_id=self.user_id)
         data = loads(self.session.get(route).text)
         return Webinar.User(data, True)
 
+    @webinar_required
     def get_schedule(self) -> Union[List[Webinar.Event], Dict]:
-        errors = self.ensure_session()
-        if errors is not None:
-            return errors
         schedule = list()
         user = self.get_user()
         for organisation in user.memberships:
