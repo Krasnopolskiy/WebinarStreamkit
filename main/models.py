@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from http.cookiejar import Cookie
 from json import loads
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -52,8 +52,10 @@ class WebinarSession(models.Model):
         data = loads(self.session.get(route).text)
         return Webinar.User(data, True)
 
-    def get_schedule(self) -> List[Webinar.Event]:
+    def get_schedule(self) -> Union[List[Webinar.Event], Dict]:
         errors = self.ensure_session()
+        if errors is not None:
+            return errors
         schedule = list()
         user = self.get_user()
         for organisation in user.memberships:
@@ -82,7 +84,7 @@ class WebinarSession(models.Model):
         errors = self.ensure_session()
         payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.ACCEPT.value.format(session_id=session_id)
-        self.session.put(route, data=payload).text
+        self.session.put(route, data=payload)
 
     def delete_message(self, session_id: int, **kwargs) -> None:
         errors = self.ensure_session()
@@ -93,7 +95,7 @@ class WebinarSession(models.Model):
     def update_settings(self, session_id: int, **kwargs) -> None:
         errors = self.ensure_session()
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
-        self.session.put(route, data=kwargs).text
+        self.session.put(route, data=kwargs)
 
     def start(self, session_id: int, **kwargs) -> None:
         errors = self.ensure_session()
