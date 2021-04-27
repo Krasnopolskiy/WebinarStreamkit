@@ -60,13 +60,13 @@ class WebinarSession(models.Model):
         return wrap
 
     @webinar_required
-    def get_user(self) -> Webinar.User:
+    def get_user(self) -> Union[Webinar.User, Webinar.Error]:
         route = UserRouter.INFO.value.format(user_id=self.user_id)
         data = loads(self.session.get(route).text)
         return Webinar.User(data, True)
 
     @webinar_required
-    def get_schedule(self) -> Union[List[Webinar.Event], Dict]:
+    def get_schedule(self) -> Union[List[Webinar.Event], Webinar.Error]:
         schedule = list()
         user = self.get_user()
         for organisation in user.memberships:
@@ -78,43 +78,43 @@ class WebinarSession(models.Model):
             ))
         return schedule
 
-    def get_event(self, event_id: int) -> Webinar.Event:
-        errors = self.ensure_session()
+    @webinar_required
+    def get_event(self, event_id: int) -> Union[Webinar.Event, Webinar.Error]:
         route = EventRouter.INFO.value.format(event_id=event_id)
         data = loads(self.session.get(route).text)
         if 'error' not in data:
             return Webinar.Event(self.user_id, data)
 
-    def get_chat(self, session_id: int) -> Webinar.Chat:
-        errors = self.ensure_session()
+    @webinar_required
+    def get_chat(self, session_id: int) -> Union[Webinar.Chat, Webinar.Error]:
         route = MessageRouter.CHAT.value.format(session_id=session_id)
         data = loads(self.session.get(route).text)
         return Webinar.Chat(data)
 
-    def accept_message(self, session_id: int, **kwargs) -> None:
-        errors = self.ensure_session()
+    @webinar_required
+    def accept_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.ACCEPT.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
-    def delete_message(self, session_id: int, **kwargs) -> None:
-        errors = self.ensure_session()
+    @webinar_required
+    def delete_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         payload = {'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.DELETE.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
-    def update_settings(self, session_id: int, **kwargs) -> None:
-        errors = self.ensure_session()
+    @webinar_required
+    def update_settings(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
         self.session.put(route, data=kwargs)
 
-    def start(self, session_id: int, **kwargs) -> None:
-        errors = self.ensure_session()
+    @webinar_required
+    def start(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         route = EventRouter.START.value.format(session_id=session_id)
         self.session.put(route)
 
-    def stop(self, session_id: int, **kwargs) -> None:
-        errors = self.ensure_session()
+    @webinar_required
+    def stop(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         route = EventRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 
