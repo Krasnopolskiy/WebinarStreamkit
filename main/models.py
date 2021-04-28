@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from functools import wraps
 from http.cookiejar import Cookie
 from json import loads
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
