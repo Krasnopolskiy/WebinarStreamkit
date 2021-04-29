@@ -40,6 +40,9 @@ ws.onmessage = event => {
         update_messages(data['template'])
         document.querySelector('#message-box').scrollTop = last_scroll_pos
     }
+    
+    if (data['event'] === 'error')
+        console.log(data['message'])
 
     $('#message-box').on('scroll', function (event) {
         last_scroll_pos = $('#message-box').scrollTop()

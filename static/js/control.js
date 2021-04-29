@@ -3,10 +3,40 @@ let parent_url = url.href.replace('/control', '')
 let ws = new WebSocket(`ws://${url.host}${url.pathname}`)
 let chat_widget, awaiting_widget
 
+
+let close_widget = () => {
+    if (chat_widget !== undefined)
+        chat_widget.close()
+    if (awaiting_widget !== undefined)
+        awaiting_widget.close()
+    window.close()
+}
+
+
+let update_setting = (settings) => {
+    console.log(settings)
+    if (settings.status === 'ACTIVE') {
+        $('#stop-btn').css('display', 'none')
+        $('#start-btn').css('display', 'block')
+    }
+    if (settings.status === 'START') {
+        $('#stop-btn').css('display', 'block')
+        $('#start-btn').css('display', 'none')
+    }
+    if (settings.status === 'STOP')
+        close_widget()
+    $('#moderate-switch').prop('checked', settings.premoderation)
+}
+
+
 ws.onmessage = event => {
     let data = JSON.parse(event['data'])
-    console.log(data)
+    if (data['event'] === 'update settings')
+        update_setting(data['settings'])
+    if (data['event'] === 'error')
+        console.log('WS error')
 }
+
 
 $('#moderate-switch').on('change', () => {
     let payload = {
