@@ -123,7 +123,11 @@ class EventView(LoginRequiredMixin, View):
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['event'] = request.user.webinar_session.get_event(event_id)
+        response = request.user.webinar_session.get_event(event_id)
+        if isinstance(response, Webinar.Error):
+            messages.error(request, response.message)
+            return redirect(reverse('index'))
+        self.context['event'] = response
         return render(request, 'pages/event.html', self.context)
 
 

@@ -56,7 +56,10 @@ class WebinarSession(models.Model):
             response = self.ensure_session()
             if isinstance(response, Webinar.Error):
                 return response
-            return function(self, *args, **kwargs)
+            try:
+                return function(self, *args, **kwargs)
+            except:
+                return Webinar.Error({'message': 'error'})
         return wrap
 
     @webinar_required
@@ -88,8 +91,10 @@ class WebinarSession(models.Model):
     @webinar_required
     def get_chat(self, session_id: int) -> Union[Webinar.Chat, Webinar.Error]:
         route = MessageRouter.CHAT.value.format(session_id=session_id)
-        data = loads(self.session.get(route).text)
-        return Webinar.Chat(data)
+        messages = loads(self.session.get(route).text)
+        route = MessageRouter.SETTINGS.value.format(session_id=session_id)
+        settings = loads(self.session.get(route).text)
+        return Webinar.Chat(messages, settings)
 
     @webinar_required
     def accept_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
