@@ -34,7 +34,10 @@ class Timer:
 
     async def job(self) -> None:
         while self.enabled:
-            await self.callback(*self.args, **self.kwargs)
+            try:
+                await self.callback(*self.args, **self.kwargs)
+            except:
+                await send_error(*self.args, **self.kwargs)
             await asyncio.sleep(self.timeout)
 
     def cancel(self):
@@ -94,14 +97,13 @@ async def send_settings(consumer: ControlConsumer) -> None:
     )
 
 
-async def send_error(consumer: BaseConsumer, error: Exception) -> None:
+async def send_error(consumer: BaseConsumer) -> None:
     await consumer.channel_layer.group_send(
         consumer.room,
         {
             'type': 'server_message',
             'message': {
-                'event': 'error',
-                'message': error.message
+                'event': 'error'
             }
         }
     )
@@ -132,10 +134,7 @@ class BaseConsumer(AsyncWebsocketConsumer):
         message = loads(text_data)
         event = await sync_to_async(self.webinar_session.get_event)(self.event_id)
         if message['command'] in self.commands:
-            try:
-                await self.commands[message['command']](event.session_id, **message['params'])
-            except Exception as error:
-                await send_error(self, error)
+            await self.commands[message['command']](event.session_id, **message['params'])
 
     async def server_message(self, event: dict) -> None:
         await self.send(text_data=dumps(event['message']))

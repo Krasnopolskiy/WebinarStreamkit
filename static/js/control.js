@@ -14,13 +14,14 @@ let close_widget = () => {
 
 
 let update_setting = (settings) => {
+    console.log(settings)
     if (settings.status === 'ACTIVE') {
         $('#stop-btn').css('display', 'none')
-        $('#start-btn').css('display', 'start')
+        $('#start-btn').css('display', 'block')
     }
     if (settings.status === 'START') {
-        $('#stop-btn').css('display', 'none')
-        $('#start-btn').css('display', 'block')
+        $('#stop-btn').css('display', 'block')
+        $('#start-btn').css('display', 'none')
     }
     if (settings.status === 'STOP')
         close_widget()
@@ -33,7 +34,7 @@ ws.onmessage = event => {
     if (data['event'] === 'update settings')
         update_setting(data['settings'])
     if (data['event'] === 'error')
-        console.log(data['message'])
+        console.log('WS error')
 }
 
 
