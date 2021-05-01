@@ -12,18 +12,13 @@
                     </div>
                     <div class="col">
                         <p class="lead">Аккаунт Webinar</p>
-                        {% if webinar_user.is_authenticated %}
-                        <p class="px-3">
-                            {{ webinar_user.name }} {{ webinar_user.secondName }}
-                            <br>
-                            {{ webinar_user.email }}
-                            <div class="alert alert-success" role="alert">
-                                Пользователь авторизован
-                            </div>
-                        </p>
+                        {% if error is None %}
+                        <div class="alert alert-success font-monospace">
+                            Аккаут авторизован
+                        </div>
                         {% else %}
-                        <div class="alert alert-danger" role="alert">
-                            Не удалось авторизоваться на Webinar
+                        <div class="alert alert-danger font-monospace">
+                            {{ error }}
                         </div>
                         {% endif %}
                     </div>

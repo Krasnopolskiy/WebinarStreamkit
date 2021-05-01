@@ -1,24 +1,27 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.urls import path, reverse_lazy
-from django_registration.backends.one_step.views import RegistrationView
 
-from main.consumers import AwaitingMessagesConsumer, ChatConsumer, ControlConsumer
-from main.forms import ExtendedSignupForm
-from main.views import *
+from main.consumers import (AwaitingMessagesConsumer, ChatConsumer,
+                            ControlConsumer)
+from main.forms import ExtendedRegistrationForm
+from main.views import (AwaitingMessagesView, ChatView, ControlView, EventView,
+                        ExtendedLoginView, ExtendedRegistrationView, IndexView,
+                        ProfileView, ScheduleView, UserInformationView,
+                        WebinarCredentialsView)
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('login/', LoginView.as_view(
+    path('login/', ExtendedLoginView.as_view(
         template_name='registration/login.html',
         extra_context={'pagename': 'Авторизация'},
     ), name='login'),
-    path('signup/', RegistrationView.as_view(
+    path('signup/', ExtendedRegistrationView.as_view(
         template_name='registration/signup.html',
         extra_context={'pagename': 'Регистрация'},
-        form_class=ExtendedSignupForm,
+        form_class=ExtendedRegistrationForm,
         success_url=reverse_lazy('index')
     ), name='signup'),
     path('logout/', LogoutView.as_view(), name='logout'),

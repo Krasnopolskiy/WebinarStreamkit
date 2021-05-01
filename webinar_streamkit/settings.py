@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware'
 ]
 
 ROOT_URLCONF = 'webinar_streamkit.urls'
@@ -89,7 +91,12 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'green',
+    messages.INFO: 'blue',
+    messages.WARNING: 'yellow',
+    messages.ERROR: 'red',
+}
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 

@@ -10,7 +10,8 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.template.loader import render_to_string
 
-from main.models import WebinarSession
+from main.models import User, WebinarSession
+from main.webinar import Webinar
 
 
 class ChatMode(Enum):
@@ -24,6 +25,7 @@ class Timer:
         self.callback = callback
         self.args = args
         self.kwargs = kwargs
+        self.enabled = False
         self.task = asyncio.Future
 
     def enable(self) -> None:
@@ -32,7 +34,10 @@ class Timer:
 
     async def job(self) -> None:
         while self.enabled:
-            await self.callback(*self.args, **self.kwargs)
+            try:
+                await self.callback(*self.args, **self.kwargs)
+            except:
+                await send_error(*self.args, **self.kwargs)
             await asyncio.sleep(self.timeout)
 
     def cancel(self):
@@ -40,7 +45,7 @@ class Timer:
         self.task.cancel()
 
 
-def get_chat_template(webinar_session: WebinarSession, event_id: str, mode: ChatMode) -> str:
+def get_chat_template(webinar_session: WebinarSession, event_id: int, mode: ChatMode) -> str:
     event = webinar_session.get_event(event_id)
     chat = webinar_session.get_chat(event.session_id)
     return render_to_string(f'components/widget/{mode.value}.html', {'chat': chat})
@@ -65,12 +70,52 @@ async def send_chat(consumer: ChatConsumer) -> None:
     )
 
 
+def get_event_settings(webinar_session: WebinarSession, event_id: int) -> Webinar.Chat:
+    event = webinar_session.get_event(event_id)
+    chat = webinar_session.get_chat(event.session_id)
+    return {
+        'status': event.status,
+        'premoderation': chat.premoderation == 'True'
+    }
+
+
+async def send_settings(consumer: ControlConsumer) -> None:
+    settings = await sync_to_async(get_event_settings)(
+        consumer.webinar_session,
+        consumer.event_id
+    )
+
+    await consumer.channel_layer.group_send(
+        consumer.room,
+        {
+            'type': 'server_message',
+            'message': {
+                'event': 'update settings',
+                'settings': settings
+            }
+        }
+    )
+
+
+async def send_error(consumer: BaseConsumer) -> None:
+    await consumer.channel_layer.group_send(
+        consumer.room,
+        {
+            'type': 'server_message',
+            'message': {
+                'event': 'error'
+            }
+        }
+    )
+
+
 class BaseConsumer(AsyncWebsocketConsumer):
     async def connect(self) -> None:
         self.event_id = self.scope['url_route']['kwargs']['event_id']
         self.room = f'client_{self.event_id}_{uuid4()}'
 
         user_id = self.scope['user'].id
+        self.user = await sync_to_async(User.objects.get)(id=user_id)
         self.webinar_session = await sync_to_async(WebinarSession.objects.get)(user=user_id)
 
         await self.channel_layer.group_add(
@@ -122,8 +167,11 @@ class AwaitingMessagesConsumer(BaseConsumer):
 class ControlConsumer(BaseConsumer):
     async def connect(self) -> None:
         await super().connect()
+        self.timer = Timer(1, send_settings, self)
+        self.timer.enable()
         self.commands = {
             'update settings': sync_to_async(self.webinar_session.update_settings),
+            'update fontsize': sync_to_async(self.user.update_fontsize),
             'start': sync_to_async(self.webinar_session.start),
             'stop': sync_to_async(self.webinar_session.stop)
         }

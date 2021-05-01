@@ -4,7 +4,7 @@ from django_registration.forms import RegistrationForm
 from main.models import User, WebinarSession
 
 
-class ExtendedSignupForm(RegistrationForm):
+class ExtendedRegistrationForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
         model = User
 
