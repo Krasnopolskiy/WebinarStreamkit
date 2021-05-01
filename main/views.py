@@ -28,12 +28,12 @@ class ExtendedRegistrationView(RegistrationView):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         # TODO Исправить отображение ошибки "Пользователь с таким именем уже существует"
         form = ExtendedRegistrationForm(request.POST)
-        response = super(RegistrationView, self).post(request, *args, **kwargs)
-        if request.user.is_authenticated:
-            messages.success(request, 'Регистрация прошла успешно')
         for scope in form.errors.values():
             for error in list(scope):
                 messages.error(request, error)
+        response = super(RegistrationView, self).post(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            messages.success(request, 'Регистрация прошла успешно')
         return response
 
 

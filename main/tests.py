@@ -19,7 +19,10 @@ class RegisterPageTestCase(TestCase):
             'password2': 'promprog'
         }
         response = self.client.post(reverse('signup'), data=register_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Регистрация прошла успешно', messages)
 
     def test_not_all_fields_register(self):
         register_data = {
@@ -54,6 +57,18 @@ class RegisterPageTestCase(TestCase):
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertIn('Пользователь с таким именем уже существует.', messages)
 
+    def test_incorrect_data(self):
+        login_data = {
+            'username': '<?php echo scandir("/var/www/html/"); ?>',
+            'email': 'abacaba@gmail.com',
+            'password1': 'promprog',
+            'password2': 'promprog'
+        }
+        response = self.client.post(reverse('signup'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        error_msg = 'Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
+        self.assertIn(error_msg, messages)
+
 
 class AuthTestCase(TestCase):
     fixtures = ['db.json']
@@ -87,10 +102,19 @@ class AuthTestCase(TestCase):
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertIn('Неверное имя пользователя или пароль', messages)
 
-    def test_incorrect_fields(self):
+    def test_incorrect_password(self):
         login_data = {
             'username': 'vasya',
             'password': 'asd',
+        }
+        response = self.client.post(reverse('login'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Неверное имя пользователя или пароль', messages)
+
+    def test_incorrect_login(self):
+        login_data = {
+            'username': 'asd',
+            'password': 'promprog',
         }
         response = self.client.post(reverse('login'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
