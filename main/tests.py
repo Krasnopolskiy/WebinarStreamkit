@@ -20,14 +20,15 @@ class RegisterPageTestCase(TestCase):
         response = self.client.post(reverse('signup'), data=register_data)
         self.assertEqual(response.status_code, 302)
 
-    def test_not_all_fields_register(self):  # Проверить на ошибки
+    def test_not_all_fields_register(self):
         register_data = {
             'username': 'Harry',
             'nya': 'khhhh',
             'password1': 'promprog'
         }
         response = self.client.post(reverse('signup'), data=register_data)
-        self.assertIn('error_'.encode(), response.content)
+        errors = response.context_data['view'].form_class.error_messages.values()
+        self.assertIn('Введенные пароли не совпадают.', errors)
 
     def test_incorrect_register(self):  # Проверить на ошибки
         register_data = {
@@ -37,7 +38,8 @@ class RegisterPageTestCase(TestCase):
             'password2': '123'
         }
         response = self.client.post(reverse('signup'), data=register_data)
-        self.assertIn('error_'.encode(), response.content)
+        errors = response.context_data['view'].form_class.error_messages.values()
+        self.assertIn('Введенные пароли не совпадают.', errors)
 
     def test_exist_register(self):  # Проверить на ошибки
         register_data = {
