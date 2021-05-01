@@ -150,4 +150,5 @@ class ControlView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
         self.context['event'] = request.user.webinar_session.get_event(event_id)
+        self.context['fontsize'] = request.user.fontsize
         return render(request, 'pages/control.html', self.context)
