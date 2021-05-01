@@ -5,6 +5,7 @@ from json import loads
 from typing import List, Optional, Union
 
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from requests import Session
 
@@ -133,8 +134,24 @@ class User(AbstractUser):
     """
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
+    fontsize = models.IntegerField(
+        default=16,
+        validators=[
+            MinValueValidator(8),
+            MaxValueValidator(48)
+        ]
+    )
 
     def save(self, *args, **kwargs) -> None:
         if self.id is None:
             self.webinar_session = WebinarSession.objects.create()
         super(User, self).save(*args, **kwargs)
+
+    def update_fontsize(self, *args, **kwargs) -> None:
+        fontsize = kwargs.get('fontsize', '16')
+        if fontsize.isdigit():
+            fontsize = int(fontsize)
+            fontsize = min(fontsize, 48)
+            fontsize = max(fontsize, 8)
+            self.fontsize = fontsize
+            self.save()

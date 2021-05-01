@@ -10,7 +10,7 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.template.loader import render_to_string
 
-from main.models import WebinarSession
+from main.models import User, WebinarSession
 from main.webinar import Webinar
 
 
@@ -75,7 +75,7 @@ def get_event_settings(webinar_session: WebinarSession, event_id: int) -> Webina
     chat = webinar_session.get_chat(event.session_id)
     return {
         'status': event.status,
-        'premoderation': chat.premoderation.lower()
+        'premoderation': chat.premoderation == 'True'
     }
 
 
@@ -115,6 +115,7 @@ class BaseConsumer(AsyncWebsocketConsumer):
         self.room = f'client_{self.event_id}_{uuid4()}'
 
         user_id = self.scope['user'].id
+        self.user = await sync_to_async(User.objects.get)(id=user_id)
         self.webinar_session = await sync_to_async(WebinarSession.objects.get)(user=user_id)
 
         await self.channel_layer.group_add(
@@ -170,6 +171,7 @@ class ControlConsumer(BaseConsumer):
         self.timer.enable()
         self.commands = {
             'update settings': sync_to_async(self.webinar_session.update_settings),
+            'update fontsize': sync_to_async(self.user.update_fontsize),
             'start': sync_to_async(self.webinar_session.start),
             'stop': sync_to_async(self.webinar_session.stop)
         }
