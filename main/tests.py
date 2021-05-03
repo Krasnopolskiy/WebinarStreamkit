@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.contrib.messages import get_messages
 
 from main.models import User
 
@@ -18,18 +19,22 @@ class RegisterPageTestCase(TestCase):
             'password2': 'promprog'
         }
         response = self.client.post(reverse('signup'), data=register_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Регистрация прошла успешно', messages)
 
-    def test_not_all_fields_register(self):  # Проверить на ошибки
+    def test_not_all_fields_register(self):
         register_data = {
             'username': 'Harry',
             'nya': 'khhhh',
             'password1': 'promprog'
         }
         response = self.client.post(reverse('signup'), data=register_data)
-        self.assertIn('error_'.encode(), response.content)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Обязательное поле.', messages)
 
-    def test_incorrect_register(self):  # Проверить на ошибки
+    def test_incorrect_register(self):
         register_data = {
             'username': 'Harry',
             'email': 'khhhh',
@@ -37,9 +42,11 @@ class RegisterPageTestCase(TestCase):
             'password2': '123'
         }
         response = self.client.post(reverse('signup'), data=register_data)
-        self.assertIn('error_'.encode(), response.content)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Введенные пароли не совпадают.', messages)
+        self.assertIn('Введите правильный адрес электронной почты.', messages)
 
-    def test_exist_register(self):  # Проверить на ошибки
+    def test_exist_register(self):
         register_data = {
             'username': 'vasya',
             'email': '1@gmail.com',
@@ -47,7 +54,20 @@ class RegisterPageTestCase(TestCase):
             'password2': 'promprog'
         }
         response = self.client.post(reverse('signup'), data=register_data)
-        self.assertIn('error_'.encode(), response.content)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Пользователь с таким именем уже существует.', messages)
+
+    def test_incorrect_data(self):
+        login_data = {
+            'username': '<?php echo scandir("/var/www/html/"); ?>',
+            'email': 'abacaba@gmail.com',
+            'password1': 'promprog',
+            'password2': 'promprog'
+        }
+        response = self.client.post(reverse('signup'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        error_msg = 'Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
+        self.assertIn(error_msg, messages)
 
 
 class AuthTestCase(TestCase):
@@ -74,20 +94,31 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/admin/'.encode(), self.client.get(reverse('index')).content)
 
-    def test_not_all_fields(self):  # Проверить на ошибки
+    def test_not_all_fields(self):
         login_data = {
             'password': 'promprog',
         }
         response = self.client.post(reverse('login'), data=login_data)
-        self.assertEqual(response.status_code, 200)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Неверное имя пользователя или пароль', messages)
 
-    def test_incorrect_fields(self):  # Проверить на ошибки
+    def test_incorrect_password(self):
         login_data = {
             'username': 'vasya',
             'password': 'asd',
         }
         response = self.client.post(reverse('login'), data=login_data)
-        self.assertEqual(response.status_code, 200)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Неверное имя пользователя или пароль', messages)
+
+    def test_incorrect_login(self):
+        login_data = {
+            'username': 'asd',
+            'password': 'promprog',
+        }
+        response = self.client.post(reverse('login'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertIn('Неверное имя пользователя или пароль', messages)
 
     def test_logout(self):
         user = User.objects.get(username='vasya')
