@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from requests import Session, post
+from requests import Session
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
@@ -30,7 +30,7 @@ class WebinarSession(models.Model):
     def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
         payload = {'email': check_email, 'password': check_password, 'rememberMe': 'true'}
-        response = loads(post(route, data=payload).text)
+        response = loads(self.session.post(route, data=payload).text)
         return 'error' not in response
 
     def login(self) -> Optional[Webinar.Error]:
