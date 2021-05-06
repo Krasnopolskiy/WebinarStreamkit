@@ -127,3 +127,40 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.cookies['sessionid'].value, '')
 
+    def test_webinar_login(self):
+        user = User.objects.get(username='petya')
+        self.client.force_login(user)
+        login_data = {
+            'email': 'artemglazyrin@mail.ru',
+            'password': 'qwerty12345'
+        }
+        response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Данные для авторизации на Webinar обновлены', messages)
+        self.assertEqual(len(messages), 1)
+
+    def test_webinar_login_fields1(self):
+        user = User.objects.get(username='vasya')
+        self.client.force_login(user)
+        login_data = {
+            'email': 'artemglazyrin@mail.ru',
+        }
+        response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Обязательное поле.', messages)
+        self.assertEqual(len(messages), 1)
+
+    def test_webinar_incorrect_login(self):
+        user = User.objects.get(username='vasya')
+        self.client.force_login(user)
+        login_data = {
+            'email': 'artemglazyrin@mail.ru',
+            'password': 'ferdgbdfbsd'
+        }
+        response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Неверное имя пользователя или пароль аккаунта Webinar', messages)
+        self.assertEqual(len(messages), 1)

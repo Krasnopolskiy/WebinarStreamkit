@@ -27,6 +27,12 @@ class WebinarSession(models.Model):
             if cookie.name == cookie_name:
                 return cookie
 
+    def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
+        route = UserRouter.LOGIN.value
+        payload = {'email': check_email, 'password': check_password, 'rememberMe': 'true'}
+        response = loads(self.session.post(route, data=payload).text)
+        return 'error' not in response
+
     def login(self) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password}
