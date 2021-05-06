@@ -79,9 +79,12 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
         form = WebinarCredentialsForm(request.POST, instance=request.user.webinar_session)
         if form.is_valid():
-            form.save()
-            request.user.webinar_session.login()
-            messages.success(request, 'Данные для авторизации на Webinar обновлены')
+            if request.user.webinar_session.is_correct_data(request.POST['email'], request.POST['password']):
+                form.save()
+                request.user.webinar_session.login()
+                messages.success(request, 'Данные для авторизации на Webinar обновлены')
+            else:
+                messages.error(request, 'Неверное имя пользователя или пароль аккаунта Webinar')
         for scope in form.errors.values():
             for error in list(scope):
                 messages.error(request, error)
