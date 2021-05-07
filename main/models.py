@@ -13,6 +13,7 @@ from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
 
 class WebinarSession(models.Model):
+    id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(null=True)
     email = models.EmailField(max_length=255, null=True)
     password = models.CharField(max_length=255, null=True)
@@ -138,6 +139,7 @@ class User(AbstractUser):
     :param avatar: ссылка на изображение
     :param webinar_session: ForeignKey на модель сессии
     """
+    id = models.AutoField(primary_key=True)
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
     fontsize = models.IntegerField(
