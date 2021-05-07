@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
+from bs4 import BeautifulSoup
 
 from main.models import User
 
@@ -164,3 +165,37 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('Неверное имя пользователя или пароль аккаунта Webinar', messages)
         self.assertEqual(len(messages), 1)
+
+
+class WebinarTestCase(TestCase):
+    fixtures = ['db.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+        user = User.objects.get(username='vasya')
+        self.client.force_login(user)
+        login_data = {
+            'email': 'artemglazyrin@mail.ru',
+            'password': 'qwerty12345'
+        }
+        self.client.post(reverse('update_webinar_credentials'), data=login_data)
+
+    def test_schedule_view(self):
+        response = self.client.get(reverse('schedule'))
+        self.assertEqual(response.status_code, 200)
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Данные для авторизации на Webinar обновлены', messages)
+        self.assertIn(b'<div class="shadow-sm p-3 border rounded">', response.content)
+
+    def test_event_view(self):
+        response = self.client.get(reverse('schedule'))
+        soup = BeautifulSoup(response.content, 'html.parser')
+        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
+        response = self.client.get(a[0])
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        buttons = soup.find('div', class_='px-3').findChildren()
+        text_in_buttons = [b.text.strip() for b in buttons]
+        self.assertEqual(len(text_in_buttons), 2)
+        self.assertListEqual(text_in_buttons, ['Панель управления', 'Перейти к вебинару'])

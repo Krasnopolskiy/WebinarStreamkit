@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from requests import Session
+from requests import Session, post
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
@@ -38,11 +38,11 @@ class WebinarSession(models.Model):
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password}
         response = loads(self.session.post(route, data=payload).text)
+        data = loads(self.session.get(route).text)
         if 'error' in response:
             self.last_login = None
             self.save()
             return Webinar.Error(response.get('error'))
-        data = loads(self.session.get(route).text)
         self.user_id = data.get('id')
         self.last_login = date.today()
         self.cookie = self.get_cookie('sessionId').value
@@ -72,6 +72,8 @@ class WebinarSession(models.Model):
 
     @webinar_required
     def get_user(self) -> Union[Webinar.User, Webinar.Error]:
+        if not self.user_id:
+            self.login()
         route = UserRouter.INFO.value.format(user_id=self.user_id)
         data = loads(self.session.get(route).text)
         return Webinar.User(data, True)
