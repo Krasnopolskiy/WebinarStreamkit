@@ -309,21 +309,21 @@
 },
 {
     "model": "sessions.session",
-    "pk": "uc2vmj89nw7zqe3ckrcshl20130aovn4",
+    "pk": "l7n4i5216fepbprtc5yxvbzqrxj3zpmc",
     "fields": {
-        "session_data": ".eJxVjEEOwiAQRe_C2hAohSku3XsGMgyDVA0kpV0Z765NutDtf-_9lwi4rSVsnZcwJ3EWWpx-t4j04LqDdMd6a5JaXZc5yl2RB-3y2hI_L4f7d1Cwl2-t2EdNVnmdJiDwZCCTHcCzSjQiqJwjsnNKO-t8GjI7JIN6YiAzWhTvD-opODo:1la1Zo:q6aAe_31eshOyQWm9FzwfEl9cjWOP14htbKnL94kLTw",
-        "expire_date": "2021-05-07T19:34:56.773Z"
+        "session_data": ".eJxVjEEOwiAQRe_C2hAohSku3XsGMgyDVA0kpV0Z765NutDtf-_9lwi4rSVsnZcwJ3EWWpx-t4j04LqDdMd6a5JaXZc5yl2RB-3y2hI_L4f7d1Cwl2-t2EdNVnmdJiDwZCCTHcCzSjQiqJwjsnNKO-t8GjI7JIN6YiAzWhTvD-opODo:1leYLa:KdbXPYqr0mWLvtWY93Gy_70w4pLRzv0CYPxUaU54NXs",
+        "expire_date": "2021-05-20T07:22:58.521Z"
     }
 },
 {
     "model": "main.webinarsession",
     "pk": 1,
     "fields": {
-        "user_id": null,
-        "email": null,
-        "password": null,
-        "cookie": null,
-        "last_login": null
+        "user_id": 21272160,
+        "email": "artemglazyrin@mail.ru",
+        "password": "qwerty12345",
+        "cookie": "da2441ba45423e5832296c2dd0a38db8",
+        "last_login": "2021-05-06"
     }
 },
 {
@@ -342,7 +342,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$216000$9k5lpH4J54CV$SJ5fWexX1rIvHtiVjILD5mUhjKs7L2XNcR34a/pzR9Q=",
-        "last_login": "2021-04-23T19:34:56.665Z",
+        "last_login": "2021-05-06T07:22:58.344Z",
         "is_superuser": true,
         "username": "vasya",
         "first_name": "",
@@ -353,6 +353,7 @@
         "date_joined": "2021-04-23T19:33:57.364Z",
         "avatar": "avatar.svg",
         "webinar_session": 1,
+        "fontsize": 16,
         "groups": [],
         "user_permissions": []
     }
@@ -373,6 +374,7 @@
         "date_joined": "2021-04-23T19:34:44.947Z",
         "avatar": "avatar.svg",
         "webinar_session": 2,
+        "fontsize": 16,
         "groups": [],
         "user_permissions": []
     }

@@ -5,13 +5,15 @@ from json import loads
 from typing import List, Optional, Union
 
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from requests import Session
+from requests import post, Session
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
 
 class WebinarSession(models.Model):
+    id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(null=True)
     email = models.EmailField(max_length=255, null=True)
     password = models.CharField(max_length=255, null=True)
@@ -25,6 +27,12 @@ class WebinarSession(models.Model):
         for cookie in self.session.cookies:
             if cookie.name == cookie_name:
                 return cookie
+
+    def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
+        route = UserRouter.LOGIN.value
+        payload = {'email': check_email, 'password': check_password, 'rememberMe': 'true'}
+        response = loads(post(route, data=payload).text)
+        return 'error' not in response
 
     def login(self) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
@@ -56,7 +64,10 @@ class WebinarSession(models.Model):
             response = self.ensure_session()
             if isinstance(response, Webinar.Error):
                 return response
-            return function(self, *args, **kwargs)
+            try:
+                return function(self, *args, **kwargs)
+            except:
+                return Webinar.Error({'message': 'error'})
         return wrap
 
     @webinar_required
@@ -88,8 +99,10 @@ class WebinarSession(models.Model):
     @webinar_required
     def get_chat(self, session_id: int) -> Union[Webinar.Chat, Webinar.Error]:
         route = MessageRouter.CHAT.value.format(session_id=session_id)
-        data = loads(self.session.get(route).text)
-        return Webinar.Chat(data)
+        messages = loads(self.session.get(route).text)
+        route = MessageRouter.SETTINGS.value.format(session_id=session_id)
+        settings = loads(self.session.get(route).text)
+        return Webinar.Chat(messages, settings)
 
     @webinar_required
     def accept_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
@@ -126,10 +139,27 @@ class User(AbstractUser):
     :param avatar: ссылка на изображение
     :param webinar_session: ForeignKey на модель сессии
     """
+    id = models.AutoField(primary_key=True)
     avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
+    fontsize = models.IntegerField(
+        default=16,
+        validators=[
+            MinValueValidator(8),
+            MaxValueValidator(48)
+        ]
+    )
 
     def save(self, *args, **kwargs) -> None:
         if self.id is None:
             self.webinar_session = WebinarSession.objects.create()
         super(User, self).save(*args, **kwargs)
+
+    def update_fontsize(self, *args, **kwargs) -> None:
+        fontsize = kwargs.get('fontsize', '16')
+        if fontsize.isdigit():
+            fontsize = int(fontsize)
+            fontsize = min(fontsize, 48)
+            fontsize = max(fontsize, 8)
+            self.fontsize = fontsize
+            self.save()

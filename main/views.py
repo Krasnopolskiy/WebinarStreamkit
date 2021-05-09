@@ -28,12 +28,12 @@ class ExtendedRegistrationView(RegistrationView):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         # TODO Исправить отображение ошибки "Пользователь с таким именем уже существует"
         form = ExtendedRegistrationForm(request.POST)
-        response = super(RegistrationView, self).post(request, *args, **kwargs)
-        if request.user.is_authenticated:
-            messages.success(request, 'Регистрация прошла успешно')
         for scope in form.errors.values():
             for error in list(scope):
                 messages.error(request, error)
+        response = super(RegistrationView, self).post(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            messages.success(request, 'Регистрация прошла успешно')
         return response
 
 
@@ -79,9 +79,12 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
         form = WebinarCredentialsForm(request.POST, instance=request.user.webinar_session)
         if form.is_valid():
-            form.save()
-            request.user.webinar_session.login()
-            messages.success(request, 'Данные для авторизации на Webinar обновлены')
+            if request.user.webinar_session.is_correct_data(request.POST['email'], request.POST['password']):
+                form.save()
+                request.user.webinar_session.login()
+                messages.success(request, 'Данные для авторизации на Webinar обновлены')
+            else:
+                messages.error(request, 'Неверное имя пользователя или пароль аккаунта Webinar')
         for scope in form.errors.values():
             for error in list(scope):
                 messages.error(request, error)
@@ -123,7 +126,11 @@ class EventView(LoginRequiredMixin, View):
     context = {'pagename': 'Event'}
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
-        self.context['event'] = request.user.webinar_session.get_event(event_id)
+        response = request.user.webinar_session.get_event(event_id)
+        if isinstance(response, Webinar.Error):
+            messages.error(request, response.message)
+            return redirect(reverse('index'))
+        self.context['event'] = response
         return render(request, 'pages/event.html', self.context)
 
 
@@ -146,4 +153,5 @@ class ControlView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, event_id: int) -> HttpResponse:
         self.context['event'] = request.user.webinar_session.get_event(event_id)
+        self.context['fontsize'] = request.user.fontsize
         return render(request, 'pages/control.html', self.context)

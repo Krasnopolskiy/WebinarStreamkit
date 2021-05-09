@@ -143,11 +143,13 @@ class Webinar:
         """
         класс чата
         """
+        attrs = ['premoderation', 'show']
 
-        def __init__(self, messages: List[Dict]) -> None:
+        def __init__(self, messages: List[Dict], settings: Dict) -> None:
             """
             Конструктор класса чата
             """
+            self = Converter(self, self.attrs, settings).convert()
             self.awaiting = []
             self.moderated = []
             for message in messages:

@@ -1,0 +1,69 @@
+image: python:latest
+
+cache:
+  paths:
+    - ~/.cache/pip/
+
+stages:
+  - test
+  - style
+  - docs
+  - deploy
+
+pep8:
+  stage: style
+  before_script:
+    - pip install -r ci/pycodestyle/requirements.txt
+    - chmod +x ci/pycodestyle/runner.sh
+  script:
+    - ./ci/pycodestyle/runner.sh
+  artifacts:
+    paths:
+      - public/pycodestyle.txt
+
+pylint:
+  stage: style
+  before_script:
+    - pip install -r ci/pylint/requirements.txt
+    - chmod +x ci/pylint/runner.sh
+  script:
+    - ./ci/pylint/runner.sh
+  artifacts:
+    paths:
+      - public/pylint.svg
+      - public/pylint.html
+
+test:
+  stage: test
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - coverage run manage.py test
+    - coverage report --omit=manage.py
+    - coverage html --omit=manage.py
+    - mkdir public
+    - mv htmlcov public/coverage
+  artifacts:
+    paths:
+      - public/coverage
+
+sphinx:
+  stage: docs
+  before_script:
+    - pip install -r ci/sphinx/requirements.txt
+    - chmod +x ci/sphinx/runner.sh
+  script:
+    - ./ci/sphinx/runner.sh
+  artifacts:
+    paths:
+      - public/docs
+
+pages:
+  stage: deploy
+  script:
+    - echo 'Publish pages data'
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
