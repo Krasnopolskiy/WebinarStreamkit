@@ -35,6 +35,7 @@ let update_setting = (settings) => {
 }
 
 ws.onmessage = event => {
+    data = JSON.parse(event['data'])
     console.log(data)
     if (data['event'] === 'update settings')
         update_setting(data['settings'])
@@ -51,6 +52,7 @@ $('#moderate-switch').on('change', () => {
         }
     }
     ws.send(JSON.stringify(payload))
+    iziToast.warning({ message: 'Изменения вступят в силу через некоторое время' })
 })
 
 
