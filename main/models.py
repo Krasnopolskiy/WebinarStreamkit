@@ -10,6 +10,7 @@ from django.db import models
 from requests import Session, post
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
+import urllib
 
 
 class WebinarSession(models.Model):
@@ -31,12 +32,12 @@ class WebinarSession(models.Model):
     def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
         payload = {'email': check_email, 'password': check_password, 'rememberMe': 'true'}
-        response = loads(self.session.post(route, data=payload).text)
+        response = loads(post(route, data=payload).text)
         return 'error' not in response
 
     def login(self) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
-        payload = {'email': self.email, 'password': self.password}
+        payload = {'email': self.email, 'password': self.password, 'rememberMe': 'true'}
         response = loads(self.session.post(route, data=payload).text)
         data = loads(self.session.get(route).text)
         if 'error' in response:
@@ -121,7 +122,8 @@ class WebinarSession(models.Model):
     @webinar_required
     def update_settings(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
-        self.session.put(route, data=kwargs)
+        resp = self.session.put(route, data=kwargs)
+        print(resp.text)
 
     @webinar_required
     def start(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
@@ -130,7 +132,7 @@ class WebinarSession(models.Model):
 
     @webinar_required
     def stop(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
-        route = EventRouter.STOP.value.format(session_id=session_id)
+        route = MessageRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 
 
