@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from requests import Session, post
+from requests import post, Session
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 import urllib
