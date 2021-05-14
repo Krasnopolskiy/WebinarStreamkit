@@ -13,6 +13,7 @@ channels-redis==3.2.0
 coverage==5.5
 pylint==2.5.3
 pylint-django==2.1.0
+beautifulsoup4==4.9.3
 
 # Documentation
 Sphinx==3.5.4
