@@ -55,31 +55,6 @@ class MessageRouter(Enum):
     SETTINGS = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/settings')
 
 
-class BaseRouter(Enum):
-    EVENTS = 'https://events.webinar.ru/{route}'
-    STREAM = EVENTS.format(route='{user_id}/{event_id}/stream-new/{session_id}')
-    API = EVENTS.format(route='api/{route}')
-
-
-class UserRouter(Enum):
-    LOGIN = BaseRouter.API.value.format(route='login')
-    INFO = BaseRouter.API.value.format(route='user/{user_id}')
-
-
-class EventRouter(Enum):
-    PLANNED = BaseRouter.API.value.format(route='organizations/{organization_id}/eventsessions/list/planned')
-    INFO = BaseRouter.API.value.format(route='event/{event_id}')
-    START = BaseRouter.API.value.format(route='eventsession/{session_id}/start')
-    STOP = BaseRouter.API.value.format(route='eventsession/{session_id}/stop')
-
-
-class MessageRouter(Enum):
-    CHAT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat')
-    ACCEPT = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/moderate')
-    DELETE = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/messages/delete')
-    SETTINGS = BaseRouter.API.value.format(route='eventsessions/{session_id}/chat/settings')
-
-
 class Webinar:
     """
     класс вебинара

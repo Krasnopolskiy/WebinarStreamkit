@@ -10,6 +10,7 @@ from django.db import models
 from requests import post, Session
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
+import urllib
 
 
 class WebinarSession(models.Model):
@@ -36,13 +37,13 @@ class WebinarSession(models.Model):
 
     def login(self) -> Optional[Webinar.Error]:
         route = UserRouter.LOGIN.value
-        payload = {'email': self.email, 'password': self.password}
+        payload = {'email': self.email, 'password': self.password, 'rememberMe': 'true'}
         response = loads(self.session.post(route, data=payload).text)
+        data = loads(self.session.get(route).text)
         if 'error' in response:
             self.last_login = None
             self.save()
             return Webinar.Error(response.get('error'))
-        data = loads(self.session.get(route).text)
         self.user_id = data.get('id')
         self.last_login = date.today()
         self.cookie = self.get_cookie('sessionId').value
@@ -72,6 +73,8 @@ class WebinarSession(models.Model):
 
     @webinar_required
     def get_user(self) -> Union[Webinar.User, Webinar.Error]:
+        if not self.user_id:
+            self.login()
         route = UserRouter.INFO.value.format(user_id=self.user_id)
         data = loads(self.session.get(route).text)
         return Webinar.User(data, True)
@@ -119,7 +122,8 @@ class WebinarSession(models.Model):
     @webinar_required
     def update_settings(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
-        self.session.put(route, data=kwargs)
+        resp = self.session.put(route, data=kwargs)
+        print(resp.text)
 
     @webinar_required
     def start(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
@@ -128,7 +132,7 @@ class WebinarSession(models.Model):
 
     @webinar_required
     def stop(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
-        route = EventRouter.STOP.value.format(session_id=session_id)
+        route = MessageRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 
 
