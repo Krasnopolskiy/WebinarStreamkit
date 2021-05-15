@@ -43,7 +43,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns = [
-        path('__debag__/', include(debug_toolbar.urls)),
+        path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
     urlpatterns += static(
         settings.MEDIA_URL,
