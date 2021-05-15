@@ -173,5 +173,5 @@ class ControlConsumer(BaseConsumer):
             'update settings': sync_to_async(self.webinar_session.update_settings),
             'update fontsize': sync_to_async(self.user.update_fontsize),
             'start': sync_to_async(self.webinar_session.start),
-            'stop': sync_to_async(self.webinar_session.stop)
+            'stop': sync_to_async(self.webinar_session.stop),
         }

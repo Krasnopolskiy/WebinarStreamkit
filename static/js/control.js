@@ -51,6 +51,7 @@ $('#moderate-switch').on('change', () => {
             value: $('#moderate-switch').is(':checked')
         }
     }
+    console.log(payload);
     ws.send(JSON.stringify(payload))
     iziToast.warning({ message: 'Изменения вступят в силу через некоторое время' })
 })
