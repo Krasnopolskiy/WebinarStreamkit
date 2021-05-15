@@ -8,7 +8,6 @@ stages:
   - test
   - style
   - docs
-  - deploy
 
 pep8:
   stage: style
@@ -20,6 +19,9 @@ pep8:
   artifacts:
     paths:
       - public/pycodestyle.txt
+  only:
+    - develop
+    - master
 
 pylint:
   stage: style
@@ -32,6 +34,9 @@ pylint:
     paths:
       - public/pylint.svg
       - public/pylint.html
+  only:
+    - develop
+    - master
 
 test:
   stage: test
@@ -46,6 +51,9 @@ test:
   artifacts:
     paths:
       - public/coverage
+  only:
+    - develop
+    - master
 
 sphinx:
   stage: docs
@@ -57,13 +65,6 @@ sphinx:
   artifacts:
     paths:
       - public/docs
-
-pages:
-  stage: deploy
-  script:
-    - echo 'Publish pages data'
-  artifacts:
-    paths:
-      - public
   only:
+    - develop
     - master
