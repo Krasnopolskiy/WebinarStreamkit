@@ -219,6 +219,7 @@ class WidgetTestCase(TestCase):
         self.client.post(reverse('update_webinar_credentials'), data=login_data)
 
     def test_view(self):
+        # TODO: Дописать проверку виджетов, (у тестировщика не отображаются вебинары)
         response = self.client.get(reverse('schedule'))
 
 
