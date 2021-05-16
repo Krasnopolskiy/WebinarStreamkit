@@ -21,7 +21,7 @@ class RegisterPageTestCase(TestCase):
         }
         response = self.client.post(reverse('signup'), data=register_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('index'))
         self.assertEqual(len(messages), 1)
         self.assertIn('Регистрация прошла успешно', messages)
 
@@ -83,7 +83,7 @@ class AuthTestCase(TestCase):
             'password': 'promprog',
         }
         response = self.client.post(reverse('login'), data=login_data)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('index'))
         self.assertNotIn('/admin/'.encode(), self.client.get(reverse('index')).content)
 
     def test_super_user_auth(self):
@@ -125,7 +125,7 @@ class AuthTestCase(TestCase):
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         response = self.client.get(reverse('logout'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login'))
         self.assertEqual(response.cookies['sessionid'].value, '')
 
     def test_webinar_login(self):
@@ -137,7 +137,7 @@ class AuthTestCase(TestCase):
         }
         response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile'))
         self.assertIn('Данные для авторизации на Webinar обновлены', messages)
         self.assertEqual(len(messages), 1)
 
@@ -145,11 +145,11 @@ class AuthTestCase(TestCase):
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         login_data = {
-            'email': 'artemglazyrin@mail.ru',
+            'email': 'wstreamkit@mail.ru',
         }
         response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile'))
         self.assertIn('Обязательное поле.', messages)
         self.assertEqual(len(messages), 1)
 
@@ -157,12 +157,12 @@ class AuthTestCase(TestCase):
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         login_data = {
-            'email': 'artemglazyrin@mail.ru',
+            'email': 'wstreamkit@mail.ru',
             'password': 'ferdgbdfbsd'
         }
         response = self.client.post(reverse('update_webinar_credentials'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile'))
         self.assertIn('Неверное имя пользователя или пароль аккаунта Webinar', messages)
         self.assertEqual(len(messages), 1)
 
@@ -229,21 +229,21 @@ class UnauthUserTestCase(TestCase):
 
     def test_profile(self):
         response = self.client.get(reverse('profile'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('profile'))
 
     def test_webinar_credentials(self):
         payload = {'email': 'asd@asdas',
                    'password': 'ahsudhhcnwen'}
         response = self.client.post(reverse('update_webinar_credentials'), data=payload)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_webinar_credentials'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 0)
 
     def test_update_user_information(self):
         payload = {'avatar': Image.open('static/images/Hey_You.png')}
         response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_user_information'))
 
     def test_schedule(self):
         response = self.client.get(reverse('schedule'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
