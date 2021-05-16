@@ -247,3 +247,19 @@ class UnauthUserTestCase(TestCase):
     def test_schedule(self):
         response = self.client.get(reverse('schedule'))
         self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
+
+
+class UnauthWebinatUser(TestCase):
+    fixtures = ['db.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+        user = User.objects.get(username='petya')
+        self.client.force_login(user)
+
+    def test_schedule(self):
+        response = self.client.get(reverse('schedule'))
+        self.assertRedirects(response, reverse('index'))
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
