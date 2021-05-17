@@ -12,12 +12,16 @@ let close_widget = () => {
 }
 
 let update_fontsize = () => {
-    let fontsize = $('#fontsize-range').val()
+    let fontsize = parseInt($('#fontsize-range').val())
     $('#fontsize-value').html(fontsize)
-    if (chat_widget !== undefined)
-        $('.container-fluid', chat_widget.document).css('font-size', `${fontsize}px`)
-    if (awaiting_widget !== undefined)
-        $('.container-fluid', awaiting_widget.document).css('font-size', `${fontsize}px`)
+    if (chat_widget !== undefined) {
+        $('.display-6', chat_widget.document).css('font-size', `${fontsize + 12}px`)
+        $('#message-box', chat_widget.document).css('font-size', `${fontsize}px`)
+    }
+    if (awaiting_widget !== undefined) {
+        $('.display-6', awaiting_widget.document).css('font-size', `${fontsize + 12}px`)
+        $('#message-box', awaiting_widget.document).css('font-size', `${fontsize}px`)
+    }
 }
 
 let update_setting = (settings) => {
@@ -53,7 +57,9 @@ $('#moderate-switch').on('change', () => {
     }
     console.log(payload);
     ws.send(JSON.stringify(payload))
-    iziToast.warning({ message: 'Изменения вступят в силу через некоторое время' })
+    iziToast.warning({
+        message: 'Изменения вступят в силу через некоторое время'
+    })
 })
 
 
@@ -89,11 +95,11 @@ $('#stop-btn').click(() => {
 $('#chat-btn').click(() => {
     if (chat_widget === undefined || chat_widget.closed)
         chat_widget = window.open(`${parent_url}/chat`, 'Chat', `height=${100*vh * 2}, width=${100*vw}, left=${100*vw + 10}`)
-    update_fontsize()
+    setTimeout(() => update_fontsize(), 1000)
 })
 
 $('#awaiting-btn').click(() => {
     if (awaiting_widget === undefined || awaiting_widget.closed)
         awaiting_widget = window.open(`${parent_url}/awaiting`, 'Awaiting', `height=${100*vh * 2}, width=${100*vw}, left=${(100*vw + 10) * 2}`)
-    update_fontsize()
+    setTimeout(() => update_fontsize(), 1000)
 })

@@ -1,3 +1,7 @@
+iziToast.settings({
+    position: 'bottomRight',
+})
+
 messages.forEach(message => {
     let payload = { message: message.message }
     switch (message.tags) {
