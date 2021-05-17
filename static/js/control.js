@@ -15,9 +15,9 @@ let update_fontsize = () => {
     let fontsize = $('#fontsize-range').val()
     $('#fontsize-value').html(fontsize)
     if (chat_widget !== undefined)
-        $('#message-box', chat_widget.document).css('font-size', `${fontsize}px`)
+        $('.container-fluid', chat_widget.document).css('font-size', `${fontsize}px`)
     if (awaiting_widget !== undefined)
-        $('#message-box', awaiting_widget.document).css('font-size', `${fontsize}px`)
+        $('.container-fluid', awaiting_widget.document).css('font-size', `${fontsize}px`)
 }
 
 let update_setting = (settings) => {
