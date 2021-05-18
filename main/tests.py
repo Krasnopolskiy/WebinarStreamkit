@@ -88,8 +88,8 @@ class AuthTestCase(TestCase):
 
     def test_super_user_auth(self):
         login_data = {
-            'username': 'vasya',
-            'password': 'promprog',
+            'username': 'special_admin',
+            'password': 'r3ally_s3cr3t_p4ssw0rd',
         }
         response = self.client.post(reverse('login'), data=login_data)
         self.assertEqual(response.status_code, 302)
@@ -214,53 +214,25 @@ class WidgetTestCase(TestCase):
         login_data = {
             'email': 'wstreamkit@mail.ru',
             'password': 'uTAouAOpy-51',
-            'rememberMe': 'true',
         }
         self.client.post(reverse('update_webinar_credentials'), data=login_data)
+        response = self.client.get(reverse('schedule'))
+        soup = BeautifulSoup(response.content, 'html.parser')
+        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
+        if not a:
+            raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
+                                                                   'Создайте вебинар и снова запустите тесты')
+        self.target_url = self.client.get(a[0]) + '/control'
 
     def test_view(self):
         # TODO: Дописать проверку виджетов, (у тестировщика не отображаются вебинары)
-        response = self.client.get(reverse('schedule'))
+        response = self.client.get(self.target_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        print(soup.prettify())
 
 
 class UnauthUserTestCase(TestCase):
-
-    def setUp(self) -> None:
-        self.client = Client()
-
-    def test_profile(self):
-        response = self.client.get(reverse('profile'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('profile'))
-
-    def test_webinar_credentials(self):
-        payload = {'email': 'asd@asdas',
-                   'password': 'ahsudhhcnwen'}
-        response = self.client.post(reverse('update_webinar_credentials'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_webinar_credentials'))
-        messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(len(messages), 0)
-
-    def test_update_user_information(self):
-        payload = {'avatar': Image.open('static/images/Hey_You.png')}
-        response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_user_information'))
-
-    def test_schedule(self):
-        response = self.client.get(reverse('schedule'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
-
-
-class UnauthWebinatUser(TestCase):
     fixtures = ['db.json']
 
     def setUp(self) -> None:
         self.client = Client()
-        user = User.objects.get(username='petya')
-        self.client.force_login(user)
-
-    def test_schedule(self):
-        response = self.client.get(reverse('schedule'))
-        self.assertRedirects(response, reverse('index'))
-        messages = list(map(str, get_messages(response.wsgi_request)))
-        self.assertEqual(len(messages), 1)
-        self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
