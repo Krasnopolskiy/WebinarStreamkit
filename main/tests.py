@@ -88,8 +88,8 @@ class AuthTestCase(TestCase):
 
     def test_super_user_auth(self):
         login_data = {
-            'username': 'vasya',
-            'password': 'promprog',
+            'username': 'special_admin',
+            'password': 'r3ally_s3cr3t_p4ssw0rd',
         }
         response = self.client.post(reverse('login'), data=login_data)
         self.assertEqual(response.status_code, 302)
@@ -222,13 +222,16 @@ class WidgetTestCase(TestCase):
         if not a:
             raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
                                                                    'Создайте вебинар и снова запустите тесты')
-        self.target_url = self.client.get(a[0]) + '/control'
+
+        self.target_url = a[0] + '/control'
 
     def test_view(self):
-        # TODO: Дописать проверку виджетов, (у тестировщика не отображаются вебинары)
         response = self.client.get(self.target_url)
         soup = BeautifulSoup(response.content, 'html.parser')
-        print(soup.prettify())
+        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'), soup.find(id='moderate-switch'),
+               soup.find(id='chat-btn'), soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
+        for el in arr:
+            self.assertNotEqual(el, None)
 
 
 class UnauthUserTestCase(TestCase):
@@ -259,11 +262,12 @@ class UnauthUserTestCase(TestCase):
         self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
 
 
-class UnauthWebinatUser(TestCase):
+class UnauthWebinarUser(TestCase):
     fixtures = ['db.json']
 
     def setUp(self) -> None:
         self.client = Client()
+
         user = User.objects.get(username='petya')
         self.client.force_login(user)
 
@@ -273,3 +277,4 @@ class UnauthWebinatUser(TestCase):
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 1)
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
+
