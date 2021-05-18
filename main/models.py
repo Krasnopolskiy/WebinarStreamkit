@@ -36,6 +36,7 @@ class WebinarSession(models.Model):
         return 'error' not in response
 
     def login(self) -> Optional[Webinar.Error]:
+        self.session = Session()
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password, 'rememberMe': 'true'}
         response = loads(self.session.post(route, data=payload).text)

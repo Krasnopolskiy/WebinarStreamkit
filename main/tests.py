@@ -222,13 +222,16 @@ class WidgetTestCase(TestCase):
         if not a:
             raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
                                                                    'Создайте вебинар и снова запустите тесты')
-        self.target_url = self.client.get(a[0]) + '/control'
+
+        self.target_url = a[0] + '/control'
 
     def test_view(self):
-        # TODO: Дописать проверку виджетов, (у тестировщика не отображаются вебинары)
         response = self.client.get(self.target_url)
         soup = BeautifulSoup(response.content, 'html.parser')
-        print(soup.prettify())
+        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'), soup.find(id='moderate-switch'),
+               soup.find(id='chat-btn'), soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
+        for el in arr:
+            self.assertNotEqual(el, None)
 
 
 class UnauthUserTestCase(TestCase):
@@ -236,3 +239,42 @@ class UnauthUserTestCase(TestCase):
 
     def setUp(self) -> None:
         self.client = Client()
+
+    def test_profile(self):
+        response = self.client.get(reverse('profile'))
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('profile'))
+
+    def test_webinar_credentials(self):
+        payload = {'email': 'asd@asdas',
+                   'password': 'ahsudhhcnwen'}
+        response = self.client.post(reverse('update_webinar_credentials'), data=payload)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_webinar_credentials'))
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(len(messages), 0)
+
+    def test_update_user_information(self):
+        payload = {'avatar': Image.open('static/images/Hey_You.png')}
+        response = self.client.post(reverse('update_user_information'), data=payload)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_user_information'))
+
+    def test_schedule(self):
+        response = self.client.get(reverse('schedule'))
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
+
+
+class UnauthWebinarUser(TestCase):
+    fixtures = ['db.json']
+
+    def setUp(self) -> None:
+        self.client = Client()
+
+        user = User.objects.get(username='petya')
+        self.client.force_login(user)
+
+    def test_schedule(self):
+        response = self.client.get(reverse('schedule'))
+        self.assertRedirects(response, reverse('index'))
+        messages = list(map(str, get_messages(response.wsgi_request)))
+        self.assertEqual(len(messages), 1)
+        self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
+
