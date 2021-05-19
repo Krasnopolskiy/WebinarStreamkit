@@ -109,30 +109,30 @@ class WebinarSession(models.Model):
         return Webinar.Chat(messages, settings)
 
     @webinar_required
-    def accept_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def accept_message(self, session_id: int, **kwargs):
         payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.ACCEPT.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
     @webinar_required
-    def delete_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def delete_message(self, session_id: int, **kwargs):
         payload = {'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.DELETE.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
     @webinar_required
-    def update_settings(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def update_settings(self, session_id: int, **kwargs):
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
         resp = self.session.put(route, data=kwargs)
         print(resp.text)
 
     @webinar_required
-    def start(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def start(self, session_id: int, **kwargs):
         route = EventRouter.START.value.format(session_id=session_id)
         self.session.put(route)
 
     @webinar_required
-    def stop(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def stop(self, session_id: int, **kwargs):
         route = MessageRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 

@@ -1,4 +1,7 @@
 # import pytest
+"""
+Just test, no more
+"""
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
@@ -91,7 +94,8 @@ class RegisterPageTestCase(TestCase):
         }
         response = self.client.post(reverse('signup'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        error_msg = 'Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
+        error_msg = 'Введите правильное имя пользователя. ' \
+                    'Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
         self.assertIn(error_msg, messages)
 
 
@@ -260,9 +264,9 @@ class WebinarTestCase(TestCase):
         """
         response = self.client.get(reverse('schedule'))
         soup = BeautifulSoup(response.content, 'html.parser')
-        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
-        if a:
-            response = self.client.get(a[0])
+        links = [link.attrs['href'] for link in soup.findAll('a', class_='btn-outline-primary')]
+        if links:
+            response = self.client.get(links[0])
             self.assertEqual(response.status_code, 200)
             soup = BeautifulSoup(response.content, 'html.parser')
             buttons = soup.find('div', class_='px-3').findChildren()
@@ -293,12 +297,13 @@ class WidgetTestCase(TestCase):
         self.client.post(reverse('update_webinar_credentials'), data=login_data)
         response = self.client.get(reverse('schedule'))
         soup = BeautifulSoup(response.content, 'html.parser')
-        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
-        if not a:
-            raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
-                                                                   'Создайте вебинар и снова запустите тесты')
+        links = [link.attrs['href'] for link in soup.findAll('a', class_='btn-outline-primary')]
+        if not links:
+            raise Exception('На аккаунте ' +
+                            login_data['email'] +
+                            ' нет ни одного вебинара.\n Создайте вебинар и снова запустите тесты')
 
-        self.target_url = a[0]
+        self.target_url = links[0]
 
     def test_view(self):
         """
@@ -306,10 +311,11 @@ class WidgetTestCase(TestCase):
         """
         response = self.client.get(self.target_url + '/control')
         soup = BeautifulSoup(response.content, 'html.parser')
-        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'), soup.find(id='moderate-switch'),
-               soup.find(id='chat-btn'), soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
-        for el in arr:
-            self.assertNotEqual(el, None)
+        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'),
+               soup.find(id='moderate-switch'), soup.find(id='chat-btn'),
+               soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
+        for element in arr:
+            self.assertNotEqual(element, None)
 
     def test_view_chat(self):
         """
@@ -353,7 +359,8 @@ class UnauthUserTestCase(TestCase):
         payload = {'email': 'asd@asdas',
                    'password': 'ahsudhhcnwen'}
         response = self.client.post(reverse('update_webinar_credentials'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_webinar_credentials'))
+        self.assertRedirects(response, reverse('login') + '?next='
+                             + reverse('update_webinar_credentials'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 0)
 
@@ -363,7 +370,8 @@ class UnauthUserTestCase(TestCase):
         """
         payload = {'avatar': Image.open('static/images/Hey_You.png')}
         response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_user_information'))
+        self.assertRedirects(response, reverse('login') + '?next='
+                             + reverse('update_user_information'))
 
     def test_schedule(self):
         """
