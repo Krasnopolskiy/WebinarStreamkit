@@ -12,48 +12,60 @@
     <div class="row">
         <div class="col px-5">
             <h2>Новый StreamKit для платформы Webinar</h2>
-            <p class="lead">Удобный виджет для администраторов вебинара. С помощью него Вы можете модерировать чат,
-                создавать вебинары и управлять ими</p>
+            <p class="lead">Уважаемый пользователь, добро пожаловать на главную страницу нашего сервиса Webinar
+                StreamKit.
+                В первую очередь он предназначен для администраторов вебинаров. В функционал входит модерация чата,
+                создание и дальнейшее управление вебинарами.</p>
+            <h3>Для начала работы, пожалуйста, выполните следующие действия:</h3>
+            <br>
             <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Шаг #1
+                        <button aria-controls="collapseOne" aria-expanded="true" class="accordion-button"
+                                data-bs-target="#collapseOne" data-bs-toggle="collapse" type="button">
+                            Шаг #1. Авторизация/Регистрация на сайте
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                         data-bs-parent="#accordionExample">
+                    <div aria-labelledby="headingOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
+                         id="collapseOne">
                         <div class="accordion-body">
-                            Текст
+                            Если вы впервые на нашем сайте, зарегистрируйтесь, иначе авторизуйтесь через расположенные
+                            ниже, а также в правом верхнем углу соответствующие кнопки.
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Шаг #2
+                        <button aria-controls="collapseTwo" aria-expanded="false" class="accordion-button collapsed"
+                                data-bs-target="#collapseTwo" data-bs-toggle="collapse" type="button">
+                            Шаг #2. Авторизация на Webinar
                         </button>
                     </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                         data-bs-parent="#accordionExample">
+                    <div aria-labelledby="headingTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
+                         id="collapseTwo">
                         <div class="accordion-body">
-                            Текст
+                            Вы зарегистрировались на сайте. Перейдите на страницу вашего профиля.
+                            На текущий момент аккаунты на Webinar Streamkit и Webinar.ru не синхронизированы. По этой
+                            причине перейдите на вкладку профиля "Данные Webinar" и авторизуйтесь через платформу.
+                            Затем до этого заблокированная панель "Расписание вебинаров" станет для вас доступна.
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Шаг #3
+                        <button aria-controls="collapseThree" aria-expanded="false" class="accordion-button collapsed"
+                                data-bs-target="#collapseThree" data-bs-toggle="collapse" type="button">
+                            Шаг #3. Подробнее
                         </button>
                     </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                         data-bs-parent="#accordionExample">
+                    <div aria-labelledby="headingThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
+                         id="collapseThree">
                         <div class="accordion-body">
-                            Текст
+                            Для более глубокого изучения предоставляемых возможностей, пожалуйста, ознакомьтесь с
+                            приложенной документацией.
+                            <div class="card-body">
+                                <a class="btn btn-primary" href="#">Документация</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,18 +74,10 @@
     </div>
 </div>
 <div class="card-body">
-    <a href="#" class="btn btn-primary">Документация</a>
-</div>
-<div class="card-body">
-    {% if user.is_authenticated %}
-    <a href="{% url 'profile' %}" class="btn btn-primary me-3">Авторизация Webinar</a>
-    {% else %}
-    <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
-    <a href="{% url 'signup' %}" class="btn btn-primary ms-3">Регистрация</a>
+    {% if not user.is_authenticated %}
+    <a class="btn btn-primary me-3" href="{% url 'login' %}">Авторизация</a>
+    <a class="btn btn-primary ms-3" href="{% url 'signup' %}">Регистрация</a>
     {% endif %}
-</div>
-
-</div>
 </div>
 
 {% endblock %}
