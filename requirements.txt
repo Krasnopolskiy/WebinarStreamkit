@@ -1,21 +1,14 @@
-# Engine
-Django==3.2.2
-django-crispy-forms==1.11.2
-django-registration==3.1.2
-Pillow==8.2.0
-requests==2.25.1
+-r requirements_common.txt
 
-# Websocket
-channels==3.0.3
-channels-redis==3.2.0
+# App server
+daphne==3.0.2
 
-# Tests
-coverage==5.5
-pylint==2.5.3
-pylint-django==2.1.0
-beautifulsoup4==4.9.3
+# Database
+dj-database-url==0.5.0
+psycopg2==2.8.6
 
-# Documentation
-Sphinx==3.5.4
-sphinx-rtd-theme==0.5.2
-sphinx-autodoc-typehints==1.12.0
+# Heroku
+django-heroku==0.3.1
+
+# Staticfiles
+whitenoise==5.2.0
