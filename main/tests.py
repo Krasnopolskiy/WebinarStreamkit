@@ -1,12 +1,12 @@
-import pytest
+# import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
 from PIL import Image
 from main.models import User
-import asyncio
-import websockets
+# import asyncio
+# import websockets
 
 
 class RegisterPageTestCase(TestCase):
