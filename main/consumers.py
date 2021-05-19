@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict
 from uuid import uuid4
 
 from asgiref.sync import sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from django.template.loader import render_to_string
 
 from main.models import User, WebinarSession

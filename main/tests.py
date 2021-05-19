@@ -1,9 +1,12 @@
+import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
 from PIL import Image
 from main.models import User
+import asyncio
+import websockets
 
 
 class RegisterPageTestCase(TestCase):
@@ -223,15 +226,23 @@ class WidgetTestCase(TestCase):
             raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
                                                                    'Создайте вебинар и снова запустите тесты')
 
-        self.target_url = a[0] + '/control'
+        self.target_url = a[0]
 
     def test_view(self):
-        response = self.client.get(self.target_url)
+        response = self.client.get(self.target_url + '/control')
         soup = BeautifulSoup(response.content, 'html.parser')
         arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'), soup.find(id='moderate-switch'),
                soup.find(id='chat-btn'), soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
         for el in arr:
             self.assertNotEqual(el, None)
+
+    def test_view_chat(self):
+        response = self.client.get(self.target_url+'/chat')
+        self.assertIn('Сообщения'.encode(), response.content)
+
+    def test_view_moderate(self):
+        response = self.client.get(self.target_url+'/awaiting')
+        self.assertIn('Ожидают модерацию'.encode(), response.content)
 
 
 class UnauthUserTestCase(TestCase):
@@ -278,3 +289,33 @@ class UnauthWebinarUser(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
+
+# class SocketsTestCase(TestCase):
+#     fixtures = ['db.json']
+#
+#     def setUp(self) -> None:
+#         self.client = Client()
+#         user = User.objects.get(username='vasya')
+#         self.client.force_login(user)
+#         login_data = {
+#             'email': 'wstreamkit@mail.ru',
+#             'password': 'uTAouAOpy-51',
+#         }
+#         self.client.post(reverse('update_webinar_credentials'), data=login_data)
+#
+#         response = self.client.get(reverse('schedule'))
+#         soup = BeautifulSoup(response.content, 'html.parser')
+#         a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
+#         if not a:
+#             raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
+#                                                                    'Создайте вебинар и снова запустите тесты')
+#
+#         self.target_url = a[0]
+#
+#     @pytest.mark.django_db
+#     @pytest.mark.asyncio
+#     async def test_control(self):
+#         uri = 'ws://127.0.0.1:8000' + self.target_url
+#         async with websockets.connect(uri) as ws:
+#             resp = await ws.recv()
+#             print(resp)
