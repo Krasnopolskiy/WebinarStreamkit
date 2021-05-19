@@ -22,6 +22,7 @@ pep8:
   only:
     - develop
     - master
+    - feature/tests
 
 pylint:
   stage: style
