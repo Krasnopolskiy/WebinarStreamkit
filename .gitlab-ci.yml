@@ -38,6 +38,7 @@ pylint:
   only:
     - develop
     - master
+    - feature/tests
 
 test:
   stage: test
@@ -55,6 +56,7 @@ test:
   only:
     - develop
     - master
+    - feature/tests
 
 sphinx:
   stage: docs
@@ -69,3 +71,4 @@ sphinx:
   only:
     - develop
     - master
+    - feature/tests
