@@ -24,7 +24,7 @@ class WebinarSession(models.Model):
 
     session = Session()
 
-    def get_cookie(self, cookie_name: str) -> Optional[Cookie]:
+    def get_cookie(self, cookie_name: str):
         """
         Получение Куки пользователя
         :param cookie_name:
@@ -34,7 +34,7 @@ class WebinarSession(models.Model):
             if cookie.name == cookie_name:
                 return cookie
 
-    def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
+    def is_correct_data(self, check_email: str, check_password: str):
         """
         Проверка на наличие аккаунта на webinar
         :param check_email: email пользователя
@@ -91,7 +91,7 @@ class WebinarSession(models.Model):
         return wrap
 
     @webinar_required
-    def get_user(self) -> Union[Webinar.User, Webinar.Error]:
+    def get_user(self):
         """
         Получение пользователя
         :return: Объект пользователя webinar
@@ -103,7 +103,7 @@ class WebinarSession(models.Model):
         return Webinar.User(data, True)
 
     @webinar_required
-    def get_schedule(self) -> Union[List[Webinar.Event], Webinar.Error]:
+    def get_schedule(self):
         """
         Получение расписания вебинаров
         :return: Расписание вебинаров
@@ -120,7 +120,7 @@ class WebinarSession(models.Model):
         return schedule
 
     @webinar_required
-    def get_event(self, event_id: int) -> Union[Webinar.Event, Webinar.Error]:
+    def get_event(self, event_id: int):
         """
         Получение вебинара (события)
         :param event_id: id события
@@ -132,7 +132,7 @@ class WebinarSession(models.Model):
             return Webinar.Event(self.user_id, data)
 
     @webinar_required
-    def get_chat(self, session_id: int) -> Union[Webinar.Chat, Webinar.Error]:
+    def get_chat(self, session_id: int):
         """
         Получение чата
         :return: Чат из вебинара

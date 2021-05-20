@@ -1,3 +1,7 @@
+"""
+Consumers для работы с сокетами
+"""
+
 from __future__ import annotations
 
 import asyncio
@@ -7,7 +11,7 @@ from typing import Any, Callable, Dict
 from uuid import uuid4
 
 from asgiref.sync import sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.template.loader import render_to_string
 
 from main.models import User, WebinarSession
@@ -52,6 +56,9 @@ def get_chat_template(webinar_session: WebinarSession, event_id: int, mode: Chat
 
 
 async def send_chat(consumer: ChatConsumer) -> None:
+    """
+    Метод отправки чата
+    """
     template = await sync_to_async(get_chat_template)(
         consumer.webinar_session,
         consumer.event_id,
@@ -110,10 +117,13 @@ async def send_error(consumer: BaseConsumer) -> None:
 
 
 class BaseConsumer(AsyncWebsocketConsumer):
+
     async def connect(self) -> None:
+        """
+        Метод, срабатывающий после подключения по websockets
+        """
         self.event_id = self.scope['url_route']['kwargs']['event_id']
         self.room = f'client_{self.event_id}_{uuid4()}'
-
         user_id = self.scope['user'].id
         self.user = await sync_to_async(User.objects.get)(id=user_id)
         self.webinar_session = await sync_to_async(WebinarSession.objects.get)(user=user_id)
@@ -132,6 +142,9 @@ class BaseConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data: str) -> None:
+        """
+        Метод принятия сообщений по websockets
+        """
         message = loads(text_data)
         event = await sync_to_async(self.webinar_session.get_event)(self.event_id)
         if message['command'] in self.commands:
@@ -142,36 +155,60 @@ class BaseConsumer(AsyncWebsocketConsumer):
 
 
 class ChatConsumer(BaseConsumer):
-    async def connect(self) -> None:
-        await super().connect()
+    def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
+        super(ChatConsumer, self).__init__(*args, **kwargs)
         self.mode = ChatMode.MODERATED
+        self.commands = {}
         self.timer = Timer(1, send_chat, self)
+
+    async def connect(self) -> None:
+        """
+        Метод, срабатывающий после подключения по websockets
+        """
+        await super().connect()
+        self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message)
         self.timer.enable()
-        self.commands = {
-            'delete message': sync_to_async(self.webinar_session.delete_message)
-        }
 
 
 class AwaitingMessagesConsumer(BaseConsumer):
-    async def connect(self) -> None:
-        await super().connect()
-        self.mode = ChatMode.AWAITING
+    def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
+        super().__init__(*args, **kwargs)
         self.timer = Timer(1, send_chat, self)
+        self.mode = ChatMode.AWAITING
+        self.commands = {}
+
+    async def connect(self) -> None:
+        """
+        Метод, срабатывающий после подключения по websockets
+        """
+        await super().connect()
+        self.commands['accept message'] = sync_to_async(self.webinar_session.accept_message),
+        self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message),
         self.timer.enable()
-        self.commands = {
-            'accept message': sync_to_async(self.webinar_session.accept_message),
-            'delete message': sync_to_async(self.webinar_session.delete_message)
-        }
 
 
 class ControlConsumer(BaseConsumer):
-    async def connect(self) -> None:
-        await super().connect()
+    def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
+        super().__init__(*args, **kwargs)
         self.timer = Timer(1, send_settings, self)
+        self.commands = {}
+
+    async def connect(self) -> None:
+        """
+        Метод, срабатывающий после подключения по websockets
+        """
+        await super().connect()
+        self.commands['update settings'] = sync_to_async(self.webinar_session.update_settings)
+        self.commands['update fontsize'] = sync_to_async(self.user.update_fontsize)
+        self.commands['start'] = sync_to_async(self.webinar_session.start)
+        self.commands['stop'] = sync_to_async(self.webinar_session.stop)
         self.timer.enable()
-        self.commands = {
-            'update settings': sync_to_async(self.webinar_session.update_settings),
-            'update fontsize': sync_to_async(self.user.update_fontsize),
-            'start': sync_to_async(self.webinar_session.start),
-            'stop': sync_to_async(self.webinar_session.stop),
-        }

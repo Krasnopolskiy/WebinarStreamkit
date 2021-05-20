@@ -425,8 +425,8 @@ class UnauthWebinarUser(TestCase):
 #         soup = BeautifulSoup(response.content, 'html.parser')
 #         a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
 #         if not a:
-#             raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
-#                                                                    'Создайте вебинар и снова запустите тесты')
+#             raise Exception('На аккаунте ' + login_data['email'] +
+#             ' нет ни одного вебинара.\n Создайте вебинар и снова запустите тесты')
 #
 #         self.target_url = a[0]
 #
