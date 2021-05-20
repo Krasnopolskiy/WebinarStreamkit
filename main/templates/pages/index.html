@@ -13,57 +13,66 @@
         <div class="col px-5">
             <h2>Новый StreamKit для платформы Webinar</h2>
             <p class="lead">Уважаемый пользователь, добро пожаловать на главную страницу нашего сервиса Webinar
-                StreamKit.
-                В первую очередь он предназначен для администраторов вебинаров. В функционал входит модерация чата,
+                StreamKit. Данный сервис предназначен для удобного администраторов вебинаров. В функционал входит
+                модерация чата,
                 создание и дальнейшее управление вебинарами.</p>
-            <h3>Для начала работы, пожалуйста, выполните следующие действия:</h3>
+            <h3>Для начала работы:</h3>
             <br>
             <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                         <button aria-controls="collapseOne" aria-expanded="true" class="accordion-button"
-                                data-bs-target="#collapseOne" data-bs-toggle="collapse" type="button">
+                            data-bs-target="#collapseOne" data-bs-toggle="collapse" type="button">
                             Шаг #1. Авторизация/Регистрация на сайте
                         </button>
                     </h2>
-                    <div aria-labelledby="headingOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
-                         id="collapseOne">
+                    <div aria-labelledby="headingOne" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample" id="collapseOne">
                         <div class="accordion-body">
-                            Если вы впервые на нашем сайте, зарегистрируйтесь, иначе авторизуйтесь через расположенные
-                            ниже, а также в правом верхнем углу соответствующие кнопки.
+                            Если вы впервые на нашем сайте, зарегистрируйтесь. Завершив процедуру регистрации, вы можете
+                            войти в
+                            свой аккаунт для
+                            дальнейшей работы.
+                            <div class="p-3">
+                                <a href="{% url 'login' %}" class="btn btn-primary">Авторизация</a>
+                                <a href="{% url 'signup' %}" class="btn btn-primary">Регистрация</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingTwo">
                         <button aria-controls="collapseTwo" aria-expanded="false" class="accordion-button collapsed"
-                                data-bs-target="#collapseTwo" data-bs-toggle="collapse" type="button">
+                            data-bs-target="#collapseTwo" data-bs-toggle="collapse" type="button">
                             Шаг #2. Авторизация на Webinar
                         </button>
                     </h2>
-                    <div aria-labelledby="headingTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
-                         id="collapseTwo">
+                    <div aria-labelledby="headingTwo" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample" id="collapseTwo">
                         <div class="accordion-body">
-                            Вы зарегистрировались на сайте. Перейдите на страницу вашего профиля.
-                            На текущий момент аккаунты на Webinar Streamkit и Webinar.ru не синхронизированы. По этой
-                            причине перейдите на вкладку профиля "Данные Webinar" и авторизуйтесь через платформу.
-                            Затем до этого заблокированная панель "Расписание вебинаров" станет для вас доступна.
+                            Перейдите на страницу вашего профиля. На текущий момент аккаунты на Webinar Streamkit и
+                            Webinar.ru не синхронизированы. Чтобы привязать аккаунт Webinar, перейдите на вкладку
+                            профиля "Данные Webinar" и авторизуйтесь через платформу.
+                            После синзронизации Вам станет доступен весь функционал сервиса.
+                            <div class="p-3">
+                                <a href="{% url 'profile' %}" class="btn btn-primary">Профиль</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingThree">
                         <button aria-controls="collapseThree" aria-expanded="false" class="accordion-button collapsed"
-                                data-bs-target="#collapseThree" data-bs-toggle="collapse" type="button">
+                            data-bs-target="#collapseThree" data-bs-toggle="collapse" type="button">
                             Шаг #3. Подробнее
                         </button>
                     </h2>
-                    <div aria-labelledby="headingThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample"
-                         id="collapseThree">
+                    <div aria-labelledby="headingThree" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample" id="collapseThree">
                         <div class="accordion-body">
                             Для более глубокого изучения предоставляемых возможностей, пожалуйста, ознакомьтесь с
                             приложенной документацией.
-                            <div class="card-body">
+                            <div class="p-3">
                                 <a class="btn btn-primary" href="#">Документация</a>
                             </div>
                         </div>
