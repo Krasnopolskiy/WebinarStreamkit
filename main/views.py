@@ -33,7 +33,7 @@ class ExtendedRegistrationView(RegistrationView):
         for scope in form.errors.values():
             for error in list(scope):
                 messages.error(request, error)
-        response = super(RegistrationView, self).post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
         if request.user.is_authenticated:
             messages.success(request, "Регистрация прошла успешно")
         return response
@@ -93,10 +93,15 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
         return redirect(reverse("profile"))
 
     def set_messages(self, request, form):
+        """
+        Метод для добавления сообщений при авторизации на webinar через наш сервис
+        :param request:
+        :param form:
+        :return:
+        """
         if form.is_valid():
-            if request.user.webinar_session.is_correct_data(
-                request.POST["email"], request.POST["password"]
-            ):
+            if request.user.webinar_session.is_correct_data(request.POST["email"],
+                                                            request.POST["password"]):
                 form.save()
                 request.user.webinar_session.login()
                 messages.success(request, "Данные для авторизации на Webinar обновлены")

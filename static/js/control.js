@@ -80,7 +80,7 @@ $('#start-btn').click(() => {
         params: {}
     }
     ws.send(JSON.stringify(payload))
-    location.reload()
+    // location.reload()
 })
 
 $('#stop-btn').click(() => {
@@ -89,7 +89,7 @@ $('#stop-btn').click(() => {
         params: {}
     }
     ws.send(JSON.stringify(payload))
-    location.reload()
+    // location.reload()
 })
 
 $('#chat-btn').click(() => {
