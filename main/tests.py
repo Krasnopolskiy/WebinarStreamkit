@@ -6,6 +6,7 @@ from json import loads
 
 from channels.testing import HttpCommunicator
 from django.test import TestCase, Client
+from django.test.client import AsyncClient
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
@@ -422,7 +423,7 @@ class SocketsTestCase(TestCase):
     fixtures = ['db.json']
 
     def setUp(self) -> None:
-        self.client = Client()
+        self.async_client = AsyncClient()
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         self.login_data = {
@@ -446,9 +447,8 @@ class SocketsTestCase(TestCase):
         """
         Тест на функциональность кнопки начала вебинара
         """
-        communicator = HttpCommunicator(ControlConsumer, "GET", self.target_url+'/control/')
-        response = await communicator.get_response()
-        print(response)
+        response = await self.async_client.get(self.target_url+'/control')
+        print(response.content)
         route = BaseRouter.API.value.format(route='eventsessions?status=start')
         response = loads(self.session.get(route).text)
         if response:
