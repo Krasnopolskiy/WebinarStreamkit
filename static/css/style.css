@@ -2,3 +2,7 @@
     height: 40px;
     width: 40px;
 }
+
+.container, .navbar {
+    min-width: 980px;
+}

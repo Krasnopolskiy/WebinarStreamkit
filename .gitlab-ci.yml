@@ -33,8 +33,7 @@ pylint:
     - ./ci/pylint/runner.sh
   artifacts:
     paths:
-      - public/pylint.svg
-      - public/pylint.html
+      - public
   only:
     - develop
     - master
