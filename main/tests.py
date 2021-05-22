@@ -4,6 +4,7 @@ Just tests, no more
 # import pytest
 from json import loads
 
+from asgiref.sync import sync_to_async
 from channels.testing import HttpCommunicator
 from django.test import TestCase, Client
 from django.test.client import AsyncClient
@@ -418,13 +419,13 @@ class UnauthWebinarUser(TestCase):
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
 
-class SocketsTestCase(TestCase):
-    serve_static = True  # emulate StaticLiveServerTestCase
+class BugsTestCase(TestCase):
     fixtures = ['db.json']
 
-    def setUp(self) -> None:
-        self.async_client = AsyncClient()
-        user = User.objects.get(username='vasya')
+    def setUp(self):
+        self.client = Client()
+
+        user = User.objects.get(username='Olegsandr')  # <-- Ahah memes
         self.client.force_login(user)
         self.login_data = {
             'email': 'wstreamkit@mail.ru',
@@ -432,7 +433,27 @@ class SocketsTestCase(TestCase):
         }
         self.client.post(reverse('update_webinar_credentials'), data=self.login_data)
 
-        response = self.client.get(reverse('schedule'))
+        route = BaseRouter.API.value.format(route='eventsessions?status=start')
+        response = loads(self.session.get(route).text)
+        if response:
+            raise Exception('На аккаунте ' +
+                            self.login_data['email'] +
+                            'Уже есть идущие вебинары.\n '
+                            'Закончите все вебинары и перезапустите тесты')
+
+
+class SocketsTestCase(TestCase):
+    fixtures = ['db.json']
+
+    async def test_start_webinar(self):
+        await sync_to_async(self.async_client.login)(username='vasya', password='promprog')
+        self.login_data = {
+            'email': 'wstreamkit@mail.ru',
+            'password': 'uTAouAOpy-51',
+        }
+        await self.async_client.post(reverse('update_webinar_credentials'), data=self.login_data)
+
+        response = self.async_client.get(reverse('schedule'))
         soup = BeautifulSoup(response.content, 'html.parser')
         a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
         if not a:
@@ -442,8 +463,6 @@ class SocketsTestCase(TestCase):
         self.session = Session()
         self.session.post(UserRouter.LOGIN.value.format(), data=self.login_data)
         self.target_url = a[0]
-
-    async def test_start_webinar(self):
         """
         Тест на функциональность кнопки начала вебинара
         """
