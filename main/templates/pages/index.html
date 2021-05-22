@@ -12,43 +12,86 @@
     <div class="row">
         <div class="col px-5">
             <h2>Новый StreamKit для платформы Webinar</h2>
-            <p class="lead">Удобный виджет для администраторов вебинара. С помощью него Вы можете модерировать чат,
-                создавать вебинары и управлять ими</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col p-5">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Как это работает?</h5>
-                    <p class="card-text">Подробную документацию по использованию StreamKit для платформы Webinar можно
-                        изучить здесь</p>
-                    <a href="#" class="btn btn-primary">Документация</a>
+            <p class="lead">Уважаемый пользователь, добро пожаловать на главную страницу нашего сервиса Webinar
+                StreamKit. Данный сервис предназначен для удобного ведения вебинаров. В функционал входит
+                модерация чата,
+                создание и дальнейшее управление вебинарами.</p>
+            <h3>Для начала работы:</h3>
+            <br>
+            <div class="accordion" id="instructionBlocks">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="stepOne">
+                        <button aria-controls="insideFirstBlock" aria-expanded="true" class="accordion-button"
+                            data-bs-target="#insideFirstBlock" data-bs-toggle="collapse" type="button">
+                            Шаг #1. Авторизация/Регистрация на сайте
+                        </button>
+                    </h2>
+                    <div aria-labelledby="stepOne" class="accordion-collapse collapse"
+                        data-bs-parent="#instructionBlocks" id="insideFirstBlock">
+                        <div class="accordion-body">
+                            Если вы впервые на нашем сайте, зарегистрируйтесь. Завершив процедуру регистрации, вы можете
+                            войти в
+                            свой аккаунт для
+                            дальнейшей работы.
+                            <div class="p-3">
+                                <a href="{% url 'login' %}" class="btn btn-primary">Авторизация</a>
+                                <a href="{% url 'signup' %}" class="btn btn-primary">Регистрация</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col p-5">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Как начать?</h5>
-                    {% if user.is_authenticated %}
-                    <p class="card-text">Для получения информации о запланированных Вами мероприятиях, пожалуйста,
-                        авторизуйтесь в аккаунте Webinar на нашем сайте.</p>
-                    <a href="{% url 'profile' %}" class="btn btn-primary me-3">Авторизация Webinar</a>
-                    {% else %}
-                    <p class="card-text">Для начала работы необходимо зарегистрироваться или авторизоваться под Вашим
-                        аккаунтом</p>
-                    <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
-                    <a href="{% url 'signup' %}" class="btn btn-primary ms-3">Регистрация</a>
-                    {% endif %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="stepTwo">
+                        <button aria-controls="insideSecondBlock" aria-expanded="false" class="accordion-button collapsed"
+                            data-bs-target="#insideSecondBlock" data-bs-toggle="collapse" type="button">
+                            Шаг #2. Авторизация на Webinar
+                        </button>
+                    </h2>
+                    <div aria-labelledby="stepTwo" class="accordion-collapse collapse"
+                        data-bs-parent="#instructionBlocks" id="insideSecondBlock">
+                        <div class="accordion-body">
+                            Перейдите на страницу вашего профиля. На текущий момент аккаунты на Webinar Streamkit и
+                            Webinar.ru не синхронизированы. Чтобы привязать аккаунт Webinar, перейдите на вкладку
+                            профиля "Данные Webinar" и авторизуйтесь через платформу.
+                            После синзронизации Вам станет доступен весь функционал сервиса.
+                            <div class="p-3">
+                                <a href="{% url 'profile' %}" class="btn btn-primary">Профиль</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="stepThree">
+                        <button aria-controls="insideThreeBlock" aria-expanded="false" class="accordion-button collapsed"
+                            data-bs-target="#insideThreeBlock" data-bs-toggle="collapse" type="button">
+                            Шаг #3. Подробнее
+                        </button>
+                    </h2>
+                    <div aria-labelledby="stepThree" class="accordion-collapse collapse"
+                        data-bs-parent="#instructionBlocks" id="insideThreeBlock">
+                        <div class="accordion-body">
+                            Для более глубокого изучения предоставляемых возможностей, пожалуйста, ознакомьтесь с
+                            приложенной документацией.
+                            <div class="p-3">
+                                <a class="btn btn-primary" href="#">Документация</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="card-body">
+    {% if not user.is_authenticated %}
+    <a class="btn btn-primary me-3" href="{% url 'login' %}">Авторизация</a>
+    <a class="btn btn-primary ms-3" href="{% url 'signup' %}">Регистрация</a>
+    {% endif %}
+</div>
 
 {% endblock %}
 
 {% block extra_js %}
+
 <script src="{% static 'js/script.js' %}"></script>
 {% endblock %}
