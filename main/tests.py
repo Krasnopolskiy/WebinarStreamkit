@@ -4,8 +4,8 @@ Just tests, no more
 # import pytest
 from json import loads
 
-import websockets
-from asgiref.sync import sync_to_async
+# import websockets
+# from asgiref.sync import sync_to_async
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
@@ -18,7 +18,7 @@ from main.webinar import UserRouter, EventRouter
 from main.models import User
 
 
-import asyncio
+# import asyncio
 # import websockets
 
 
