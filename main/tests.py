@@ -12,6 +12,8 @@ from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
 from PIL import Image
 from requests import Session
+
+from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer
 from main.webinar import UserRouter, EventRouter
 from main.models import User
 
@@ -416,6 +418,32 @@ class UnauthWebinarUser(TestCase):
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 1)
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
+
+
+class ConsumersTestCase(TestCase):
+    def test_Awaiting(self):
+        try:
+            AwaitingMessagesConsumer()
+        except:
+            self.fail("AwaitingMessagesConsumer не смог создаться")
+
+    def test_Control(self):
+        try:
+            ControlConsumer()
+        except:
+            self.fail("ControlConsumer не смог создаться")
+
+    def test_ChatConsumer(self):
+        try:
+            ChatConsumer()
+        except:
+            self.fail("ChatConsumer не смог создаться")
+
+    def test_Consumer(self):
+        try:
+            BaseConsumer()
+        except:
+            self.fail("BaseConsumer не смог создаться")
 
 
 # class TestForTest(TestCase):
