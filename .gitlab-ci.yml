@@ -77,4 +77,4 @@ heroku:
   script:
     - ./ci/heroku/runner.sh
   only:
-    - master
+    - feature/deploy

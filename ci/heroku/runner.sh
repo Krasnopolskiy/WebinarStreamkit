@@ -1,5 +1,6 @@
 #!/bin/bash
 
 git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/webinar-streamkit.git
-git push -v heroku master
+git show-ref
+git push heroku master
 exit 0
