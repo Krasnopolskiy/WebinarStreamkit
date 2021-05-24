@@ -8,6 +8,7 @@ stages:
   - test
   - style
   - docs
+  - deploy
 
 pep8:
   stage: style
@@ -67,4 +68,13 @@ sphinx:
       - public/docs
   only:
     - develop
+    - master
+
+heroku:
+  stage: deploy
+  before_script:
+    - chmod +x ci/heroku/runner.sh
+  script:
+    - ./ci/heroku/runner.sh
+  only:
     - master
