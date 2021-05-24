@@ -8,6 +8,7 @@ stages:
   - test
   - style
   - docs
+  - deploy
 
 pep8:
   stage: style
@@ -40,6 +41,7 @@ pylint:
 test:
   stage: test
   before_script:
+    - pip install -r requirements_dev.txt
     - pip install -r requirements.txt
   script:
     - coverage run manage.py test
@@ -66,4 +68,13 @@ sphinx:
       - public/docs
   only:
     - develop
+    - master
+
+heroku:
+  stage: deploy
+  before_script:
+    - chmod +x ci/heroku/runner.sh
+  script:
+    - ./ci/heroku/runner.sh
+  only:
     - master
