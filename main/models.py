@@ -24,18 +24,32 @@ class WebinarSession(models.Model):
 
     session = Session()
 
-    def get_cookie(self, cookie_name: str) -> Optional[Cookie]:
+    def get_cookie(self, cookie_name: str):
+        """
+        Получение Куки пользователя
+        :param cookie_name:
+        :return: Кука
+        """
         for cookie in self.session.cookies:
             if cookie.name == cookie_name:
                 return cookie
 
-    def is_correct_data(self, check_email: str, check_password: str) -> Optional[Webinar.Error]:
+    def is_correct_data(self, check_email: str, check_password: str):
+        """
+        Проверка на наличие аккаунта на webinar
+        :param check_email: email пользователя
+        :param check_password: пароль пользователя
+        :return: Существует пользователь или нет
+        """
         route = UserRouter.LOGIN.value
         payload = {'email': check_email, 'password': check_password, 'rememberMe': 'true'}
         response = loads(post(route, data=payload).text)
         return 'error' not in response
 
     def login(self) -> Optional[Webinar.Error]:
+        """
+        Вход в аккаунт webinar через наш сервис
+        """
         self.session = Session()
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': self.password, 'rememberMe': 'true'}
@@ -51,6 +65,10 @@ class WebinarSession(models.Model):
         self.save()
 
     def is_login_required(self) -> bool:
+        """
+        Проверка на необходимость повторного входа в аккаунт webinar
+        :return:
+        """
         return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
 
     def ensure_session(self) -> Optional[Webinar.Error]:
@@ -73,7 +91,11 @@ class WebinarSession(models.Model):
         return wrap
 
     @webinar_required
-    def get_user(self) -> Union[Webinar.User, Webinar.Error]:
+    def get_user(self):
+        """
+        Получение пользователя
+        :return: Объект пользователя webinar
+        """
         if not self.user_id:
             self.login()
         route = UserRouter.INFO.value.format(user_id=self.user_id)
@@ -81,7 +103,11 @@ class WebinarSession(models.Model):
         return Webinar.User(data, True)
 
     @webinar_required
-    def get_schedule(self) -> Union[List[Webinar.Event], Webinar.Error]:
+    def get_schedule(self):
+        """
+        Получение расписания вебинаров
+        :return: Расписание вебинаров
+        """
         schedule = list()
         user = self.get_user()
         for organisation in user.memberships:
@@ -94,14 +120,23 @@ class WebinarSession(models.Model):
         return schedule
 
     @webinar_required
-    def get_event(self, event_id: int) -> Union[Webinar.Event, Webinar.Error]:
+    def get_event(self, event_id: int):
+        """
+        Получение вебинара (события)
+        :param event_id: id события
+        :return: Объект события
+        """
         route = EventRouter.INFO.value.format(event_id=event_id)
         data = loads(self.session.get(route).text)
         if 'error' not in data:
             return Webinar.Event(self.user_id, data)
 
     @webinar_required
-    def get_chat(self, session_id: int) -> Union[Webinar.Chat, Webinar.Error]:
+    def get_chat(self, session_id: int):
+        """
+        Получение чата
+        :return: Чат из вебинара
+        """
         route = MessageRouter.CHAT.value.format(session_id=session_id)
         messages = loads(self.session.get(route).text)
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
@@ -109,30 +144,50 @@ class WebinarSession(models.Model):
         return Webinar.Chat(messages, settings)
 
     @webinar_required
-    def accept_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def accept_message(self, session_id: int, **kwargs):
+        """
+        Принятие сообщений
+        """
         payload = {'isModerated': 'true', 'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.ACCEPT.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
     @webinar_required
-    def delete_message(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def delete_message(self, session_id: int, **kwargs):
+        """
+        Удаление сообщений
+        """
         payload = {'messageIds[0]': kwargs.get('message_id')}
         route = MessageRouter.DELETE.value.format(session_id=session_id)
         self.session.put(route, data=payload)
 
     @webinar_required
-    def update_settings(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def update_settings(self, session_id: int, **kwargs):
+        """
+        Обновление настроек
+        :param session_id:
+        :param kwargs:
+        :return:
+        """
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
         resp = self.session.put(route, data=kwargs)
         print(resp.text)
 
     @webinar_required
-    def start(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def start(self, session_id: int, **kwargs):
+        """
+        Начать вебинар
+        :param session_id: id сессии
+        """
         route = EventRouter.START.value.format(session_id=session_id)
         self.session.put(route)
 
     @webinar_required
-    def stop(self, session_id: int, **kwargs) -> Optional[Webinar.Error]:
+    def stop(self, session_id: int, **kwargs):
+        """
+        Закончить вебинар
+        :param session_id: id сессии
+        """
         route = MessageRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 
@@ -156,11 +211,17 @@ class User(AbstractUser):
     )
 
     def save(self, *args, **kwargs) -> None:
+        """
+        Сохранение пользователя
+        """
         if self.id is None:
             self.webinar_session = WebinarSession.objects.create()
         super(User, self).save(*args, **kwargs)
 
     def update_fontsize(self, *args, **kwargs) -> None:
+        """
+        Обновление размера шрифта у пользователя
+        """
         fontsize = kwargs.get('fontsize', '16')
         if fontsize.isdigit():
             fontsize = int(fontsize)

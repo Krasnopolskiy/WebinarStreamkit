@@ -1,18 +1,44 @@
+"""
+Just tests, no more
+"""
+# import pytest
+from json import loads
+
+# import websockets
+# from asgiref.sync import sync_to_async
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
 from PIL import Image
-from main.models import User
+from requests import Session
+
+from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer, Timer, \
+    get_event_settings
+from main.webinar import UserRouter, EventRouter
+from main.models import User, WebinarSession
+
+
+# import asyncio
+# import websockets
 
 
 class RegisterPageTestCase(TestCase):
+    """
+    Тесты на регистрацию
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
 
     def test_casual_signup(self):
+        """
+        Тест на регистрацию
+        """
         register_data = {
             'username': 'Harry',
             'email': '1@gmail.com',
@@ -26,6 +52,9 @@ class RegisterPageTestCase(TestCase):
         self.assertIn('Регистрация прошла успешно', messages)
 
     def test_not_all_fields_register(self):
+        """
+        Тест на регистрацию. Не все поля заданы
+        """
         register_data = {
             'username': 'Harry',
             'nya': 'khhhh',
@@ -36,6 +65,9 @@ class RegisterPageTestCase(TestCase):
         self.assertIn('Обязательное поле.', messages)
 
     def test_incorrect_register(self):
+        """
+        Тест на регистрацию. Не все поля правильно заданы
+        """
         register_data = {
             'username': 'Harry',
             'email': 'khhhh',
@@ -48,6 +80,9 @@ class RegisterPageTestCase(TestCase):
         self.assertIn('Введите правильный адрес электронной почты.', messages)
 
     def test_exist_register(self):
+        """
+        Тест на регистрацию. Пользователь существует
+        """
         register_data = {
             'username': 'vasya',
             'email': '1@gmail.com',
@@ -59,6 +94,9 @@ class RegisterPageTestCase(TestCase):
         self.assertIn('Пользователь с таким именем уже существует.', messages)
 
     def test_incorrect_data(self):
+        """
+        Тест на регистрацию. Неверно заданы поля
+        """
         login_data = {
             'username': '<?php echo scandir("/var/www/html/"); ?>',
             'email': 'abacaba@gmail.com',
@@ -67,17 +105,27 @@ class RegisterPageTestCase(TestCase):
         }
         response = self.client.post(reverse('signup'), data=login_data)
         messages = list(map(str, get_messages(response.wsgi_request)))
-        error_msg = 'Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
+        error_msg = 'Введите правильное имя пользователя. ' \
+                    'Оно может содержать только буквы, цифры и знаки @/./+/-/_.'
         self.assertIn(error_msg, messages)
 
 
 class AuthTestCase(TestCase):
+    """
+    Тесты на авторизацию (В том числе и на webinar)
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
 
     def test_auth(self):
+        """
+        Тест на авторизацию. Обычный вход в аккаунт
+        """
         login_data = {
             'username': 'petya',
             'password': 'promprog',
@@ -87,6 +135,9 @@ class AuthTestCase(TestCase):
         self.assertNotIn('/admin/'.encode(), self.client.get(reverse('index')).content)
 
     def test_super_user_auth(self):
+        """
+        Тест на авторизацию. Вход в аккаунт суперпользователя
+        """
         login_data = {
             'username': 'special_admin',
             'password': 'r3ally_s3cr3t_p4ssw0rd',
@@ -96,6 +147,9 @@ class AuthTestCase(TestCase):
         self.assertIn('/admin/'.encode(), self.client.get(reverse('index')).content)
 
     def test_not_all_fields(self):
+        """
+        Тест на авторизацию. Не все поля заданы
+        """
         login_data = {
             'password': 'promprog',
         }
@@ -104,6 +158,9 @@ class AuthTestCase(TestCase):
         self.assertIn('Неверное имя пользователя или пароль', messages)
 
     def test_incorrect_password(self):
+        """
+        Тест на авторизацию. Неверный пароль
+        """
         login_data = {
             'username': 'vasya',
             'password': 'asd',
@@ -113,6 +170,9 @@ class AuthTestCase(TestCase):
         self.assertIn('Неверное имя пользователя или пароль', messages)
 
     def test_incorrect_login(self):
+        """
+        Тест на авторизацию. Неверный логин
+        """
         login_data = {
             'username': 'asd',
             'password': 'promprog',
@@ -122,6 +182,9 @@ class AuthTestCase(TestCase):
         self.assertIn('Неверное имя пользователя или пароль', messages)
 
     def test_logout(self):
+        """
+        Тест на выход из аккаунта
+        """
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         response = self.client.get(reverse('logout'))
@@ -129,6 +192,9 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.cookies['sessionid'].value, '')
 
     def test_webinar_login(self):
+        """
+        Тест на вход в аккаунт вебинара
+        """
         user = User.objects.get(username='petya')
         self.client.force_login(user)
         login_data = {
@@ -142,6 +208,9 @@ class AuthTestCase(TestCase):
         self.assertEqual(len(messages), 1)
 
     def test_webinar_login_fields1(self):
+        """
+        Тест на вход в аккаунт вебинара. Не указан пароль
+        """
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         login_data = {
@@ -154,6 +223,9 @@ class AuthTestCase(TestCase):
         self.assertEqual(len(messages), 1)
 
     def test_webinar_incorrect_login(self):
+        """
+        Тест на вход в аккаунт вебинара. Неверно указан пароль
+        """
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
         login_data = {
@@ -168,9 +240,15 @@ class AuthTestCase(TestCase):
 
 
 class WebinarTestCase(TestCase):
+    """
+    Тесты на получение вебинаров
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
         user = User.objects.get(username='vasya')
         self.client.force_login(user)
@@ -181,6 +259,9 @@ class WebinarTestCase(TestCase):
         self.client.post(reverse('update_webinar_credentials'), data=login_data)
 
     def test_schedule_view(self):
+        """
+        Тест на отображение расписания
+        """
         response = self.client.get(reverse('schedule'))
         self.assertEqual(response.status_code, 200)
         messages = list(map(str, get_messages(response.wsgi_request)))
@@ -189,11 +270,14 @@ class WebinarTestCase(TestCase):
         self.assertIn(b'<div class="shadow-sm p-3 border rounded">', response.content)
 
     def test_event_view(self):
+        """
+        Тест на отображение события
+        """
         response = self.client.get(reverse('schedule'))
         soup = BeautifulSoup(response.content, 'html.parser')
-        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
-        if a:
-            response = self.client.get(a[0])
+        links = [link.attrs['href'] for link in soup.findAll('a', class_='btn-outline-primary')]
+        if links:
+            response = self.client.get(links[0])
             self.assertEqual(response.status_code, 200)
             soup = BeautifulSoup(response.content, 'html.parser')
             buttons = soup.find('div', class_='px-3').findChildren()
@@ -205,76 +289,255 @@ class WebinarTestCase(TestCase):
 
 
 class WidgetTestCase(TestCase):
+    """
+    Тесты на виджеты
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
-        user = User.objects.get(username='vasya')
-        self.client.force_login(user)
-        login_data = {
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(self.user)
+        self.login_data = {
             'email': 'wstreamkit@mail.ru',
             'password': 'uTAouAOpy-51',
         }
-        self.client.post(reverse('update_webinar_credentials'), data=login_data)
+        self.client.post(reverse('update_webinar_credentials'), data=self.login_data)
         response = self.client.get(reverse('schedule'))
         soup = BeautifulSoup(response.content, 'html.parser')
-        a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
-        if not a:
-            raise Exception('На аккаунте ' + login_data['email'] + ' нет ни одного вебинара.\n'
-                                                                   'Создайте вебинар и снова запустите тесты')
+        links = [link.attrs['href'] for link in soup.findAll('a', class_='btn-outline-primary')]
+        if not links:
+            raise RuntimeError('На аккаунте ' +
+                               self.login_data['email'] +
+                               ' нет ни одного вебинара.\n Создайте вебинар и снова запустите тесты')
+        self.session = Session()
+        self.session.post(UserRouter.LOGIN.value.format(), data=self.login_data)
 
-        self.target_url = a[0] + '/control'
+        self.target_url = links[0]
+
+    def test_get_event_settings(self):
+        webinar_session = self.user.webinar_session
+        l1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
+        l2 = ['status', 'premoderation']
+        self.assertListEqual(l2, l1)
 
     def test_view(self):
-        response = self.client.get(self.target_url)
+        """
+        Тест на отображение панели управления
+        """
+        response = self.client.get(self.target_url + '/control')
         soup = BeautifulSoup(response.content, 'html.parser')
-        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'), soup.find(id='moderate-switch'),
-               soup.find(id='chat-btn'), soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
-        for el in arr:
-            self.assertNotEqual(el, None)
+        arr = [soup.find(id='stop-btn'), soup.find(id='start-btn'),
+               soup.find(id='moderate-switch'), soup.find(id='chat-btn'),
+               soup.find(id='awaiting-btn'), soup.find(id='fontsize-range')]
+        for element in arr:
+            self.assertNotEqual(element, None)
+
+    def test_view_chat(self):
+        """
+        Тест на отображение виджета сообщений
+        """
+        response = self.client.get(self.target_url + '/chat')
+        self.assertIn('Сообщения'.encode(), response.content)
+
+    def test_view_moderate(self):
+        """
+        Тест на отображение виджета модерируемых сообщений
+        """
+        response = self.client.get(self.target_url + '/awaiting')
+        self.assertIn('Ожидают модерацию'.encode(), response.content)
 
 
 class UnauthUserTestCase(TestCase):
+    """
+    Тесты на недоступность страниц для пользователей,
+    которые не авторизовались
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
 
     def test_profile(self):
+        """
+        Тест на недоступность профиля
+        """
         response = self.client.get(reverse('profile'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('profile'))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('profile'))
 
     def test_webinar_credentials(self):
+        """
+        Тест на недоступность изменения профиля
+        """
         payload = {'email': 'asd@asdas',
                    'password': 'ahsudhhcnwen'}
         response = self.client.post(reverse('update_webinar_credentials'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_webinar_credentials'))
+        self.assertRedirects(response, reverse('login') + '?next='
+                             + reverse('update_webinar_credentials'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 0)
 
     def test_update_user_information(self):
+        """
+        Тест на недоступность изменения аватара профиля
+        """
         payload = {'avatar': Image.open('static/images/Hey_You.png')}
         response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('update_user_information'))
+        self.assertRedirects(response, reverse('login') + '?next='
+                             + reverse('update_user_information'))
 
     def test_schedule(self):
+        """
+        Тест на недоступность списка вебинаров
+        """
         response = self.client.get(reverse('schedule'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('schedule'))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('schedule'))
 
 
 class UnauthWebinarUser(TestCase):
+    """
+    Тесты на недоступность страниц для пользователей,
+    которые не авторизовались в webinar через наш сервис
+    """
     fixtures = ['db.json']
 
     def setUp(self) -> None:
+        """
+        Предустановка начальных значений
+        """
         self.client = Client()
 
         user = User.objects.get(username='petya')
         self.client.force_login(user)
 
     def test_schedule(self):
+        """
+        Тест на недоступность списка вебинаров без аккаунта ebinar
+        """
         response = self.client.get(reverse('schedule'))
         self.assertRedirects(response, reverse('index'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 1)
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
+
+def tempFunc():
+    return "stop"
+
+
+class ConsumersTestCase(TestCase):
+
+    def test_timer(self):
+        try:
+            my_timer = Timer(1, tempFunc)
+        except:
+            self.fail("Timer не смог создаться")
+
+        try:
+            my_timer.enable()
+        except:
+            self.fail("Timer не смог запуститься")
+
+        try:
+            my_timer.cancel()
+        except:
+            self.fail("Timer не смог отмениться")
+
+    def test_Awaiting(self):
+        try:
+            AwaitingMessagesConsumer()
+        except:
+            self.fail("AwaitingMessagesConsumer не смог создаться")
+
+    def test_Control(self):
+        try:
+            ControlConsumer()
+        except:
+            self.fail("ControlConsumer не смог создаться")
+
+    def test_ChatConsumer(self):
+        try:
+            ChatConsumer()
+        except:
+            self.fail("ChatConsumer не смог создаться")
+
+    def test_Consumer(self):
+        try:
+            BaseConsumer()
+        except:
+            self.fail("BaseConsumer не смог создаться")
+
+
+# class TestForTest(TestCase):
+#     fixtures = ['db.json']
+#
+#     async def test_url(self, data=""):
+#         await sync_to_async(self.async_client.login)(username='vasya', password='promprog')
+#         self.login_data = {
+#             'email': 'wstreamkit@mail.ru',
+#             'password': 'uTAouAOpy-51',
+#         }
+#         await self.async_client.post(reverse('update_webinar_credentials'), data=self.login_data)
+#
+#         response = self.async_client.get(reverse('schedule'))
+#         soup = BeautifulSoup(response.content, 'html.parser')
+#         a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
+#         if not a:
+#             raise Exception('На аккаунте ' + self.login_data['email'] +
+#                             ' нет ни одного вебинара.\n Создайте вебинар и снова запустите тесты')
+#
+#         self.session = Session()
+#         self.session.post(UserRouter.LOGIN.value.format(), data=self.login_data)
+#         self.target_url = a[0]
+#         print(self.target_url)
+#
+#         async def inner():
+#             async with websockets.connect(self.target_url) as websocket:
+#                 await websocket.send(data)
+#
+#         return asyncio.get_event_loop().run_until_complete(inner())
+
+
+# class SocketsTestCase(TestCase):
+#     fixtures = ['db.json']
+#
+#     async def test_start_webinar(self):
+#         await sync_to_async(self.async_client.login)(username='vasya', password='promprog')
+#         self.login_data = {
+#             'email': 'wstreamkit@mail.ru',
+#             'password': 'uTAouAOpy-51',
+#         }
+#         await self.async_client.post(reverse('update_webinar_credentials'), data=self.login_data)
+#
+#         response = self.async_client.get(reverse('schedule'))
+#         soup = BeautifulSoup(response.content, 'html.parser')
+#         a = [a.attrs['href'] for a in soup.findAll('a', class_='btn-outline-primary')]
+#         if not a:
+#             raise Exception('На аккаунте ' + self.login_data['email'] +
+#                             ' нет ни одного вебинара.\n Создайте вебинар и снова запустите тесты')
+#
+#         self.session = Session()
+#         self.session.post(UserRouter.LOGIN.value.format(), data=self.login_data)
+#         self.target_url = a[0]
+#         """
+#         Тест на функциональность кнопки начала вебинара
+#         """
+#         response = await self.async_client.get(self.target_url+'/control')
+#         print(response.content)
+#         route = BaseRouter.API.value.format(route='eventsessions?status=start')
+#         response = loads(self.session.get(route).text)
+#         if response:
+#             raise RuntimeError(f'На аккаунте { self.login_data["email"] } '
+#                                f'Уже есть идущие вебинары.\n'
+#                                f'Закончите все вебинары и перезапустите тесты')
+
+
+# Джун уронил прод
+# Они думали, что тесты остановят его
+# Но он их закомментировал
