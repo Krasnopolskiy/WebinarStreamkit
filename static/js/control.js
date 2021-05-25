@@ -1,6 +1,6 @@
 let url = new URL(window.location.href)
 let parent_url = url.href.replace('/control', '')
-let ws = new WebSocket(`ws://${url.host}${url.pathname}`)
+let ws = new WebSocket(`wss://${url.host}${url.pathname}`)
 let chat_widget, awaiting_widget
 
 let close_widget = () => {

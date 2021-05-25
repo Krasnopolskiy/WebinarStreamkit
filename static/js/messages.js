@@ -1,6 +1,6 @@
 let last_scroll_pos = 0
 let url = new URL(window.location.href)
-let ws = new WebSocket(`ws://${url.host}${url.pathname}`)
+let ws = new WebSocket(`wss://${url.host}${url.pathname}`)
 
 let update_messages = template => {
     if (template !== $('#message-box').html()) {
@@ -40,7 +40,7 @@ ws.onmessage = event => {
         update_messages(data['template'])
         document.querySelector('#message-box').scrollTop = last_scroll_pos
     }
-    
+
     if (data['event'] === 'error')
         console.log(data['message'])
 

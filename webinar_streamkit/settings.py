@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,13 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^iycegdycqy&5)6')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('DEBUG', 'True'))
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    'webinar-streamkit.herokuapp.com',
+    '127.0.0.1'
+]
 
 # Application definition
 
@@ -88,7 +95,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)],
+            'hosts': [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
@@ -107,6 +114,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
 
 FIXTURE_DIRS = [
     'first/fixtures',
@@ -152,14 +162,41 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     'static'
 ]
+STATIC_ROOT = 'staticfiles'
 
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/static/media/'
+if not DEBUG:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/media/')   # due to whitenoise does not support media files
+    if not os.path.exists(MEDIA_ROOT):
+        os.mkdir(STATIC_ROOT)
+        os.mkdir(MEDIA_ROOT)
+        from shutil import copyfile
+        copyfile('media/avatar.svg', os.path.join(MEDIA_ROOT, 'avatar.svg'))
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+if not DEBUG:
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
