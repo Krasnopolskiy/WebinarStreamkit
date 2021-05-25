@@ -13,9 +13,10 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from requests import Session
 
-from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer
+from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer, Timer, \
+    get_event_settings
 from main.webinar import UserRouter, EventRouter
-from main.models import User
+from main.models import User, WebinarSession
 
 
 # import asyncio
@@ -298,8 +299,8 @@ class WidgetTestCase(TestCase):
         Предустановка начальных значений
         """
         self.client = Client()
-        user = User.objects.get(username='vasya')
-        self.client.force_login(user)
+        self.user = User.objects.get(username='vasya')
+        self.client.force_login(self.user)
         self.login_data = {
             'email': 'wstreamkit@mail.ru',
             'password': 'uTAouAOpy-51',
@@ -316,6 +317,12 @@ class WidgetTestCase(TestCase):
         self.session.post(UserRouter.LOGIN.value.format(), data=self.login_data)
 
         self.target_url = links[0]
+
+    def test_get_event_settings(self):
+        webinar_session = self.user.webinar_session
+        l1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
+        l2 = ['status', 'premoderation']
+        self.assertListEqual(l2, l1)
 
     def test_view(self):
         """
@@ -420,7 +427,28 @@ class UnauthWebinarUser(TestCase):
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
 
+def tempFunc():
+    return "stop"
+
+
 class ConsumersTestCase(TestCase):
+
+    def test_timer(self):
+        try:
+            my_timer = Timer(1, tempFunc)
+        except:
+            self.fail("Timer не смог создаться")
+
+        try:
+            my_timer.enable()
+        except:
+            self.fail("Timer не смог запуститься")
+
+        try:
+            my_timer.cancel()
+        except:
+            self.fail("Timer не смог отмениться")
+
     def test_Awaiting(self):
         try:
             AwaitingMessagesConsumer()
