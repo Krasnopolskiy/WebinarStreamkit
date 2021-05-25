@@ -10,6 +10,24 @@ stages:
   - docs
   - deploy
 
+test:
+  stage: test
+  before_script:
+    - pip install -r requirements_dev.txt
+    - pip install -r requirements.txt
+  script:
+    - coverage run manage.py test
+    - coverage report --omit=manage.py
+    - coverage html --omit=manage.py
+    - mkdir public
+    - mv htmlcov public/coverage
+  artifacts:
+    paths:
+      - public/coverage
+  only:
+    - develop
+    - master
+
 pep8:
   stage: style
   before_script:
@@ -38,24 +56,6 @@ pylint:
     - develop
     - master
 
-test:
-  stage: test
-  before_script:
-    - pip install -r requirements_dev.txt
-    - pip install -r requirements.txt
-  script:
-    - coverage run manage.py test
-    - coverage report --omit=manage.py
-    - coverage html --omit=manage.py
-    - mkdir public
-    - mv htmlcov public/coverage
-  artifacts:
-    paths:
-      - public/coverage
-  only:
-    - develop
-    - master
-
 sphinx:
   stage: docs
   before_script:
@@ -69,6 +69,16 @@ sphinx:
   only:
     - develop
     - master
+
+readthedocs:
+  stage: deploy
+  before_script:
+    - chmod +x ci/readthedocs/runner.sh
+  script:
+    - ./ci/readthedocs/runner.sh
+  only:
+    - master
+    - feature/readthedocs
 
 heroku:
   stage: deploy
