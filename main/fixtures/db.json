@@ -331,8 +331,8 @@
     "pk": 2,
     "fields": {
         "user_id": 21272160,
-        "email": "artemglazyrin@mail.ru",
-        "password": "qwerty12345",
+        "email": "maybe_my_or_n0t@mail.ru",
+        "password": "l0l_n0t_important",
         "cookie": "ebc4b00f26dcbec40e5608164af04c8a",
         "last_login": "2021-05-18"
     }
@@ -387,7 +387,7 @@
         "password": "pbkdf2_sha256$260000$IpVLFt9QX3OU0UmoI2RcSn$1iqhFRixbSEnsPYykOOhoTBkAVC3j2fWG3qG56/TGec=",
         "last_login": "2021-05-18T12:23:33.406Z",
         "is_superuser": false,
-        "username": "Artem",
+        "username": "Olegsandr",
         "first_name": "",
         "last_name": "",
         "email": "abacaba@mail.ru",

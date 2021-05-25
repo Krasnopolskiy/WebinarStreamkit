@@ -10,34 +10,6 @@ stages:
   - docs
   - deploy
 
-pep8:
-  stage: style
-  before_script:
-    - pip install -r ci/pycodestyle/requirements.txt
-    - chmod +x ci/pycodestyle/runner.sh
-  script:
-    - ./ci/pycodestyle/runner.sh
-  artifacts:
-    paths:
-      - public/pycodestyle.txt
-  only:
-    - develop
-    - master
-
-pylint:
-  stage: style
-  before_script:
-    - pip install -r ci/pylint/requirements.txt
-    - chmod +x ci/pylint/runner.sh
-  script:
-    - ./ci/pylint/runner.sh
-  artifacts:
-    paths:
-      - public
-  only:
-    - develop
-    - master
-
 test:
   stage: test
   before_script:
@@ -56,6 +28,36 @@ test:
     - develop
     - master
 
+pep8:
+  stage: style
+  before_script:
+    - pip install -r ci/pycodestyle/requirements.txt
+    - chmod +x ci/pycodestyle/runner.sh
+  script:
+    - ./ci/pycodestyle/runner.sh
+  artifacts:
+    paths:
+      - public/pycodestyle.txt
+  only:
+    - develop
+    - master
+    - feature/tests
+
+pylint:
+  stage: style
+  before_script:
+    - pip install -r ci/pylint/requirements.txt
+    - chmod +x ci/pylint/runner.sh
+  script:
+    - ./ci/pylint/runner.sh
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop
+    - master
+    - feature/tests
+
 sphinx:
   stage: docs
   before_script:
@@ -68,6 +70,15 @@ sphinx:
       - public/docs
   only:
     - develop
+    - master
+
+readthedocs:
+  stage: deploy
+  before_script:
+    - chmod +x ci/readthedocs/runner.sh
+  script:
+    - ./ci/readthedocs/runner.sh
+  only:
     - master
 
 heroku:
