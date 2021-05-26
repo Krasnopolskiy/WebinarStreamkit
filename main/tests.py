@@ -10,13 +10,12 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
-from PIL import Image
 from requests import Session
 
 from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer, Timer, \
     get_event_settings
-from main.webinar import UserRouter, EventRouter
-from main.models import User, WebinarSession
+from main.webinar import UserRouter
+from main.models import User
 
 
 # import asyncio
@@ -382,15 +381,6 @@ class UnauthUserTestCase(TestCase):
                              + reverse('update_webinar_credentials'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 0)
-
-    def test_update_user_information(self):
-        """
-        Тест на недоступность изменения аватара профиля
-        """
-        payload = {'avatar': Image.open('static/images/Hey_You.png')}
-        response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertRedirects(response, reverse('login') + '?next='
-                             + reverse('update_user_information'))
 
     def test_schedule(self):
         """

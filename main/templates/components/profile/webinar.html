@@ -9,12 +9,21 @@
                 </h2>
                 {% csrf_token %}
                 {% for item in form %}
-                    {{ item|as_crispy_field }}
+                {{ item|as_crispy_field }}
                 {% endfor %}
                 <div class="d-grid">
                     <input class="btn btn-primary mt-3" type="submit" value="Сохранить">
                 </div>
             </form>
+            <div class="webinar-status pt-3 mt-3">
+                <p class="lead">Статус:
+                    {% if error is None %}
+                    <span class="badge bg-success font-monospace"> Аккаунт авторизован </span>
+                    {% else %}
+                    <span class="badge bg-danger font-monospace"> {{ error }} </span>
+                    {% endif %}
+                </p>
+            </div>
         </div>
     </div>
 </div>

@@ -9,17 +9,6 @@ class ExtendedRegistrationForm(RegistrationForm):
         model = User
 
 
-class UserInformationForm(forms.ModelForm):
-    avatar = forms.ImageField(
-        widget=forms.FileInput(attrs={'class': 'form-control'}),
-        label=''
-    )
-
-    class Meta:
-        model = User
-        fields = ['avatar']
-
-
 class WebinarCredentialsForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'placeholder': 'john.doe@mail.com'}),
