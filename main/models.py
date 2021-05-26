@@ -194,13 +194,12 @@ class WebinarSession(models.Model):
 
 class User(AbstractUser):
     """
-    Модель пользователя с аватаром и ключом API
+    Модель пользователя
 
-    :param avatar: ссылка на изображение
     :param webinar_session: ForeignKey на модель сессии
+    :param fontsize: Размер шрифта виджетов
     """
     id = models.AutoField(primary_key=True)
-    avatar = models.ImageField(upload_to='avatars', default='avatar.svg')
     webinar_session = models.OneToOneField(WebinarSession, on_delete=models.CASCADE)
     fontsize = models.IntegerField(
         default=16,

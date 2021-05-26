@@ -5,7 +5,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from bs4 import BeautifulSoup
-from PIL import Image
 from requests import Session
 
 from main.consumers import AwaitingMessagesConsumer, ControlConsumer, ChatConsumer, BaseConsumer, Timer, \
@@ -374,15 +373,6 @@ class UnauthUserTestCase(TestCase):
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 0)
 
-    def test_update_user_information(self):
-        """
-        Тест на недоступность изменения аватара профиля
-        """
-        payload = {'avatar': Image.open('static/images/Hey_You.png')}
-        response = self.client.post(reverse('update_user_information'), data=payload)
-        self.assertRedirects(response, reverse('login') + '?next='
-                             + reverse('update_user_information'))
-
     def test_schedule(self):
         """
         Тест на недоступность списка вебинаров
@@ -505,6 +495,7 @@ class ProductionTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Webinar StreamKit', response.text)
 
+
 # class TestForTest(TestCase):
 #     fixtures = ['db.json']
 #
@@ -533,7 +524,6 @@ class ProductionTestCase(TestCase):
 #                 await websocket.send(data)
 #
 #         return asyncio.get_event_loop().run_until_complete(inner())
-
 
 
 # Джун уронил прод
