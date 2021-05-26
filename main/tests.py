@@ -486,6 +486,7 @@ class ProductionTestCase(TestCase):
         """
         self.session = Session()
         self.target_url = 'https://webinar-streamkit.herokuapp.com/'
+        self.docs_url = 'https://webinarstreamkit.readthedocs.io/en/latest/index.html'
 
     def test_good_response(self):
         """
@@ -494,6 +495,15 @@ class ProductionTestCase(TestCase):
         response = self.session.get(self.target_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Webinar StreamKit', response.text)
+
+    def test_docs(self):
+        """
+        Тест на отображение документации на удаленном сервере
+        :return:
+        """
+        response = self.session.get(self.docs_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Welcome to Webinar Streamkit', response.text)
 
 
 # class TestForTest(TestCase):
