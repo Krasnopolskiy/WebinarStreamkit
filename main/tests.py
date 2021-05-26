@@ -428,12 +428,21 @@ class UnauthWebinarUser(TestCase):
 
 
 def tempFunc():
+    """
+    Функция заглушка. Нужна для теста таймера
+    """
     return "stop"
 
 
 class ConsumersTestCase(TestCase):
+    """
+    Тесты для файла consumers.py
+    """
 
     def test_timer(self):
+        """
+        Тест на самописный таймер
+        """
         try:
             my_timer = Timer(1, tempFunc)
         except:
@@ -450,24 +459,36 @@ class ConsumersTestCase(TestCase):
             self.fail("Timer не смог отмениться")
 
     def test_Awaiting(self):
+        """
+        Тест на consumer с ожидаемыми сообщениями
+        """
         try:
             AwaitingMessagesConsumer()
         except:
             self.fail("AwaitingMessagesConsumer не смог создаться")
 
     def test_Control(self):
+        """
+        Тест на consumer с contol panel
+        """
         try:
             ControlConsumer()
         except:
             self.fail("ControlConsumer не смог создаться")
 
     def test_ChatConsumer(self):
+        """
+        Тест на consumer с чатом
+        """
         try:
             ChatConsumer()
         except:
             self.fail("ChatConsumer не смог создаться")
 
     def test_Consumer(self):
+        """
+        Тест на consumer
+        """
         try:
             BaseConsumer()
         except:

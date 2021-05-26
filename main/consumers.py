@@ -24,7 +24,15 @@ class ChatMode(Enum):
 
 
 class Timer:
+    """
+    Класс таймера
+    """
     def __init__(self, timeout: float, callback: Callable, *args: Any, **kwargs: Dict) -> None:
+        """
+        Конструктоор
+        :param timeout: Сколько секунд между действиями
+        :param callback: Функция, которая будет вызываться каждые timeout секунд
+        """
         self.timeout = timeout
         self.callback = callback
         self.args = args
@@ -45,6 +53,9 @@ class Timer:
             await asyncio.sleep(self.timeout)
 
     def cancel(self):
+        """
+        Функция отключения таймера
+        """
         self.enabled = False
         self.task.cancel()
 
@@ -78,6 +89,9 @@ async def send_chat(consumer: ChatConsumer) -> None:
 
 
 def get_event_settings(webinar_session: WebinarSession, event_id: int) -> Webinar.Chat:
+    """
+    Получение настроек о событии
+    """
     event = webinar_session.get_event(event_id)
     chat = webinar_session.get_chat(event.session_id)
     return {
