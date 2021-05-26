@@ -10,11 +10,11 @@ from main.consumers import (AwaitingMessagesConsumer, ChatConsumer,
 from main.forms import ExtendedRegistrationForm
 from main.views import (AwaitingMessagesView, ChatView, ControlView, EventView,
                         ExtendedLoginView, ExtendedRegistrationView, IndexView,
-                        ProfileView, ScheduleView, UserInformationView,
-                        WebinarCredentialsView)
+                        ProfileView, ScheduleView, WebinarCredentialsView)
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
+    path('', IndexView.as_view(), name='index'),
     path('login/', ExtendedLoginView.as_view(
         template_name='registration/login.html',
         extra_context={'pagename': 'Авторизация'},
@@ -26,13 +26,11 @@ urlpatterns = [
         success_url=reverse_lazy('index')
     ), name='signup'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('', IndexView.as_view(), name='index'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/password', PasswordChangeView.as_view(
         success_url=reverse_lazy('profile')
     ), name='change_password'),
     path('profile/webinar/credentials', WebinarCredentialsView.as_view(), name='update_webinar_credentials'),
-    path('profile/user/information', UserInformationView.as_view(), name='update_user_information'),
     path('schedule/', ScheduleView.as_view(), name='schedule'),
     path('event/<int:event_id>', EventView.as_view(), name='event'),
     path('event/<int:event_id>/chat', ChatView.as_view(), name='chat'),

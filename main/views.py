@@ -11,7 +11,6 @@ from django_registration.backends.one_step.views import RegistrationView
 
 from main.forms import (
     ExtendedRegistrationForm,
-    UserInformationForm,
     WebinarCredentialsForm,
 )
 from main.webinar import BaseRouter, Webinar
@@ -68,7 +67,6 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         response = request.user.webinar_session.get_user()
         self.context["forms"] = {
-            "information": UserInformationForm(),
             "password": PasswordChangeForm(user=request.user),
             "webinar": WebinarCredentialsForm(
                 initial={"email": request.user.webinar_session.email}
@@ -100,8 +98,10 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
         :return:
         """
         if form.is_valid():
-            if request.user.webinar_session.is_correct_data(request.POST["email"],
-                                                            request.POST["password"]):
+            if request.user.webinar_session.is_correct_data(
+                request.POST["email"],
+                request.POST["password"]
+            ):
                 form.save()
                 request.user.webinar_session.login()
                 messages.success(request, "Данные для авторизации на Webinar обновлены")
@@ -109,18 +109,6 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
                 messages.error(
                     request, "Неверное имя пользователя или пароль аккаунта Webinar"
                 )
-
-
-class UserInformationView(LoginRequiredMixin, View):
-    def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
-        form = UserInformationForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Аватар обновлен")
-        for scope in form.errors.values():
-            for error in list(scope):
-                messages.error(request, error)
-        return redirect(reverse("profile"))
 
 
 class ScheduleView(LoginRequiredMixin, View):
