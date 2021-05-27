@@ -168,16 +168,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
-MEDIA_URL = '/static/media/'
-if not DEBUG:
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/media/')   # due to whitenoise does not support media files
-    if not os.path.exists(MEDIA_ROOT):
-        os.mkdir(STATIC_ROOT)
-        os.mkdir(MEDIA_ROOT)
-        from shutil import copyfile
-        copyfile('media/avatar.svg', os.path.join(MEDIA_ROOT, 'avatar.svg'))
-else:
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 LOGGING = {
     'version': 1,
