@@ -14,6 +14,7 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.template.loader import render_to_string
 
+from main.discord import DiscordClient
 from main.models import User, WebinarSession
 from main.webinar import Webinar
 
@@ -27,6 +28,7 @@ class Timer:
     """
     Класс таймера
     """
+
     def __init__(self, timeout: float, callback: Callable, *args: Any, **kwargs: Dict) -> None:
         """
         Конструктоор
@@ -183,8 +185,17 @@ class ChatConsumer(BaseConsumer):
         Метод, срабатывающий после подключения по websockets
         """
         await super().connect()
+
+        self.discord_client = DiscordClient(self.webinar_session, self.event_id)
+        self.discord_timer = Timer(1, sync_to_async(self.discord_client.print_last_message))
+
         self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message)
         self.timer.enable()
+        self.discord_timer.enable()
+
+    async def disconnect(self, close_code: int) -> None:
+        self.discord_timer.cancel()
+        return await super().disconnect(close_code)
 
 
 class AwaitingMessagesConsumer(BaseConsumer):
