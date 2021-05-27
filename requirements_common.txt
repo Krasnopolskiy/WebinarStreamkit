@@ -10,3 +10,6 @@ channels-redis==3.2.0
 
 # Discord
 discord==1.0.1
+
+# Debug
+django-debug-toolbar~=3.2.1
