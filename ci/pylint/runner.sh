@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run pylint
-pylint $(ls -d */) --load-plugins pylint_django webinar_streamkit/settings.py | tee pylint.txt
+pylint $(ls -d */) --load-plugins pylint_django ./webinar_streamkit/settings.py | tee pylint.txt
 
 # get badge
 mkdir public
