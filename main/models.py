@@ -179,8 +179,7 @@ class WebinarSession(models.Model):
         :return:
         """
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
-        resp = self.session.put(route, data=kwargs)
-        print(resp.text)
+        self.session.put(route, data=kwargs)
 
     @webinar_required
     def start(self, session_id: int, **kwargs):
