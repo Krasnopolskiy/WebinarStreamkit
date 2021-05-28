@@ -1,6 +1,7 @@
 let url = new URL(window.location.href)
 let parent_url = url.href.replace('/control', '')
-let ws = new WebSocket(`wss://${url.host}${url.pathname}`)
+let ws_protocol = url.protocol === 'http:' ? 'ws:' : 'wss:'
+let ws = new WebSocket(`${ws_protocol}//${url.host}${url.pathname}`)
 let chat_widget, awaiting_widget
 
 let close_widget = () => {
@@ -40,7 +41,6 @@ let update_setting = (settings) => {
 
 ws.onmessage = event => {
     data = JSON.parse(event['data'])
-    console.log(data)
     if (data['event'] === 'update settings')
         update_setting(data['settings'])
     if (data['event'] === 'error')
@@ -55,7 +55,6 @@ $('#moderate-switch').on('change', () => {
             value: $('#moderate-switch').is(':checked')
         }
     }
-    console.log(payload);
     ws.send(JSON.stringify(payload))
     iziToast.warning({
         message: 'Изменения вступят в силу через некоторое время'
