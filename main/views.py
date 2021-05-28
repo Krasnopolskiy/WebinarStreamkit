@@ -79,7 +79,7 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, "pages/profile.html", self.context)
 
 
-class WebinarCredentialsView(LoginRequiredMixin, View):
+class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
         form = WebinarCredentialsForm(
             request.POST, instance=request.user.webinar_session
@@ -109,6 +109,13 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
                 messages.error(
                     request, "Неверное имя пользователя или пароль аккаунта Webinar"
                 )
+
+
+class WebinarCredentialsDeleteView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
+        request.user.webinar_session.logout()
+        messages.warning(request, "Данные для авторизации на Webinar удалены")
+        return redirect(reverse("profile"))
 
 
 class ScheduleView(LoginRequiredMixin, View):

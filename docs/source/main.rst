@@ -1,7 +1,3 @@
-========
-main/
-========
-
 **************
 main/models.py
 **************
@@ -50,20 +46,6 @@ main/admin.py
 
 .. automodule:: main.admin
    :members:
-
-******************
-main/__init__.py
-******************
-
-.. automodule:: main.__init__
-   :members:
-
-******************
-main/migrations
-******************
-
-миграции в проекте
-------------------
 
 ******************
 main/templates
