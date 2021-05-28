@@ -46,6 +46,7 @@ class WebinarSession(models.Model):
     def is_correct_data(self, check_email: str, check_password: str) -> bool:
         """
         Проверка на наличие аккаунта на webinar
+
         :param check_email: email пользователя
         :param check_password: пароль пользователя
         :return: Существует пользователь или нет
@@ -76,7 +77,6 @@ class WebinarSession(models.Model):
     def is_login_required(self) -> bool:
         """
         Проверка на необходимость повторного входа в аккаунт webinar
-        :return:
         """
         return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
 
@@ -103,6 +103,7 @@ class WebinarSession(models.Model):
     def get_user(self):
         """
         Получение пользователя
+
         :return: Объект пользователя webinar
         """
         if not self.user_id:
@@ -115,6 +116,7 @@ class WebinarSession(models.Model):
     def get_schedule(self):
         """
         Получение расписания вебинаров
+
         :return: Расписание вебинаров
         """
         schedule = list()
@@ -132,6 +134,7 @@ class WebinarSession(models.Model):
     def get_event(self, event_id: int):
         """
         Получение вебинара (события)
+
         :param event_id: id события
         :return: Объект события
         """
@@ -144,6 +147,7 @@ class WebinarSession(models.Model):
     def get_chat(self, session_id: int):
         """
         Получение чата
+
         :return: Чат из вебинара
         """
         route = MessageRouter.CHAT.value.format(session_id=session_id)
@@ -174,9 +178,6 @@ class WebinarSession(models.Model):
     def update_settings(self, session_id: int, **kwargs):
         """
         Обновление настроек
-        :param session_id:
-        :param kwargs:
-        :return:
         """
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
         self.session.put(route, data=kwargs)
@@ -185,6 +186,7 @@ class WebinarSession(models.Model):
     def start(self, session_id: int, **kwargs):
         """
         Начать вебинар
+
         :param session_id: id сессии
         """
         route = EventRouter.START.value.format(session_id=session_id)
@@ -194,6 +196,7 @@ class WebinarSession(models.Model):
     def stop(self, session_id: int, **kwargs):
         """
         Закончить вебинар
+
         :param session_id: id сессии
         """
         route = MessageRouter.STOP.value.format(session_id=session_id)

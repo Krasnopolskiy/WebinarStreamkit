@@ -18,22 +18,18 @@
                 создание и дальнейшее управление вебинарами.</p>
             <h3>Для начала работы:</h3>
             <br>
-            <div class="accordion" id="instructionBlocks">
+            <div class="accordion">
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="stepTwo">
-                        <button aria-controls="insideFirstBlock" aria-expanded="false"
-                            class="accordion-button collapsed" data-bs-target="#insideFirstBlock"
-                            data-bs-toggle="collapse" type="button">
+                    <h2 class="accordion-header">
+                        <button aria-expanded="false" class="accordion-button collapsed" data-bs-target="#block-1"
+                            data-bs-toggle="collapse">
                             Шаг #1. Авторизация/Регистрация на сайте
                         </button>
                     </h2>
-                    <div aria-labelledby="stepTwo" class="accordion-collapse collapse"
-                        data-bs-parent="#instructionBlocks" id="insideFirstBlock">
+                    <div class="accordion-collapse collapse" id="block-1">
                         <div class="accordion-body">
                             Если вы впервые на нашем сайте, зарегистрируйтесь. Завершив процедуру регистрации, вы можете
-                            войти в
-                            свой аккаунт для
-                            дальнейшей работы.
+                            войти в свой аккаунт для дальнейшей работы.
                             <div class="p-3">
                                 <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
                                 <a href="{% url 'signup' %}" class="btn btn-primary">Регистрация</a>
@@ -42,15 +38,13 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="stepTwo">
-                        <button aria-controls="insideSecondBlock" aria-expanded="false"
-                            class="accordion-button collapsed" data-bs-target="#insideSecondBlock"
-                            data-bs-toggle="collapse" type="button">
+                    <h2 class="accordion-header">
+                        <button aria-expanded="false" class="accordion-button collapsed" data-bs-target="#block-2"
+                            data-bs-toggle="collapse">
                             Шаг #2. Авторизация на Webinar
                         </button>
                     </h2>
-                    <div aria-labelledby="stepTwo" class="accordion-collapse collapse"
-                        data-bs-parent="#instructionBlocks" id="insideSecondBlock">
+                    <div class="accordion-collapse collapse" id="block-2">
                         <div class="accordion-body">
                             Перейдите на страницу вашего профиля. На текущий момент аккаунты на Webinar Streamkit и
                             Webinar.ru не синхронизированы. Чтобы привязать аккаунт Webinar, перейдите на вкладку
@@ -63,15 +57,31 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="stepThree">
-                        <button aria-controls="insideThreeBlock" aria-expanded="false"
-                            class="accordion-button collapsed" data-bs-target="#insideThreeBlock"
-                            data-bs-toggle="collapse" type="button">
-                            Шаг #3. Трансляция в Discord
+                    <h2 class="accordion-header">
+                        <button aria-expanded="false" class="accordion-button collapsed" data-bs-target="#block-3"
+                            data-bs-toggle="collapse">
+                            Шаг #3. Модерация вебинаров
                         </button>
                     </h2>
-                    <div aria-labelledby="stepThree" class="accordion-collapse collapse"
-                        data-bs-parent="#instructionBlocks" id="insideThreeBlock">
+                    <div class="accordion-collapse collapse" id="block-3">
+                        <div class="accordion-body">
+                            После синхронизации с аккаунтом Webinar Вам станет доступна страница расписания вебинаров,
+                            на которой будут отображены все запланированные вебинары. Чтобы открыть виджет модерации,
+                            перейдите на страницу нужного вебинара и нажмите соответствующую кнопку
+                            <div class="p-3">
+                                <a class="btn btn-primary me-3" href="{% url 'schedule' %}">Расписание</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button aria-expanded="false" class="accordion-button collapsed" data-bs-target="#block-4"
+                            data-bs-toggle="collapse">
+                            Шаг #4. Трансляция в Discord
+                        </button>
+                    </h2>
+                    <div class="accordion-collapse collapse" id="block-4">
                         <div class="accordion-body">
                             Если вы хотите транслировать сообщения из чата вебинара в discord-канал, вы можете создать
                             webhook для этого канала и вставить полученную ссылку в соответствующее поле на странице
@@ -85,14 +95,13 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="stepFour">
-                        <button aria-controls="insideFourBlock" aria-expanded="false" class="accordion-button collapsed"
-                            data-bs-target="#insideFourBlock" data-bs-toggle="collapse" type="button">
-                            Шаг #4. Подробнее
+                    <h2 class="accordion-header">
+                        <button aria-expanded="false" class="accordion-button collapsed" data-bs-target="#block-5"
+                            data-bs-toggle="collapse">
+                            Шаг #5. Подробнее
                         </button>
                     </h2>
-                    <div aria-labelledby="stepThree" class="accordion-collapse collapse"
-                        data-bs-parent="#instructionBlocks" id="insideFourBlock">
+                    <div class="accordion-collapse collapse" id="block-5">
                         <div class="accordion-body">
                             Для более глубокого изучения предоставляемых возможностей, пожалуйста, ознакомьтесь с
                             приложенной документацией.

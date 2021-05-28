@@ -270,7 +270,9 @@ class WebinarTestCase(TestCase):
             response = self.client.get(links[0])
             self.assertEqual(response.status_code, 200)
             soup = BeautifulSoup(response.content, 'html.parser')
-            buttons = soup.find('div', class_='px-3').findChildren()
+            button1 = soup.find('button', class_='btn btn-primary')
+            button2 = soup.find('a', class_='btn btn-primary mx-2')
+            buttons = [button1, button2]
             text_in_buttons = [b.text.strip() for b in buttons]
             self.assertEqual(len(text_in_buttons), 2)
             self.assertListEqual(text_in_buttons, ['Панель управления', 'Перейти к вебинару'])
@@ -309,10 +311,17 @@ class WidgetTestCase(TestCase):
         self.target_url = links[0]
 
     def test_get_event_settings(self):
+        """
+        Тест на настройки вебинара
+        """
+        payload = {'webhooks':
+                   'https://discord.com/api/webhooks/847424948532281384/ca5xmuYDIBxmjxiq1u-_g6MXRgXpaYVsEj1lG3BT0IY'
+                   '-VHAEeA83zT74qv6OMAulc9cY'}
+        self.client.post(self.target_url, payload)
         webinar_session = self.user.webinar_session
-        l1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
-        l2 = ['status', 'premoderation']
-        self.assertListEqual(l2, l1)
+        list1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
+        list2 = ['status', 'premoderation', 'broadcast']
+        self.assertListEqual(list2, list1)
 
     def test_view(self):
         """
@@ -408,7 +417,7 @@ class UnauthWebinarUser(TestCase):
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
 
-def tempFunc():
+def foo():
     """
     Функция заглушка. Нужна для теста таймера
     """
@@ -425,7 +434,7 @@ class ConsumersTestCase(TestCase):
         Тест на самописный таймер
         """
         try:
-            my_timer = Timer(1, tempFunc)
+            my_timer = Timer(1, foo)
         except:
             self.fail("Timer не смог создаться")
 
@@ -439,7 +448,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("Timer не смог отмениться")
 
-    def test_Awaiting(self):
+    def test_awaiting(self):
         """
         Тест на consumer с ожидаемыми сообщениями
         """
@@ -448,7 +457,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("AwaitingMessagesConsumer не смог создаться")
 
-    def test_Control(self):
+    def test_control(self):
         """
         Тест на consumer с contol panel
         """
@@ -457,7 +466,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("ControlConsumer не смог создаться")
 
-    def test_ChatConsumer(self):
+    def test_chat_consumer(self):
         """
         Тест на consumer с чатом
         """
@@ -466,7 +475,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("ChatConsumer не смог создаться")
 
-    def test_Consumer(self):
+    def test_consumer(self):
         """
         Тест на consumer
         """
