@@ -37,6 +37,7 @@ let update_setting = (settings) => {
     if (settings.status === 'STOP')
         close_widget()
     $('#moderate-switch').prop('checked', settings.premoderation)
+    $('#discord-switch').prop('checked', settings.broadcast)
 }
 
 ws.onmessage = event => {
@@ -59,6 +60,16 @@ $('#moderate-switch').on('change', () => {
     iziToast.warning({
         message: 'Изменения вступят в силу через некоторое время'
     })
+})
+
+$('#discord-switch').on('change', () => {
+    let payload = {
+        command: 'update broadcast settings',
+        params: {
+            active: $('#discord-switch').is(':checked')
+        }
+    }
+    ws.send(JSON.stringify(payload))
 })
 
 

@@ -53,13 +53,6 @@
                 <h4>Discord-каналы для трянсляции сообщений: </h4>
                 <form method="post">
                     {% csrf_token %}
-                    {% comment %} <div class="my-3">
-                        <label class="form-label">Webhook ссылки для трянслиции в discord (по одной в строке)</label>
-                        <textarea class="my-3 form-control" placeholder="Webhook#1&#x0a;Webhook#2"
-                            name="discord-webhooks"></textarea>
-
-                    </div> {% endcomment %}
-                    {% csrf_token %}
                     <div class="my-3">
                         {% for item in form %}
                         {{ item|as_crispy_field }}

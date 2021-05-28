@@ -201,10 +201,27 @@ class WebinarSession(models.Model):
 
 
 class DiscordHistory(models.Model):
+    """
+    Модель, содержащая информацию для discord-бота
+
+    :param event_id: ID вебинара
+    :param message_ids: Список ID отправленных ботом сообщений
+    :param webhooks: Список webhook для трансляции в discord
+    :param active: Флаг, указывающий, транслировать ли сообщения или нет
+    """
+
     id = models.AutoField(primary_key=True)
     event_id = models.IntegerField(null=True)
     message_ids = models.JSONField(default=list)
     webhooks = models.JSONField(default=list)
+    active = models.BooleanField(default=False)
+
+    def update_settings(self, *args, **kwargs):
+        """
+        Обновление настроек
+        """
+        self.active = bool(kwargs.get('active', False))
+        self.save()
 
 
 class User(AbstractUser):

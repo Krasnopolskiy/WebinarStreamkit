@@ -1,4 +1,3 @@
-from asgiref.sync import sync_to_async
 from main.webinar import Webinar
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from main.models import DiscordHistory, WebinarSession
@@ -34,7 +33,9 @@ class DiscordClient:
         if len(chat.moderated) == 0:
             return
         for message in chat.moderated[-5:]:
-            if message.id not in self.history.message_ids:
+            if message.id in self.history.message_ids:
+                continue
+            if self.history.active:
                 self.send_message(message)
-                self.history.message_ids.append(message.id)
-                self.history.save()
+            self.history.message_ids.append(message.id)
+            self.history.save()
