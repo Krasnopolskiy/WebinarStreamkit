@@ -1,6 +1,7 @@
 let last_scroll_pos = 0
 let url = new URL(window.location.href)
-let ws = new WebSocket(`wss://${url.host}${url.pathname}`)
+let ws_protocol = url.protocol === 'http:' ? 'ws:' : 'wss:'
+let ws = new WebSocket(`${ws_protocol}//${url.host}${url.pathname}`)
 
 let update_messages = template => {
     if (template !== $('#message-box').html()) {
