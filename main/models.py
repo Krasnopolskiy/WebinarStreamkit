@@ -204,6 +204,7 @@ class DiscordHistory(models.Model):
     id = models.AutoField(primary_key=True)
     event_id = models.IntegerField(null=True)
     message_ids = models.JSONField(default=list)
+    webhooks = models.JSONField(default=list)
 
 
 class User(AbstractUser):

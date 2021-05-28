@@ -1,7 +1,7 @@
 from django import forms
 from django_registration.forms import RegistrationForm
 
-from main.models import User, WebinarSession
+from main.models import DiscordHistory, User, WebinarSession
 
 
 class ExtendedRegistrationForm(RegistrationForm):
@@ -22,3 +22,15 @@ class WebinarCredentialsForm(forms.ModelForm):
     class Meta:
         model = WebinarSession
         fields = ['email', 'password']
+
+
+class WebhooksForm(forms.Form):
+    webhooks = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Webhook#1\nWebhook#2',
+            'rows': 2,
+            'class': 'font-monospace',
+            'wrap': 'off'
+        }),
+        label='Webhook ссылки для трянслиции в discord (по одной в строке)'
+    )

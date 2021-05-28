@@ -1,3 +1,4 @@
+from asgiref.sync import sync_to_async
 from main.webinar import Webinar
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from main.models import DiscordHistory, WebinarSession
@@ -5,8 +6,6 @@ from datetime import datetime
 
 
 class DiscordClient:
-    WEBHOOK_URL = 'https://discord.com/api/webhooks/847424948532281384/ca5xmuYDIBxmjxiq1u-_g6MXRgXpaYVsEj1lG3BT0IY-VHAEeA83zT74qv6OMAulc9cY'
-
     def __init__(self, webinar_session: WebinarSession, event_id: int) -> None:
         self.webinar_session = webinar_session
         self.event_id = event_id
@@ -23,7 +22,7 @@ class DiscordClient:
 
     def send_message(self, message: Webinar.Message) -> None:
         time = datetime.strptime(message.createAt, '%Y-%m-%dT%H:%M:%S%z').time().strftime('%H:%M')
-        webhook = DiscordWebhook(url=self.WEBHOOK_URL)
+        webhook = DiscordWebhook(url=self.history.webhooks)
         embed = DiscordEmbed(description=message.text)
         embed.set_author(name=message.authorName)
         embed.set_footer(text=time)

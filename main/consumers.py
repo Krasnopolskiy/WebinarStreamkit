@@ -50,7 +50,8 @@ class Timer:
         while self.enabled:
             try:
                 await self.callback(*self.args, **self.kwargs)
-            except:
+            except Exception as error:
+                print(error)
                 await send_error(*self.args, **self.kwargs)
             await asyncio.sleep(self.timeout)
 
@@ -152,6 +153,7 @@ class BaseConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code: int) -> None:
+        self.timer.cancel()
         await self.channel_layer.group_discard(
             self.room,
             self.channel_name
