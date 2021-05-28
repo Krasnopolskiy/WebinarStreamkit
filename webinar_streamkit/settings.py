@@ -186,7 +186,7 @@ LOGGING = {
 if not DEBUG:
     MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
+
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
