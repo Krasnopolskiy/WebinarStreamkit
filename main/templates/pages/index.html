@@ -4,12 +4,12 @@
 {% include 'components/base/navbar.html' %}
 
 <div class="container p-3">
-    <div class="row mt-3">
+    <div class="row my-3">
         <div class="col">
             <h1 class="display-1 text-center">Webinar StreamKit</h1>
         </div>
     </div>
-    <div class="row">
+    <div class="row my-3">
         <div class="col px-5">
             <h2>Новый StreamKit для платформы Webinar</h2>
             <p class="lead">Уважаемый пользователь, добро пожаловать на главную страницу нашего сервиса Webinar
@@ -20,13 +20,14 @@
             <br>
             <div class="accordion" id="instructionBlocks">
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="stepOne">
-                        <button aria-controls="insideFirstBlock" aria-expanded="true" class="accordion-button"
-                            data-bs-target="#insideFirstBlock" data-bs-toggle="collapse" type="button">
+                    <h2 class="accordion-header" id="stepTwo">
+                        <button aria-controls="insideFirstBlock" aria-expanded="false"
+                            class="accordion-button collapsed" data-bs-target="#insideFirstBlock"
+                            data-bs-toggle="collapse" type="button">
                             Шаг #1. Авторизация/Регистрация на сайте
                         </button>
                     </h2>
-                    <div aria-labelledby="stepOne" class="accordion-collapse collapse"
+                    <div aria-labelledby="stepTwo" class="accordion-collapse collapse"
                         data-bs-parent="#instructionBlocks" id="insideFirstBlock">
                         <div class="accordion-body">
                             Если вы впервые на нашем сайте, зарегистрируйтесь. Завершив процедуру регистрации, вы можете
@@ -34,7 +35,7 @@
                             свой аккаунт для
                             дальнейшей работы.
                             <div class="p-3">
-                                <a href="{% url 'login' %}" class="btn btn-primary">Авторизация</a>
+                                <a href="{% url 'login' %}" class="btn btn-primary me-3">Авторизация</a>
                                 <a href="{% url 'signup' %}" class="btn btn-primary">Регистрация</a>
                             </div>
                         </div>
@@ -42,8 +43,9 @@
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="stepTwo">
-                        <button aria-controls="insideSecondBlock" aria-expanded="false" class="accordion-button collapsed"
-                            data-bs-target="#insideSecondBlock" data-bs-toggle="collapse" type="button">
+                        <button aria-controls="insideSecondBlock" aria-expanded="false"
+                            class="accordion-button collapsed" data-bs-target="#insideSecondBlock"
+                            data-bs-toggle="collapse" type="button">
                             Шаг #2. Авторизация на Webinar
                         </button>
                     </h2>
@@ -62,19 +64,45 @@
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="stepThree">
-                        <button aria-controls="insideThreeBlock" aria-expanded="false" class="accordion-button collapsed"
-                            data-bs-target="#insideThreeBlock" data-bs-toggle="collapse" type="button">
-                            Шаг #3. Подробнее
+                        <button aria-controls="insideThreeBlock" aria-expanded="false"
+                            class="accordion-button collapsed" data-bs-target="#insideThreeBlock"
+                            data-bs-toggle="collapse" type="button">
+                            Шаг #3. Трансляция в Discord
                         </button>
                     </h2>
                     <div aria-labelledby="stepThree" class="accordion-collapse collapse"
                         data-bs-parent="#instructionBlocks" id="insideThreeBlock">
                         <div class="accordion-body">
+                            Если вы хотите транслировать сообщения из чата вебинара в discord-канал, вы можете создать
+                            webhook для этого канала и вставить полученную ссылку в соответствующее поле на странице
+                            вебинар
+                            <div class="p-3">
+                                <a class="btn btn-primary me-3"
+                                    href="https://support.discord.com/hc/ru/articles/228383668-%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-Webhooks">Как
+                                    создать webhook</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="stepFour">
+                        <button aria-controls="insideFourBlock" aria-expanded="false" class="accordion-button collapsed"
+                            data-bs-target="#insideFourBlock" data-bs-toggle="collapse" type="button">
+                            Шаг #4. Подробнее
+                        </button>
+                    </h2>
+                    <div aria-labelledby="stepThree" class="accordion-collapse collapse"
+                        data-bs-parent="#instructionBlocks" id="insideFourBlock">
+                        <div class="accordion-body">
                             Для более глубокого изучения предоставляемых возможностей, пожалуйста, ознакомьтесь с
                             приложенной документацией.
                             <div class="p-3">
-                                <a class="btn btn-primary" href="https://webinarstreamkit.readthedocs.io/en/latest/code.html#id1">Документация для пользователя</a>
-                                <a class="btn btn-primary" href="https://webinarstreamkit.readthedocs.io/en/latest/code.html#module-main.views">Документация для разработчика</a>
+                                <a class="btn btn-primary me-3"
+                                    href="https://webinarstreamkit.readthedocs.io/en/latest/user_docs.html">Документация
+                                    для пользователя</a>
+                                <a class="btn btn-primary"
+                                    href="https://webinarstreamkit.readthedocs.io/en/latest/code.html">Документация для
+                                    разработчика</a>
                             </div>
                         </div>
                     </div>

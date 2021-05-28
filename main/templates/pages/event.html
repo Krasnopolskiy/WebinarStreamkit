@@ -1,5 +1,7 @@
 {% extends 'base/base.html' %}
 {% load filters %}
+{% load crispy_forms_tags %}
+
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/event.css' %}">
@@ -14,7 +16,7 @@
     </div>
     <div class="row my-3">
         <div class="col-6">
-            <div class="border shadow rounded p-3">
+            <div class="card h-100 border shadow rounded p-3">
                 <div class="position-relative" id="cover">
                     <img src="{{ event.image }}">
                     <div id="event-name" class="rounded p-3 position-absolute top-50 start-50 translate-middle">
@@ -24,24 +26,40 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="border shadow rounded p-3">
+            <div class="card h-100 border shadow rounded p-3">
                 <div class="mt-3 p-3">
                     <h4>Описание: </h4>
                     <p class="my-3">
                         {% if not event.description %}
-                            Описание отсутствует
+                        Описание отсутствует
                         {% else %}
-                            {{ event.description }}
+                        {{ event.description }}
                         {% endif %}
                     </p>
                     <h6>{{ event.startsAt|parse_date }} &#8212; {{ event.endsAt|parse_date }}</h6>
                 </div>
-                <div class="px-3">
-                    <button class="btn btn-primary me-2 mt-2" id="widget">
+                <div class="p-3">
+                    <button class="btn btn-primary" id="widget">
                         Панель управления
                     </button>
-                    <a href="{{ event.url }}" class="btn btn-primary mt-2" target="_blank">Перейти к вебинару</a>
+                    <a href="{{ event.url }}" class="btn btn-primary mx-2" target="_blank">Перейти к вебинару</a>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-3 mb-5">
+        <div class="col">
+            <div class="border shadow rounded p-5">
+                <h4>Discord-каналы для трянсляции сообщений: </h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="my-3">
+                        {% for item in form %}
+                        {{ item|as_crispy_field }}
+                        {% endfor %}
+                    </div>
+                    <input type="submit" value="Сохранить" class="btn btn-primary">
+                </form>
             </div>
         </div>
     </div>

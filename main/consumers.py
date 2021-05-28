@@ -15,7 +15,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.template.loader import render_to_string
 
 from main.discord import DiscordClient
-from main.models import User, WebinarSession
+from main.models import DiscordHistory, User, WebinarSession
 from main.webinar import Webinar
 
 
@@ -50,7 +50,7 @@ class Timer:
         while self.enabled:
             try:
                 await self.callback(*self.args, **self.kwargs)
-            except:
+            except Exception as error:
                 await send_error(*self.args, **self.kwargs)
             await asyncio.sleep(self.timeout)
 
@@ -96,9 +96,11 @@ def get_event_settings(webinar_session: WebinarSession, event_id: int) -> Webina
     """
     event = webinar_session.get_event(event_id)
     chat = webinar_session.get_chat(event.session_id)
+    history = DiscordHistory.objects.get(event_id=event_id)
     return {
         'status': event.status,
-        'premoderation': chat.premoderation == 'True'
+        'premoderation': chat.premoderation == 'True',
+        'broadcast': history.active
     }
 
 
@@ -152,6 +154,7 @@ class BaseConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code: int) -> None:
+        self.timer.cancel()
         await self.channel_layer.group_discard(
             self.room,
             self.channel_name
@@ -186,16 +189,8 @@ class ChatConsumer(BaseConsumer):
         """
         await super().connect()
 
-        self.discord_client = DiscordClient(self.webinar_session, self.event_id)
-        self.discord_timer = Timer(1, sync_to_async(self.discord_client.print_last_message))
-
         self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message)
         self.timer.enable()
-        self.discord_timer.enable()
-
-    async def disconnect(self, close_code: int) -> None:
-        self.discord_timer.cancel()
-        return await super().disconnect(close_code)
 
 
 class AwaitingMessagesConsumer(BaseConsumer):
@@ -232,8 +227,20 @@ class ControlConsumer(BaseConsumer):
         Метод, срабатывающий после подключения по websockets
         """
         await super().connect()
+
+        self.discord_client = DiscordClient(self.webinar_session, self.event_id)
+        await sync_to_async(self.discord_client.get_history_instance)()
+
         self.commands['update settings'] = sync_to_async(self.webinar_session.update_settings)
         self.commands['update fontsize'] = sync_to_async(self.user.update_fontsize)
+        self.commands['update broadcast settings'] = sync_to_async(self.discord_client.history.update_settings)
         self.commands['start'] = sync_to_async(self.webinar_session.start)
         self.commands['stop'] = sync_to_async(self.webinar_session.stop)
         self.timer.enable()
+
+        self.discord_timer = Timer(1, sync_to_async(self.discord_client.process))
+        self.discord_timer.enable()
+
+    async def disconnect(self, close_code: int) -> None:
+        self.discord_timer.cancel()
+        return await super().disconnect(close_code)

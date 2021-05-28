@@ -21,16 +21,21 @@
             <button class="btn btn-danger" id="stop-btn">Завершить</button>
             <button class="btn btn-success" id="start-btn">Запустить</button>
         </div>
-        <div class="col py-2">
+        <div class="col">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="moderate-switch">
                 <label class="form-check-label" for="moderate-switch">Включить премодерацию</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="discord-switch">
+                <label class="form-check-label" for="discord-switch">Транслировать в Discord</label>
             </div>
         </div>
     </div>
     <div class="row py-3">
         <div class="col">
-            <label for="fontsize-range" class="form-label">Размер шрифта: <span id="fontsize-value">{{ fontsize }}</span></label>
+            <label for="fontsize-range" class="form-label">Размер шрифта: <span
+                    id="fontsize-value">{{ fontsize }}</span></label>
             <input type="range" class="form-range" id="fontsize-range" min="8" max="48" step="1" value={{ fontsize }}>
         </div>
     </div>
