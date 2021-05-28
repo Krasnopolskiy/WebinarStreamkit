@@ -35,7 +35,7 @@
                             {% if not event.description %}
                             <td class="p-3 pt-4"> &#8212; </td>
                             {% else %}
-                            <td class="p-3 pt-4">{{ event.description }}</td>
+                            <td class="p-3 pt-4">{{ event.description|truncatechars:100 }}</td>
                             {% endif %}
                             <td class="p-3 pt-4">{{ event.startsAt|parse_date }}</td>
                             <td class="p-3 pt-4">{{ event.endsAt|parse_date }}</td>
