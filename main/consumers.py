@@ -186,16 +186,8 @@ class ChatConsumer(BaseConsumer):
         """
         await super().connect()
 
-        self.discord_client = DiscordClient(self.webinar_session, self.event_id)
-        self.discord_timer = Timer(1, sync_to_async(self.discord_client.print_last_message))
-
         self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message)
         self.timer.enable()
-        self.discord_timer.enable()
-
-    async def disconnect(self, close_code: int) -> None:
-        self.discord_timer.cancel()
-        return await super().disconnect(close_code)
 
 
 class AwaitingMessagesConsumer(BaseConsumer):
@@ -237,3 +229,12 @@ class ControlConsumer(BaseConsumer):
         self.commands['start'] = sync_to_async(self.webinar_session.start)
         self.commands['stop'] = sync_to_async(self.webinar_session.stop)
         self.timer.enable()
+
+        self.discord_client = DiscordClient(self.webinar_session, self.event_id)
+        await sync_to_async(self.discord_client.get_history_instance)()
+        self.discord_timer = Timer(1, sync_to_async(self.discord_client.process))
+        self.discord_timer.enable()
+
+    async def disconnect(self, close_code: int) -> None:
+        self.discord_timer.cancel()
+        return await super().disconnect(close_code)

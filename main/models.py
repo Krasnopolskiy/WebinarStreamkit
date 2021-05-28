@@ -201,6 +201,12 @@ class WebinarSession(models.Model):
         self.session.put(route)
 
 
+class DiscordHistory(models.Model):
+    id = models.AutoField(primary_key=True)
+    event_id = models.IntegerField(null=True)
+    message_ids = models.JSONField(default=list)
+
+
 class User(AbstractUser):
     """
     Модель пользователя
