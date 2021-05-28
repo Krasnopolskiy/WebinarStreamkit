@@ -310,9 +310,9 @@ class WidgetTestCase(TestCase):
 
     def test_get_event_settings(self):
         webinar_session = self.user.webinar_session
-        l1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
-        l2 = ['status', 'premoderation']
-        self.assertListEqual(l2, l1)
+        list1 = list(get_event_settings(webinar_session, self.target_url.split('/')[-1]).keys())
+        list2 = ['status', 'premoderation']
+        self.assertListEqual(list2, list1)
 
     def test_view(self):
         """
@@ -408,7 +408,7 @@ class UnauthWebinarUser(TestCase):
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
 
 
-def tempFunc():
+def foo():
     """
     Функция заглушка. Нужна для теста таймера
     """
@@ -425,7 +425,7 @@ class ConsumersTestCase(TestCase):
         Тест на самописный таймер
         """
         try:
-            my_timer = Timer(1, tempFunc)
+            my_timer = Timer(1, foo)
         except:
             self.fail("Timer не смог создаться")
 
@@ -439,7 +439,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("Timer не смог отмениться")
 
-    def test_Awaiting(self):
+    def test_awaiting(self):
         """
         Тест на consumer с ожидаемыми сообщениями
         """
@@ -448,7 +448,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("AwaitingMessagesConsumer не смог создаться")
 
-    def test_Control(self):
+    def test_control(self):
         """
         Тест на consumer с contol panel
         """
@@ -457,7 +457,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("ControlConsumer не смог создаться")
 
-    def test_ChatConsumer(self):
+    def test_chat_consumer(self):
         """
         Тест на consumer с чатом
         """
@@ -466,7 +466,7 @@ class ConsumersTestCase(TestCase):
         except:
             self.fail("ChatConsumer не смог создаться")
 
-    def test_Consumer(self):
+    def test_consumer(self):
         """
         Тест на consumer
         """
