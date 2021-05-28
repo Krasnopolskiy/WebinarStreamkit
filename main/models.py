@@ -1,8 +1,7 @@
 from datetime import date, timedelta
 from functools import wraps
-from http.cookiejar import Cookie
 from json import loads
-from typing import List, Optional, Union
+from typing import Optional
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -10,7 +9,6 @@ from django.db import models
 from requests import post, Session
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
-import urllib
 
 
 class WebinarSession(models.Model):
@@ -27,6 +25,7 @@ class WebinarSession(models.Model):
     def get_cookie(self, cookie_name: str):
         """
         Получение Куки пользователя
+
         :param cookie_name:
         :return: Кука
         """
@@ -37,6 +36,7 @@ class WebinarSession(models.Model):
     def is_correct_data(self, check_email: str, check_password: str):
         """
         Проверка на наличие аккаунта на webinar
+
         :param check_email: email пользователя
         :param check_password: пароль пользователя
         :return: Существует пользователь или нет
@@ -67,7 +67,6 @@ class WebinarSession(models.Model):
     def is_login_required(self) -> bool:
         """
         Проверка на необходимость повторного входа в аккаунт webinar
-        :return:
         """
         return self.last_login is None or date.today() - self.last_login > timedelta(weeks=1)
 
@@ -94,6 +93,7 @@ class WebinarSession(models.Model):
     def get_user(self):
         """
         Получение пользователя
+
         :return: Объект пользователя webinar
         """
         if not self.user_id:
@@ -106,6 +106,7 @@ class WebinarSession(models.Model):
     def get_schedule(self):
         """
         Получение расписания вебинаров
+
         :return: Расписание вебинаров
         """
         schedule = list()
@@ -123,6 +124,7 @@ class WebinarSession(models.Model):
     def get_event(self, event_id: int):
         """
         Получение вебинара (события)
+
         :param event_id: id события
         :return: Объект события
         """
@@ -135,6 +137,7 @@ class WebinarSession(models.Model):
     def get_chat(self, session_id: int):
         """
         Получение чата
+
         :return: Чат из вебинара
         """
         route = MessageRouter.CHAT.value.format(session_id=session_id)
@@ -165,9 +168,6 @@ class WebinarSession(models.Model):
     def update_settings(self, session_id: int, **kwargs):
         """
         Обновление настроек
-        :param session_id:
-        :param kwargs:
-        :return:
         """
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
         resp = self.session.put(route, data=kwargs)
@@ -177,6 +177,7 @@ class WebinarSession(models.Model):
     def start(self, session_id: int, **kwargs):
         """
         Начать вебинар
+
         :param session_id: id сессии
         """
         route = EventRouter.START.value.format(session_id=session_id)
@@ -186,6 +187,7 @@ class WebinarSession(models.Model):
     def stop(self, session_id: int, **kwargs):
         """
         Закончить вебинар
+
         :param session_id: id сессии
         """
         route = MessageRouter.STOP.value.format(session_id=session_id)
