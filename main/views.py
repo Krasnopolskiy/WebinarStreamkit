@@ -9,10 +9,9 @@ from django.urls import reverse
 from django.views import View
 from django_registration.backends.one_step.views import RegistrationView
 
-from main.forms import (
-    ExtendedRegistrationForm,
-    WebinarCredentialsForm,
-)
+from main.forms import (ExtendedRegistrationForm, WebhooksForm,
+                        WebinarCredentialsForm)
+from main.models import DiscordHistory
 from main.webinar import BaseRouter, Webinar
 
 
@@ -79,7 +78,7 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, "pages/profile.html", self.context)
 
 
-class WebinarCredentialsView(LoginRequiredMixin, View):
+class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
         form = WebinarCredentialsForm(
             request.POST, instance=request.user.webinar_session
@@ -109,6 +108,13 @@ class WebinarCredentialsView(LoginRequiredMixin, View):
                 messages.error(
                     request, "Неверное имя пользователя или пароль аккаунта Webinar"
                 )
+
+
+class WebinarCredentialsDeleteView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
+        request.user.webinar_session.logout()
+        messages.warning(request, "Данные для авторизации на Webinar удалены")
+        return redirect(reverse("profile"))
 
 
 class ScheduleView(LoginRequiredMixin, View):
@@ -141,7 +147,22 @@ class EventView(LoginRequiredMixin, View):
             messages.error(request, response.message)
             return redirect(reverse("index"))
         self.context["event"] = response
+        self.context["form"] = WebhooksForm()
         return render(request, "pages/event.html", self.context)
+
+    def post(self, request: HttpRequest, event_id: int) -> HttpResponse:
+        form = WebhooksForm(request.POST)
+        if form.is_valid():
+            webhooks = [webhook.strip() for webhook in form.cleaned_data.get('webhooks').splitlines()]
+            history = DiscordHistory.objects.filter(event_id=event_id)
+            if history.exists():
+                history = history.first()
+                history.webhooks = webhooks
+            else:
+                history = DiscordHistory(event_id=event_id, webhooks=webhooks)
+            history.save()
+            messages.success(request, "Информация обновлена")
+        return redirect(reverse('event', args=[event_id]))
 
 
 class ChatView(LoginRequiredMixin, View):

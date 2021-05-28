@@ -12,17 +12,26 @@
                 {{ item|as_crispy_field }}
                 {% endfor %}
                 <div class="d-grid">
-                    <input class="btn btn-primary mt-3" type="submit" value="Сохранить">
+                    <input class="btn btn-primary" type="submit" value="Сохранить">
                 </div>
             </form>
             <div class="webinar-status pt-3 mt-3">
-                <p class="lead">
+                <hr>
+                <p class="lead font-monospace">
+                    Статус:
                     {% if error is None %}
-                    <span class="badge bg-success font-monospace"> Аккаунт авторизован </span>
+                    <span class="badge bg-success"> Аккаунт авторизован </span>
                     {% else %}
-                    <span class="badge bg-danger font-monospace"> {{ error }} </span>
+                    <span class="badge bg-danger"> {{ error }} </span>
                     {% endif %}
                 </p>
+                <form action="{% url 'delete_webinar_credentials' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <input class="btn btn-danger" type="submit" value="Выйти из аккаунта Webinar" {% if error is not None %}
+                            disabled {% endif %}>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

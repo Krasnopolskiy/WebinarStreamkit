@@ -1,12 +1,13 @@
 from datetime import date, timedelta
 from functools import wraps
+from http.cookiejar import Cookie
 from json import loads
-from typing import Optional
+from typing import Callable, Optional
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from requests import post, Session
+from requests import Session, post
 
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
@@ -16,24 +17,33 @@ class WebinarSession(models.Model):
     user_id = models.IntegerField(null=True)
     email = models.EmailField(max_length=255, null=True)
     password = models.CharField(max_length=255, null=True)
-
     cookie = models.CharField(max_length=32, null=True)
     last_login = models.DateField(null=True)
 
     session = Session()
 
-    def get_cookie(self, cookie_name: str):
+    def logout(self) -> None:
         """
-        Получение Куки пользователя
+        Удаление данных для авторизации на Webinar
+        """
+        self.user_id = None
+        self.email = None
+        self.password = None
+        self.cookie = None
+        self.last_login = None
+        self.save()
 
+    def get_cookie(self, cookie_name: str) -> Cookie:
+        """
+        Получение Cookie пользователя
         :param cookie_name:
-        :return: Кука
+        :return: Cookie
         """
         for cookie in self.session.cookies:
             if cookie.name == cookie_name:
                 return cookie
 
-    def is_correct_data(self, check_email: str, check_password: str):
+    def is_correct_data(self, check_email: str, check_password: str) -> bool:
         """
         Проверка на наличие аккаунта на webinar
 
@@ -77,7 +87,7 @@ class WebinarSession(models.Model):
                 return error
         self.session.cookies.set('sessionId', self.cookie)
 
-    def webinar_required(function):
+    def webinar_required(function: Callable):
         @wraps(function)
         def wrap(self, *args, **kwargs):
             response = self.ensure_session()
@@ -170,8 +180,7 @@ class WebinarSession(models.Model):
         Обновление настроек
         """
         route = MessageRouter.SETTINGS.value.format(session_id=session_id)
-        resp = self.session.put(route, data=kwargs)
-        print(resp.text)
+        self.session.put(route, data=kwargs)
 
     @webinar_required
     def start(self, session_id: int, **kwargs):
@@ -192,6 +201,30 @@ class WebinarSession(models.Model):
         """
         route = MessageRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
+
+
+class DiscordHistory(models.Model):
+    """
+    Модель, содержащая информацию для discord-бота
+
+    :param event_id: ID вебинара
+    :param message_ids: Список ID отправленных ботом сообщений
+    :param webhooks: Список webhook для трансляции в discord
+    :param active: Флаг, указывающий, транслировать ли сообщения или нет
+    """
+
+    id = models.AutoField(primary_key=True)
+    event_id = models.IntegerField(null=True)
+    message_ids = models.JSONField(default=list)
+    webhooks = models.JSONField(default=list)
+    active = models.BooleanField(default=False)
+
+    def update_settings(self, *args, **kwargs):
+        """
+        Обновление настроек
+        """
+        self.active = bool(kwargs.get('active', False))
+        self.save()
 
 
 class User(AbstractUser):
