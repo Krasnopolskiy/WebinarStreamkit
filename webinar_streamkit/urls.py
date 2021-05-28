@@ -1,16 +1,17 @@
 import debug_toolbar
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView, PasswordChangeView
-from django.urls import path, reverse_lazy, include
+from django.urls import include, path, reverse_lazy
 
 from main.consumers import (AwaitingMessagesConsumer, ChatConsumer,
                             ControlConsumer)
 from main.forms import ExtendedRegistrationForm
 from main.views import (AwaitingMessagesView, ChatView, ControlView, EventView,
                         ExtendedLoginView, ExtendedRegistrationView, IndexView,
-                        ProfileView, ScheduleView, WebinarCredentialsView)
+                        ProfileView, ScheduleView,
+                        WebinarCredentialsDeleteView,
+                        WebinarCredentialsUpdateView)
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -30,7 +31,8 @@ urlpatterns = [
     path('profile/password', PasswordChangeView.as_view(
         success_url=reverse_lazy('profile')
     ), name='change_password'),
-    path('profile/webinar/credentials', WebinarCredentialsView.as_view(), name='update_webinar_credentials'),
+    path('profile/webinar/credentials', WebinarCredentialsUpdateView.as_view(), name='update_webinar_credentials'),
+    path('profile/webinar/credentials/delete', WebinarCredentialsDeleteView.as_view(), name='delete_webinar_credentials'),
     path('schedule/', ScheduleView.as_view(), name='schedule'),
     path('event/<int:event_id>', EventView.as_view(), name='event'),
     path('event/<int:event_id>/chat', ChatView.as_view(), name='chat'),

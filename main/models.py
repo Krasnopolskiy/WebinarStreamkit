@@ -22,6 +22,17 @@ class WebinarSession(models.Model):
 
     session = Session()
 
+    def logout(self) -> None:
+        """
+        Удаление данных для авторизации на Webinar
+        """
+        self.user_id = None
+        self.email = None
+        self.password = None
+        self.cookie = None
+        self.last_login = None
+        self.save()
+
     def get_cookie(self, cookie_name: str) -> Cookie:
         """
         Получение Cookie пользователя
