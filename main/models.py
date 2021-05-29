@@ -199,7 +199,7 @@ class WebinarSession(models.Model):
 
         :param session_id: id сессии
         """
-        route = MessageRouter.STOP.value.format(session_id=session_id)
+        route = EventRouter.STOP.value.format(session_id=session_id)
         self.session.put(route)
 
 

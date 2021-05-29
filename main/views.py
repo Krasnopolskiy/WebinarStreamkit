@@ -148,6 +148,10 @@ class EventView(LoginRequiredMixin, View):
             return redirect(reverse("index"))
         self.context["event"] = response
         self.context["form"] = WebhooksForm()
+        history = DiscordHistory.objects.filter(event_id=event_id)
+        if history.exists():
+            history = history.first()
+            self.context["form"] = WebhooksForm(initial={"webhooks": "\n".join(history.webhooks)})
         return render(request, "pages/event.html", self.context)
 
     def post(self, request: HttpRequest, event_id: int) -> HttpResponse:

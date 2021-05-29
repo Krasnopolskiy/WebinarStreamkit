@@ -104,12 +104,12 @@ $('#stop-btn').click(() => {
 
 $('#chat-btn').click(() => {
     if (chat_widget === undefined || chat_widget.closed)
-        chat_widget = window.open(`${parent_url}/chat`, 'Chat', `height=${100*vh * 2}, width=${100*vw}, left=${100*vw + 10}`)
+        chat_widget = window.open(`${parent_url}/chat`, 'Chat', `height=${100*vh * 2}, width=${90*vw}, left=${100*vw + 10}`)
     setTimeout(() => update_fontsize(), 1000)
 })
 
 $('#awaiting-btn').click(() => {
     if (awaiting_widget === undefined || awaiting_widget.closed)
-        awaiting_widget = window.open(`${parent_url}/awaiting`, 'Awaiting', `height=${100*vh * 2}, width=${100*vw}, left=${(100*vw + 10) * 2}`)
+        awaiting_widget = window.open(`${parent_url}/awaiting`, 'Awaiting', `height=${100*vh * 2}, width=${90*vw}, left=${190*vw + 30}`)
     setTimeout(() => update_fontsize(), 1000)
 })

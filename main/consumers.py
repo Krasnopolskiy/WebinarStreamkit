@@ -208,8 +208,8 @@ class AwaitingMessagesConsumer(BaseConsumer):
         Метод, срабатывающий после подключения по websockets
         """
         await super().connect()
-        self.commands['accept message'] = sync_to_async(self.webinar_session.accept_message),
-        self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message),
+        self.commands['accept message'] = sync_to_async(self.webinar_session.accept_message)
+        self.commands['delete message'] = sync_to_async(self.webinar_session.delete_message)
         self.timer.enable()
 
 
