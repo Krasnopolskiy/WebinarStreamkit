@@ -60,8 +60,7 @@ class WebinarSession(models.Model):
         """
         Вход в аккаунт webinar через наш сервис
         """
-        print(self.password)
-        cipher = AESCipher(settings.AES_KEY_ENC)
+        cipher = AESCipher(settings.SECRET_KEY)
         decode_password = cipher.decrypt(enc=self.password.encode())
         self.session = Session()
         route = UserRouter.LOGIN.value

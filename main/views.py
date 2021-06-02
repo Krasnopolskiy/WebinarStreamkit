@@ -86,7 +86,7 @@ class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
         return redirect(reverse("profile"))
 
     def encrypt_password(self, password):
-        cipher = AESCipher(settings.AES_KEY_ENC)
+        cipher = AESCipher(settings.SECRET_KEY)
         return cipher.encrypt(password).decode()
 
     def set_messages(self, request: HttpRequest):
