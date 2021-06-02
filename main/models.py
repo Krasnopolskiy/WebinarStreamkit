@@ -3,12 +3,12 @@ from functools import wraps
 from http.cookiejar import Cookie
 from json import loads
 from typing import Callable, Optional
-
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from requests import Session, post
-
+from main.AESCipher import AESCipher
 from main.webinar import EventRouter, MessageRouter, UserRouter, Webinar
 
 
@@ -60,9 +60,14 @@ class WebinarSession(models.Model):
         """
         Вход в аккаунт webinar через наш сервис
         """
+        cipher = AESCipher(settings.SECRET_KEY)
+        if self.user_id is not None:
+            decode_password = cipher.decrypt(enc=self.password.encode())
+        else:
+            decode_password = self.password
         self.session = Session()
         route = UserRouter.LOGIN.value
-        payload = {'email': self.email, 'password': self.password, 'rememberMe': 'true'}
+        payload = {'email': self.email, 'password': decode_password, 'rememberMe': 'true'}
         response = loads(self.session.post(route, data=payload).text)
         data = loads(self.session.get(route).text)
         if 'error' in response:
