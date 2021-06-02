@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import random
+import string
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
@@ -28,6 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'v1i_fb$_jf2#1v_lcsbu&eon4u-os0^px=s^i
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG', 'True'))
+AES_KEY_ENC = os.environ.get('AES_KEY_ENC', ''.join(random.choice(string.printable) for i in range(16)))
 
 
 ALLOWED_HOSTS = [
