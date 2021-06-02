@@ -4,7 +4,7 @@ django-crispy-forms==1.11.2
 django-registration==3.1.2
 requests==2.25.1
 cryptography==3.4.7
-pycryptodome==3.4.3
+pycrypto==3.4.3
 
 # Websockets
 channels==3.0.3
