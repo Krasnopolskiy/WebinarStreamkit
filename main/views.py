@@ -100,6 +100,9 @@ class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
         form = WebinarCredentialsForm(
             request.POST, instance=request.user.webinar_session
         )
+        for scope in form.errors.values():
+            for error in list(scope):
+                messages.error(request, error)
         if form.is_valid():
             if request.user.webinar_session.is_correct_data(
                 request.POST["email"],
@@ -112,11 +115,13 @@ class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
                 )
                 form.save()
                 request.user.webinar_session.login()
+
                 messages.success(request, "Данные для авторизации на Webinar обновлены")
             else:
                 messages.error(
                     request, "Неверное имя пользователя или пароль аккаунта Webinar"
                 )
+
 
 
 class WebinarCredentialsDeleteView(LoginRequiredMixin, View):
