@@ -61,7 +61,10 @@ class WebinarSession(models.Model):
         Вход в аккаунт webinar через наш сервис
         """
         cipher = AESCipher(settings.SECRET_KEY)
-        decode_password = cipher.decrypt(enc=self.password.encode())
+        if self.user_id is not None:
+            decode_password = cipher.decrypt(enc=self.password.encode())
+        else:
+            decode_password = self.password
         self.session = Session()
         route = UserRouter.LOGIN.value
         payload = {'email': self.email, 'password': decode_password, 'rememberMe': 'true'}

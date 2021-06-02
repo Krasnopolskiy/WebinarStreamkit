@@ -408,13 +408,20 @@ class UnauthWebinarUser(TestCase):
 
     def test_schedule(self):
         """
-        Тест на недоступность списка вебинаров без аккаунта ebinar
+        Тест на недоступность списка вебинаров без аккаунта Webinar
         """
         response = self.client.get(reverse('schedule'))
         self.assertRedirects(response, reverse('index'))
         messages = list(map(str, get_messages(response.wsgi_request)))
         self.assertEqual(len(messages), 1)
         self.assertIn('Webinar: ERROR_WRONG_CREDENTIALS', messages)
+
+    def test_profile(self):
+        """
+        Тест на отображение панели управления
+        """
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 200)
 
 
 def foo():
