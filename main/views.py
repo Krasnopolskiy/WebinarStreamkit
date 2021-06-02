@@ -8,11 +8,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django_registration.backends.one_step.views import RegistrationView
-
 from main.forms import (ExtendedRegistrationForm, WebhooksForm,
                         WebinarCredentialsForm)
 from main.models import DiscordHistory
 from main.webinar import BaseRouter, Webinar
+from main.AESCipher import AESCipher
+from django.conf import settings
 
 
 class ExtendedLoginView(LoginView):
@@ -80,27 +81,35 @@ class ProfileView(LoginRequiredMixin, View):
 
 class WebinarCredentialsUpdateView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> HttpResponsePermanentRedirect:
-        form = WebinarCredentialsForm(
-            request.POST, instance=request.user.webinar_session
-        )
-        self.set_messages(request, form)
-        for scope in form.errors.values():
-            for error in list(scope):
-                messages.error(request, error)
+
+        self.set_messages(request)
         return redirect(reverse("profile"))
 
-    def set_messages(self, request, form):
+    def encrypt_password(self, password):
+        cipher = AESCipher(settings.SECRET_KEY)
+        return cipher.encrypt(password).decode()
+
+    def set_messages(self, request: HttpRequest):
         """
         Метод для добавления сообщений при авторизации на webinar через наш сервис
         :param request:
-        :param form:
         :return:
         """
+        request.POST = request.POST.copy()
+
+        form = WebinarCredentialsForm(
+            request.POST, instance=request.user.webinar_session
+        )
         if form.is_valid():
             if request.user.webinar_session.is_correct_data(
                 request.POST["email"],
                 request.POST["password"]
             ):
+
+                request.POST["password"] = self.encrypt_password(request.POST["password"])
+                form = WebinarCredentialsForm(
+                    request.POST, instance=request.user.webinar_session
+                )
                 form.save()
                 request.user.webinar_session.login()
                 messages.success(request, "Данные для авторизации на Webinar обновлены")
